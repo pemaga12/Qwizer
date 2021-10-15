@@ -7,6 +7,9 @@ from rest_framework.response import Response
 from Crypto.Cipher import AES                           #Usado para cifrar el test
 from Crypto.Random import get_random_bytes
 import hashlib
+#Para pasar quiz a string
+import json
+import codecs
 # Create your views here.
 
 
@@ -29,14 +32,24 @@ def test(request):
             }
         ]
     }
-    # Proceso de generación de la key a partir del password
-    password = 'cursoeda2122'.encode()
+    
+    quizString = json.dumps(quiz)
+    #Hay que hacer que el texto se pueda enviar en bloques de 16 bytes, sino no funciona
+    message = pad_message(quizString)
+    #Proceso de generación de la key a partir del password
+    password = b'cursoeda2122'
     key = hashlib.sha256(password).digest()
+    print(key)
     mode = AES.MODE_CBC
-    #Generacion de un IV aleatorio
-    IV = get_random_bytes(AES.block_size)
-    #Creación del objeto cypher
+    #Utilizamos un IV
+    IV = b'This is an IV456'
     cipher = AES.new(key, mode, IV)
-    #return Response(IV + cipher.encrypt(quiz))
+    encrypted_message = cipher.encrypt(message.encode())
+   
+    return Response(encrypted_message)
 
-    return Response(quiz)
+def pad_message(message):
+    
+    while len(message) % 16 != 0:
+        message = message + " "
+    return message

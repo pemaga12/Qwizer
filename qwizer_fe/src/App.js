@@ -29,6 +29,7 @@ class App extends React.Component{
   cifrarTest(data){
     var cifradas =  CryptoJS.AES.encrypt(JSON.stringify(data),"m09sb4uXbs02W");
     localStorage.setItem('questions',cifradas.toString());
+    console.log(cifradas.toString());
   }
 
   componentWillMount(){
@@ -41,6 +42,7 @@ class App extends React.Component{
     .then(data => {
       this.setState({
         password: data.password
+        //password: "1234"
       });
       this.cifrarTest(data);
     })
@@ -62,7 +64,7 @@ class App extends React.Component{
   comprobarPassword = () => {
 
     if(this.state.contra != ""){
-      
+      console.log(this.state.password)
       if(this.state.contra == this.state.password){
         this.descifrarTest();
         
