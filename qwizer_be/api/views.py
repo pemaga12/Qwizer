@@ -37,7 +37,7 @@ def test(request):
     #Hay que hacer que el texto se pueda enviar en bloques de 16 bytes, sino no funciona
     message = pad_message(quizString)
     #Proceso de generación de la key a partir del password
-    password = b'cursoeda2122'
+    password = b'1234'
     key = hashlib.sha256(password).digest()
     print(key)
     mode = AES.MODE_CBC
