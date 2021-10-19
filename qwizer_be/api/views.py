@@ -10,6 +10,7 @@ import hashlib
 #Para pasar quiz a string
 import json
 import codecs
+import base64
 # Create your views here.
 
 
@@ -45,8 +46,8 @@ def test(request):
     IV = b'This is an IV456'
     cipher = AES.new(key, mode, IV)
     encrypted_message = cipher.encrypt(message.encode())
-   
-    return Response(encrypted_message)
+    encrypted_message  =  base64.b64encode(encrypted_message)
+    return Response(quiz)
 
 def pad_message(message):
     
