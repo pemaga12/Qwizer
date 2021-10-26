@@ -38,16 +38,13 @@ class App extends React.Component{
         password: data.password,
         iv: data.iv
       });
-      console.log(data.cleanMessage)
       localStorage.setItem('questions', data.encrypted_message);
-      
     })
   }
   
   
   descifrarTest = () => {
     var cifradas = localStorage.getItem('questions');
-    console.log("La contraseña original es: " + this.state.password);
     
     var key = CryptoJS.enc.Hex.parse(this.state.password);
     var iv = CryptoJS.enc.Hex.parse(this.state.iv);
@@ -59,9 +56,13 @@ class App extends React.Component{
 
     var text = result.toString(CryptoJS.enc.Utf8);
 
-    
-    console.log("Esto sale al descifrar:" + text);
-    
+    text = JSON.parse(text);
+
+    this.setState({
+      questionList: text.questions,
+      allow:true
+    });
+    console.log(this.state.questionList);
   }
   
 
@@ -69,7 +70,6 @@ class App extends React.Component{
   comprobarPassword = () => {
 
     if(this.state.contra != ""){
-      console.log(this.state.password)
       if(CryptoJS.SHA256(this.state.contra) == this.state.password){
         this.descifrarTest();
         

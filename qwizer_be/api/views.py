@@ -36,7 +36,7 @@ def test(request):
     
     quizString = json.dumps(quiz)
     #Hay que hacer que el texto se pueda enviar en bloques de 16 bytes, sino no funciona
-    message = pad_message(quizString)
+    message = _pad_string(quizString)
     #Proceso de generación de la key a partir del password
     password = b'1234'
     key = hashlib.sha256(password).digest()
@@ -49,7 +49,7 @@ def test(request):
     #print("El IV es: ", in_iv)
     cipher = AES.new(key, mode, iv, segment_size=128)
     encrypted = cipher.encrypt(message.encode())
-  
+    
     
     #Genero la respuesta
     content = {
@@ -67,3 +67,9 @@ def pad_message(message):
     while len(message) % 16 != 0:
         message = message + " "
     return message
+
+def _pad_string(in_string):
+    '''Pad an input string according to PKCS#7'''
+    in_len = len(in_string)
+    pad_size = 16 - (in_len % 16)
+    return in_string.ljust(in_len + pad_size, chr(pad_size))
