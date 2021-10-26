@@ -28,7 +28,7 @@ class App extends React.Component{
 
   cifrarTest(data){
     var cifradas =  CryptoJS.AES.encrypt(JSON.stringify(data),"m09sb4uXbs02W");
-    localStorage.setItem('questions',cifradas.toString());
+    console.log(cifradas.toString);
     console.log(cifradas.toString());
   }
 
@@ -41,31 +41,29 @@ class App extends React.Component{
     .then(function(response){return response.json();})
     .then(data => {
       this.setState({
-        password: data.password
-        //password: "1234"
+        password: data.password,
+        iv: data.iv
       });
-      this.cifrarTest(data);
+      localStorage.setItem('questions', data.encrypted_message);
+      console.log(data.encrypted_message)
+      
     })
   }
   
   
   descifrarTest = () => {
     var cifradas = localStorage.getItem('questions');
-    var descifradas = CryptoJS.AES.decrypt(cifradas,"m09sb4uXbs02W");
-    descifradas = JSON.parse(descifradas.toString(CryptoJS.enc.Utf8));
-    this.setState({
-      questionList: descifradas.questions,
-      allow:true
-    });
+    console.log("La contraseña original es: " + this.state.password);
+    var key = CryptoJS.SHA256(this.state.password);
+    console.log("El hash es: " + key);
     
-
   }
   
   comprobarPassword = () => {
 
     if(this.state.contra != ""){
       console.log(this.state.password)
-      if(this.state.contra == this.state.password){
+      if(CryptoJS.SHA256(this.state.contra) == this.state.password){
         this.descifrarTest();
         
       }else{

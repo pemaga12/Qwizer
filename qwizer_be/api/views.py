@@ -40,14 +40,23 @@ def test(request):
     #Proceso de generación de la key a partir del password
     password = b'1234'
     key = hashlib.sha256(password).digest()
-    print(key)
+    print("La key es: ", key.hex())
     mode = AES.MODE_CBC
     #Utilizamos un IV
     IV = b'This is an IV456'
     cipher = AES.new(key, mode, IV)
     encrypted_message = cipher.encrypt(message.encode())
-    encrypted_message  =  base64.b64encode(encrypted_message)
-    return Response(quiz)
+    encrypted_message  =  encrypted_message.hex()
+    
+    #Genero la respuesta
+    content = {
+        'password': key.hex(),
+        'iv': IV.hex(),
+        'encrypted_message': encrypted_message,
+        
+    }
+
+    return Response(content)
 
 def pad_message(message):
     
