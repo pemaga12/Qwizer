@@ -11,13 +11,13 @@ import hashlib
 import json
 import codecs
 import base64
+import binascii
 # Create your views here.
 
 
 @api_view(['GET'])
 def test(request):
     quiz = { 
-        'password': '1234',
         'questions':[
             {
             'id': 1 ,
@@ -41,18 +41,22 @@ def test(request):
     password = b'1234'
     key = hashlib.sha256(password).digest()
     print("La key es: ", key.hex())
-    mode = AES.MODE_CBC
+    mode = AES.MODE_CFB
     #Utilizamos un IV
-    IV = b'This is an IV456'
-    cipher = AES.new(key, mode, IV)
-    encrypted_message = cipher.encrypt(message.encode())
-    encrypted_message  =  encrypted_message.hex()
+    #in_iv = binascii.b2a_hex(IVorig)
+    iv = get_random_bytes(16)
+    in_iv = binascii.b2a_hex(iv)
+    #print("El IV es: ", in_iv)
+    cipher = AES.new(key, mode, iv, segment_size=128)
+    encrypted = cipher.encrypt(message.encode())
+  
     
     #Genero la respuesta
     content = {
         'password': key.hex(),
-        'iv': IV.hex(),
-        'encrypted_message': encrypted_message,
+        'iv': in_iv,
+        'encrypted_message': binascii.b2a_base64(encrypted).rstrip(),
+        'cleanMessage': message
         
     }
 

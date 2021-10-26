@@ -19,18 +19,12 @@ class App extends React.Component{
     };
     
     this.getTest = this.getTest.bind(this);
-    this.cifrarTest = this.cifrarTest.bind(this);
+    
     this.descifrarTest = this.descifrarTest.bind(this);
     this.comprobarPassword = this.comprobarPassword.bind(this);
     this.getPass = this.getPass.bind(this);
     
   };
-
-  cifrarTest(data){
-    var cifradas =  CryptoJS.AES.encrypt(JSON.stringify(data),"m09sb4uXbs02W");
-    console.log(cifradas.toString);
-    console.log(cifradas.toString());
-  }
 
   componentWillMount(){
     this.getTest();
@@ -44,8 +38,8 @@ class App extends React.Component{
         password: data.password,
         iv: data.iv
       });
+      console.log(data.cleanMessage)
       localStorage.setItem('questions', data.encrypted_message);
-      console.log(data.encrypted_message)
       
     })
   }
@@ -54,11 +48,24 @@ class App extends React.Component{
   descifrarTest = () => {
     var cifradas = localStorage.getItem('questions');
     console.log("La contraseña original es: " + this.state.password);
-    var key = CryptoJS.SHA256(this.state.password);
-    console.log("El hash es: " + key);
+    
+    var key = CryptoJS.enc.Hex.parse(this.state.password);
+    var iv = CryptoJS.enc.Hex.parse(this.state.iv);
+    var cipher = CryptoJS.lib.CipherParams.create({
+          ciphertext: CryptoJS.enc.Base64.parse(cifradas)
+    });
+
+    var result = CryptoJS.AES.decrypt(cipher, key, {iv: iv, mode: CryptoJS.mode.CFB});
+
+    var text = result.toString(CryptoJS.enc.Utf8);
+
+    
+    console.log("Esto sale al descifrar:" + text);
     
   }
   
+
+
   comprobarPassword = () => {
 
     if(this.state.contra != ""){
@@ -69,8 +76,6 @@ class App extends React.Component{
       }else{
         alert("Wrong Password");
       }
-
-      
     }
     
   }
