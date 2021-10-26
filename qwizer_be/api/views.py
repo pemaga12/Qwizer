@@ -7,13 +7,17 @@ from rest_framework.response import Response
 from Crypto.Cipher import AES                           #Usado para cifrar el test
 from Crypto.Random import get_random_bytes
 import hashlib
+#Para pasar quiz a string
+import json
+import codecs
+import base64
+import binascii
 # Create your views here.
 
 
 @api_view(['GET'])
 def test(request):
     quiz = { 
-        'password': '1234',
         'questions':[
             {
             'id': 1 ,
@@ -29,14 +33,43 @@ def test(request):
             }
         ]
     }
-    # Proceso de generación de la key a partir del password
-    password = 'cursoeda2122'.encode()
+    
+    quizString = json.dumps(quiz)
+    #Hay que hacer que el texto se pueda enviar en bloques de 16 bytes, sino no funciona
+    message = _pad_string(quizString)
+    #Proceso de generación de la key a partir del password
+    password = b'1234'
     key = hashlib.sha256(password).digest()
-    mode = AES.MODE_CBC
-    #Generacion de un IV aleatorio
-    IV = get_random_bytes(AES.block_size)
-    #Creación del objeto cypher
-    cipher = AES.new(key, mode, IV)
-    #return Response(IV + cipher.encrypt(quiz))
+    print("La key es: ", key.hex())
+    mode = AES.MODE_CFB
+    #Utilizamos un IV
+    #in_iv = binascii.b2a_hex(IVorig)
+    iv = get_random_bytes(16)
+    in_iv = binascii.b2a_hex(iv)
+    #print("El IV es: ", in_iv)
+    cipher = AES.new(key, mode, iv, segment_size=128)
+    encrypted = cipher.encrypt(message.encode())
+    
+    
+    #Genero la respuesta
+    content = {
+        'password': key.hex(),
+        'iv': in_iv,
+        'encrypted_message': binascii.b2a_base64(encrypted).rstrip(),
+        'cleanMessage': message
+        
+    }
 
-    return Response(quiz)
+    return Response(content)
+
+def pad_message(message):
+    
+    while len(message) % 16 != 0:
+        message = message + " "
+    return message
+
+def _pad_string(in_string):
+    '''Pad an input string according to PKCS#7'''
+    in_len = len(in_string)
+    pad_size = 16 - (in_len % 16)
+    return in_string.ljust(in_len + pad_size, chr(pad_size))

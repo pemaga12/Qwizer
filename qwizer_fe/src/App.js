@@ -19,17 +19,12 @@ class App extends React.Component{
     };
     
     this.getTest = this.getTest.bind(this);
-    this.cifrarTest = this.cifrarTest.bind(this);
+    
     this.descifrarTest = this.descifrarTest.bind(this);
     this.comprobarPassword = this.comprobarPassword.bind(this);
     this.getPass = this.getPass.bind(this);
     
   };
-
-  cifrarTest(data){
-    var cifradas =  CryptoJS.AES.encrypt(JSON.stringify(data),"m09sb4uXbs02W");
-    localStorage.setItem('questions',cifradas.toString());
-  }
 
   componentWillMount(){
     this.getTest();
@@ -40,37 +35,47 @@ class App extends React.Component{
     .then(function(response){return response.json();})
     .then(data => {
       this.setState({
-        password: data.password
+        password: data.password,
+        iv: data.iv
       });
-      this.cifrarTest(data);
+      localStorage.setItem('questions', data.encrypted_message);
     })
   }
   
   
   descifrarTest = () => {
     var cifradas = localStorage.getItem('questions');
-    var descifradas = CryptoJS.AES.decrypt(cifradas,"m09sb4uXbs02W");
-    descifradas = JSON.parse(descifradas.toString(CryptoJS.enc.Utf8));
+    
+    var key = CryptoJS.enc.Hex.parse(this.state.password);
+    var iv = CryptoJS.enc.Hex.parse(this.state.iv);
+    var cipher = CryptoJS.lib.CipherParams.create({
+          ciphertext: CryptoJS.enc.Base64.parse(cifradas)
+    });
+
+    var result = CryptoJS.AES.decrypt(cipher, key, {iv: iv, mode: CryptoJS.mode.CFB});
+
+    var text = result.toString(CryptoJS.enc.Utf8);
+
+    text = JSON.parse(text);
+
     this.setState({
-      questionList: descifradas.questions,
+      questionList: text.questions,
       allow:true
     });
-    
-
+    console.log(this.state.questionList);
   }
   
+
+
   comprobarPassword = () => {
 
     if(this.state.contra != ""){
-      
-      if(this.state.contra == this.state.password){
+      if(CryptoJS.SHA256(this.state.contra) == this.state.password){
         this.descifrarTest();
         
       }else{
         alert("Wrong Password");
       }
-
-      
     }
     
   }
