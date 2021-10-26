@@ -55,9 +55,7 @@ def test(request):
     content = {
         'password': key.hex(),
         'iv': in_iv,
-        'encrypted_message': binascii.b2a_base64(encrypted).rstrip(),
-        'cleanMessage': message
-        
+        'encrypted_message': binascii.b2a_base64(encrypted).rstrip(),        
     }
 
     return Response(content)
