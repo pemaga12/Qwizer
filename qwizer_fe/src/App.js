@@ -6,7 +6,7 @@ import CryptoJS from 'crypto-js'
 import {BrowserRouter as Router,Route,Switch} from 'react-router-dom';
 
 
-import QuestionList from './components/QuestionList.js'
+import QuestionContainer from './components/QuestionContainer.js'
 
 class App extends React.Component{
 
@@ -117,7 +117,7 @@ class App extends React.Component{
           <Route render={() => {
             return <div>
               <h1> El Test ha empezado! </h1>
-              <QuestionList questionList={this.state.questionList} />
+              <QuestionContainer questionList={this.state.questionList} />
             </div>
           }}>
           </Route>
