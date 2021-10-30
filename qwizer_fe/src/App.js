@@ -3,7 +3,7 @@ import './App.css';
 import React from 'react';
 import CryptoJS from 'crypto-js'
 
-import {BrowserRouter as Router,Route,Link,Redirect,Switch} from 'react-router-dom';
+import {BrowserRouter as Router,Route,Switch} from 'react-router-dom';
 
 
 import QuestionList from './components/QuestionList.js'
@@ -15,7 +15,18 @@ class App extends React.Component{
     this.state = {
       contra:"",
       questionList:[],
-      allow:false
+      allow:false,
+     /* answers:{
+        'respuestas':[
+          {
+            'question_id': 1,
+            'question_answr': 'answr_id' or 'blabla'
+          }
+        ]
+      }*/
+      answers:{
+        'respuestas':[]
+      }
     };
     
     this.getTest = this.getTest.bind(this);

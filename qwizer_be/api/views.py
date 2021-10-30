@@ -22,14 +22,24 @@ def test(request):
             {
             'id': 1 ,
             'question':'En colas, nosotros solo podemos acceder al...',
-            'options': ['Al elementos que nosotros queremos.','Primer y último elemento.'],
+            'type': 'test',
+            'options': [{'id':10,'op':'Al elementos que nosotros queremos.'},
+                        {'id':11,'op':'Primer y último elemento.'}],
             'answer': 1
             },
             {
             'id': 2 ,
             'question':'En colas, nosotros solo podemos acceder al...',
-            'options': ['Al elementos que nosotros queremos.','Primer y último elemento.'],
+            'type': 'test',
+            'options': [{'id':20,'op':'Al elementos que nosotros queremos.'},
+                        {'id':21,'op':'Primer y último elemento.'}],
             'answer': 1
+            },
+            {
+            'id': 3 ,
+            'question':'De que curso es la asignatura de EDA? (Escribe la respuesta como texto)',
+            'type': 'text',
+            'answer': 'segundo curso'
             }
         ]
     }
