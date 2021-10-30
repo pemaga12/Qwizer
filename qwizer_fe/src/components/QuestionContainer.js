@@ -3,6 +3,7 @@ import React from 'react'
 
 import TestQuestion from './TestQuestion.js'
 import TextQuestion from './TextQuestion.js'
+import QuestionNav from './QuestionNav.js'
 
 
 
@@ -18,6 +19,7 @@ class QuestionContainer extends React.Component {
     this.updateIndNext = this.updateIndNext.bind(this);
     this.updateIndBack = this.updateIndBack.bind(this);
     this.sendAnswers = this.sendAnswers.bind(this);
+    this.navHandler = this.navHandler.bind(this);
   }
 
   sendAnswers = () =>{
@@ -48,7 +50,6 @@ class QuestionContainer extends React.Component {
     if(this.state.indPregunta - 1 >= 0 ){
       this.setState({indPregunta: this.state.indPregunta - 1});
     }
-    console.log("Entered Bakc");
   }
 
   renderButtons = () =>{
@@ -70,6 +71,10 @@ class QuestionContainer extends React.Component {
   componentWillMount(){
     this.setState({numPreguntas:this.props.questionList.length});
   }
+  navHandler = (val) =>{
+    this.setState({indPregunta:val});
+  }
+
   render() { 
       
     const renderQtype = this.questionType
@@ -77,8 +82,11 @@ class QuestionContainer extends React.Component {
     
     return(
       <div id="questions">
+        <div id="question-nav">
+          <QuestionNav navigationHandler={this.navHandler} listaPreguntas={this.props.questionList}/>
+        </div>
         <div key={pregunta.id}>
-          <h2> {this.state.indPregunta + 1}.- {pregunta.question}</h2>
+          <h2> {this.state.indPregunta+1}{".-" + pregunta.question}</h2>
           {renderQtype(pregunta)}
         </div>
         {this.renderButtons()}
