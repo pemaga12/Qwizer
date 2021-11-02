@@ -30,10 +30,12 @@ class App extends React.Component{
     };
     
     this.getTest = this.getTest.bind(this);
+    this.sendTest = this.sendTest.bind(this);
     
     this.descifrarTest = this.descifrarTest.bind(this);
     this.comprobarPassword = this.comprobarPassword.bind(this);
     this.getPass = this.getPass.bind(this);
+    this.cifrarTest = this.cifrarTest.bind(this);
     
   };
 
@@ -50,6 +52,20 @@ class App extends React.Component{
         iv: data.iv
       });
       localStorage.setItem('questions', data.encrypted_message);
+    })
+  }
+
+  sendTest = () => {
+    var url = "http://127.0.0.1:8000/api/response";
+    console.log(JSON.stringify(this.state.questionList));
+    fetch(url, {
+      method: 'POST',
+      headers:{
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(this.state.questionList)
+    }).catch(function(error){
+      console.log("Error", error)
     })
   }
   
@@ -76,6 +92,16 @@ class App extends React.Component{
     console.log(this.state.questionList);
   }
   
+  cifrarTest = () => {
+    var aCifrar = localStorage.getItem('questionList');
+
+    //Usaremos la misma key para cifrar el test
+    var key = CryptoJS.enc.Hex.parse(this.state.password);
+    //Usaremos el mismo IV
+    var iv = CryptoJS.enc.Hex.parse(this.state.iv);
+    var cipher = CryptoJS.lib.CipherParams.create({
+    })
+  }
 
 
   comprobarPassword = () => {
@@ -117,7 +143,9 @@ class App extends React.Component{
           <Route render={() => {
             return <div>
               <h1> El Test ha empezado! </h1>
-              <QuestionContainer questionList={this.state.questionList} />
+              <QuestionContainer questionList={this.state.questionList} 
+              sendTest = {this.sendTest}
+              />
             </div>
           }}>
           </Route>

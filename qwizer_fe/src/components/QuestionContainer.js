@@ -23,8 +23,9 @@ class QuestionContainer extends React.Component {
   }
 
   sendAnswers = () =>{
-    alert("Enviando respuestas al servidor");
+    alert("Funcion de questionContainer");
   }
+  
   questionType = (pregunta) => {
 
     if(pregunta != null){
@@ -63,7 +64,7 @@ class QuestionContainer extends React.Component {
     }else{ //this.state.indPregunta == this.state.numPreguntas-1
       return <div>
           <button onClick={this.updateIndBack}>Atras</button>
-          <button onClick={this.sendAnswers}>Terminar y Enviar</button>
+          <button onClick={this.props.sendTest}>Terminar y Enviar</button>
         </div>
     }
 
