@@ -33,9 +33,10 @@ class App extends React.Component{
     this.sendTest = this.sendTest.bind(this);
     
     this.descifrarTest = this.descifrarTest.bind(this);
+    this.cifrarResultados = this.cifrarResultados.bind(this);
+    this.pad_message = this.pad_message.bind(this);
     this.comprobarPassword = this.comprobarPassword.bind(this);
     this.getPass = this.getPass.bind(this);
-    this.cifrarTest = this.cifrarTest.bind(this);
     
   };
 
@@ -57,6 +58,7 @@ class App extends React.Component{
 
   sendTest = () => {
     var url = "http://127.0.0.1:8000/api/response";
+    this.cifrarResultados();
     console.log(JSON.stringify(this.state.questionList));
     fetch(url, {
       method: 'POST',
@@ -70,6 +72,22 @@ class App extends React.Component{
   }
   
   
+  cifrarResultados = () => {
+    var iv = CryptoJS.enc.Hex.parse(this.state.iv);
+    var key = CryptoJS.enc.Hex.parse(this.state.password);
+    
+    var encrypted_message = CryptoJS.AES.encrypt(JSON.stringify(this.state.questionList), key,
+      {
+        iv: iv,
+        mode: CryptoJS.mode.CFB
+      });
+      console.log(encrypted_message);
+  }
+
+  pad_message = () => {
+    var len = this.state.questionList
+  }
+
   descifrarTest = () => {
     var cifradas = localStorage.getItem('questions');
     
@@ -92,18 +110,6 @@ class App extends React.Component{
     console.log(this.state.questionList);
   }
   
-  cifrarTest = () => {
-    var aCifrar = localStorage.getItem('questionList');
-
-    //Usaremos la misma key para cifrar el test
-    var key = CryptoJS.enc.Hex.parse(this.state.password);
-    //Usaremos el mismo IV
-    var iv = CryptoJS.enc.Hex.parse(this.state.iv);
-    var cipher = CryptoJS.lib.CipherParams.create({
-    })
-  }
-
-
   comprobarPassword = () => {
 
     if(this.state.contra != ""){
