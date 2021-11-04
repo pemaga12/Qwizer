@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'corsheaders',
     'rest_framework',
+    'api'
 ]
 
 MIDDLEWARE = [
@@ -84,8 +85,12 @@ WSGI_APPLICATION = 'qwizer_be.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'qwizer-db',
+        'USER' : 'root',
+        'PASSWORD' : '',
+        'HOTS' : 'localhost',
+        'PORT' : 3306
     }
 }
 

@@ -73,15 +73,7 @@ class App extends React.Component{
   
   
   cifrarResultados = () => {
-    var iv = CryptoJS.enc.Hex.parse(this.state.iv);
-    var key = CryptoJS.enc.Hex.parse(this.state.password);
-    
-    var encrypted_message = CryptoJS.AES.encrypt(JSON.stringify(this.state.questionList), key,
-      {
-        iv: iv,
-        mode: CryptoJS.mode.CFB
-      });
-      console.log(encrypted_message);
+    //Necesitamos cifrar mediante RSA, ya que no podemos usar la misma clave 
   }
 
   pad_message = () => {
