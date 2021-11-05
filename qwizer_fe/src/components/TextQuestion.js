@@ -14,7 +14,14 @@ class TextQuestion extends React.Component {
     }
 
     handleChange(event) {
-        this.setState({textValue: event.target.value});
+        var id = this.props.id;
+
+        var answer = {
+           "id": id, "respuesta" : {"type" : this.props.type, "answer" : event.target.value}
+        }
+        
+        this.props.addAnswerd(answer);
+
     }
 
     render() {  

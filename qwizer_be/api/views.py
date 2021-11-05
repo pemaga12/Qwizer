@@ -24,22 +24,22 @@ def test(request):
             'question':'En colas, nosotros solo podemos acceder al...',
             'type': 'test',
             'options': [{'id':10,'op':'Al elementos que nosotros queremos.'},
-                        {'id':11,'op':'Primer y último elemento.'}],
-            'answer': 1
+                        {'id':11,'op':'Primer y último elemento.'}]
+            
             },
             {
             'id': 2 ,
             'question':'En colas, nosotros solo podemos acceder al...',
             'type': 'test',
             'options': [{'id':20,'op':'Al elementos que nosotros queremos.'},
-                        {'id':21,'op':'Primer y último elemento.'}],
-            'answer': 1
+                        {'id':21,'op':'Primer y último elemento.'}]
+            
             },
             {
             'id': 3 ,
             'question':'De que curso es la asignatura de EDA? (Escribe la respuesta como texto)',
-            'type': 'text',
-            'answer': 'segundo curso'
+            'type': 'text'
+            
             }
         ]
     }
@@ -72,10 +72,10 @@ def test(request):
 def response(request):
     print(request.data)
     #Comienza el desencriptado de el mensaje
-    
+       
     return Response(request.data)
     
-
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def _pad_string(in_string):
     '''Pad an input string according to PKCS#7'''
     in_len = len(in_string)

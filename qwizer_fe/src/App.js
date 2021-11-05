@@ -7,6 +7,7 @@ import {BrowserRouter as Router,Route,Switch} from 'react-router-dom';
 
 
 import QuestionContainer from './components/QuestionContainer.js'
+import TestQuestion from './components/TestQuestion';
 
 class App extends React.Component{
 
@@ -16,17 +17,6 @@ class App extends React.Component{
       contra:"",
       questionList:[],
       allow:false,
-     /* answers:{
-        'respuestas':[
-          {
-            'question_id': 1,
-            'question_answr': 'answr_id' or 'blabla'
-          }
-        ]
-      }*/
-      answers:{
-        'respuestas':[]
-      }
     };
     
     this.getTest = this.getTest.bind(this);
@@ -36,8 +26,29 @@ class App extends React.Component{
     this.comprobarPassword = this.comprobarPassword.bind(this);
     this.getPass = this.getPass.bind(this);
     this.cifrarTest = this.cifrarTest.bind(this);
+    this.addAnswer = this.addAnswer.bind(this);
+    this.initAnswerList = this.initAnswerList.bind(this);
     
   };
+
+  
+  addAnswer = (answer) => {
+    var newlist = this.state.answerList;
+    newlist.set(answer.id, {"type": answer.respuesta.type, "answr": answer.respuesta.answer});
+    this.setState({
+      answerList: newlist
+    });
+    console.log(this.state.answerList);
+  }
+
+  initAnswerList = (questionList) => {
+    let list = new Map();
+    questionList.forEach(pregunta => list.set(pregunta.id, {"type": pregunta.type, "answr": "NULL"}));
+    console.log(list);
+    this.setState({
+      answerList: list
+    });
+  }
 
   componentWillMount(){
     this.getTest();
@@ -52,7 +63,8 @@ class App extends React.Component{
         iv: data.iv
       });
       localStorage.setItem('questions', data.encrypted_message);
-    })
+    });
+    
   }
 
   sendTest = () => {
@@ -63,7 +75,7 @@ class App extends React.Component{
       headers:{
         'Content-type': 'application/json',
       },
-      body: JSON.stringify(this.state.questionList)
+      body: JSON.stringify(Object.fromEntries(this.state.answerList))
     }).catch(function(error){
       console.log("Error", error)
     })
@@ -89,7 +101,9 @@ class App extends React.Component{
       questionList: text.questions,
       allow:true
     });
-    console.log(this.state.questionList);
+    return text.questions;
+    //Inicializamos la lista de respuestas para el test
+   
   }
   
   cifrarTest = () => {
@@ -108,7 +122,8 @@ class App extends React.Component{
 
     if(this.state.contra != ""){
       if(CryptoJS.SHA256(this.state.contra) == this.state.password){
-        this.descifrarTest();
+        var list = this.descifrarTest();
+        this.initAnswerList(list);
         
       }else{
         alert("Wrong Password");
@@ -138,13 +153,14 @@ class App extends React.Component{
         </Router>
     }
     else{
+      
       return <Router>
         <Switch>       
           <Route render={() => {
             return <div>
               <h1> El Test ha empezado! </h1>
               <QuestionContainer questionList={this.state.questionList} 
-              sendTest = {this.sendTest}
+              sendTest = {this.sendTest} addAnswerMethod = {this.addAnswer}
               />
             </div>
           }}>
