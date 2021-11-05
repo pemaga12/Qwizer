@@ -19,6 +19,7 @@ class App extends React.Component{
      /* answers:{
         'respuestas':[
           {
+            'type' : text o test,
             'question_id': 1,
             'question_answr': 'answr_id' or 'blabla'
           }
@@ -33,8 +34,6 @@ class App extends React.Component{
     this.sendTest = this.sendTest.bind(this);
     
     this.descifrarTest = this.descifrarTest.bind(this);
-    this.cifrarResultados = this.cifrarResultados.bind(this);
-    this.pad_message = this.pad_message.bind(this);
     this.comprobarPassword = this.comprobarPassword.bind(this);
     this.getPass = this.getPass.bind(this);
     
@@ -58,28 +57,18 @@ class App extends React.Component{
 
   sendTest = () => {
     var url = "http://127.0.0.1:8000/api/response";
-    this.cifrarResultados();
-    console.log(JSON.stringify(this.state.questionList));
+    
     fetch(url, {
       method: 'POST',
       headers:{
         'Content-type': 'application/json',
       },
       body: JSON.stringify(this.state.questionList)
-    }).catch(function(error){
-      console.log("Error", error)
-    })
+    }).then(function(response){return response.json();
+    }).then(data => {console.log(data)})
+    
   }
   
-  
-  cifrarResultados = () => {
-    //Necesitamos cifrar mediante RSA, ya que no podemos usar la misma clave 
-  }
-
-  pad_message = () => {
-    var len = this.state.questionList
-  }
-
   descifrarTest = () => {
     var cifradas = localStorage.getItem('questions');
     
@@ -99,7 +88,7 @@ class App extends React.Component{
       questionList: text.questions,
       allow:true
     });
-    console.log(this.state.questionList);
+   
   }
   
   comprobarPassword = () => {
