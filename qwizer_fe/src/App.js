@@ -38,7 +38,10 @@ class App extends React.Component{
     this.setState({
       answerList: newlist
     });
+    var respuestas = JSON.stringify(Object.fromEntries(newlist));
+    localStorage.setItem('answers', respuestas);
     console.log(this.state.answerList);
+
   }
 
   initAnswerList = (questionList) => {
@@ -69,13 +72,13 @@ class App extends React.Component{
 
   sendTest = () => {
     var url = "http://127.0.0.1:8000/api/response";
-    console.log(JSON.stringify(this.state.questionList));
+    var listaRespuestas = localStorage.getItem('answers');
     fetch(url, {
       method: 'POST',
       headers:{
         'Content-type': 'application/json',
       },
-      body: JSON.stringify(Object.fromEntries(this.state.answerList))
+      body: listaRespuestas
     }).catch(function(error){
       console.log("Error", error)
     })
