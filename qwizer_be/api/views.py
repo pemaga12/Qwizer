@@ -47,7 +47,25 @@ def test(request):
     quizString = json.dumps(quiz)
     #Hay que hacer que el texto se pueda enviar en bloques de 16 bytes, sino no funciona
     message = _pad_string(quizString)
-    #Proceso de generación de la key a partir del password
+    content = _cifrar_test(message)   
+
+    return Response(content)
+
+@api_view(['POST'])
+def response(request):
+    #Convierto el string en un json
+    resp = json.dumps(request.data)
+   
+    return Response(request.data)
+    
+
+def _pad_string(in_string):
+    '''Pad an input string according to PKCS#7'''
+    in_len = len(in_string)
+    pad_size = 16 - (in_len % 16)
+    return in_string.ljust(in_len + pad_size, chr(pad_size))
+
+def _cifrar_test(message):
     password = b'1234'
     key = hashlib.sha256(password).digest()
     mode = AES.MODE_CFB
@@ -65,42 +83,5 @@ def test(request):
         'iv': in_iv,
         'encrypted_message': binascii.b2a_base64(encrypted).rstrip(),        
     }
+    return content
 
-    return Response(content)
-
-@api_view(['POST'])
-def response(request):
-    print(request.data)
-    #Comienza el desencriptado de el mensaje
-    
-    return Response(request.data)
-    
-
-def _pad_string(in_string):
-    '''Pad an input string according to PKCS#7'''
-    in_len = len(in_string)
-    pad_size = 16 - (in_len % 16)
-    return in_string.ljust(in_len + pad_size, chr(pad_size))
-
-
-def decrypt(message, in_iv, in_key):
-		'''
-		Return encrypted string.
-		@in_encrypted: Base64 encoded 
-		@key: hexified key
-		@iv: hexified iv
-		'''
-		key = binascii.a2b_hex(in_key)
-		iv = binascii.a2b_hex(in_iv)
-		aes = AES.new(key, AES.MODE_CFB, iv, segment_size=128)		
-		
-		decrypted = aes.decrypt(binascii.a2b_base64(message).rstrip())
-		return _unpad_string(decrypted)
-
-def _unpad_string(in_string):
-		'''Remove the PKCS#7 padding from a text string'''
-		in_len = len(in_string)
-		pad_size = ord(in_string[-1])
-		if pad_size > 16:
-			raise ValueError('Input is not padded or padding is corrupt')
-		return in_string[:in_len - pad_size]
