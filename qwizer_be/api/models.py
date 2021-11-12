@@ -15,6 +15,7 @@ class Usuarios(models.Model):
 
     class Meta:
         ordering = ['apellidos']
+        db_table = "usuarios"
 
         
 class Cuestionarios(models.Model):
@@ -28,6 +29,7 @@ class Cuestionarios(models.Model):
 
     class Meta:
         ordering = ['titulo']
+        db_table = "cuestionarios"
 
 class Preguntas(models.Model):
     tipoPregunta = models.CharField(blank=True, max_length=100, verbose_name='tipoPregunta')
@@ -38,6 +40,7 @@ class Preguntas(models.Model):
 
     class Meta:
         ordering = ['pregunta']
+        db_table = "preguntas"
 
 class PerteneceACuestionario(models.Model):
     idPregunta = models.ForeignKey('Preguntas', on_delete=models.CASCADE)
@@ -51,6 +54,7 @@ class PerteneceACuestionario(models.Model):
 
     class Meta:
         ordering = ['idPregunta']
+        db_table = "pertenece_cuestionario"
 
 class OpcionesTest(models.Model):
     idPregunta = models.ForeignKey('Preguntas', on_delete=models.CASCADE)
@@ -58,6 +62,9 @@ class OpcionesTest(models.Model):
 
     def __str__(self):
         return self.opcion
+    
+    class Meta:
+        db_table = "opciones_test"
 
 
 class RespuestasTexto(models.Model):
@@ -69,6 +76,7 @@ class RespuestasTexto(models.Model):
 
     class Meta:
         ordering = ['respuesta']
+        db_table = "respuestas_texto"
 
 class RespuestasTest(models.Model):
     idPregunta = models.ForeignKey('Preguntas', on_delete=models.CASCADE)
@@ -76,6 +84,9 @@ class RespuestasTest(models.Model):
     
     def __str__(self):
         return self.respuesta
+    
+    class Meta:
+        db_table = "respuestas_test"
 
 
 class Asignaturas(models.Model):
@@ -86,20 +97,30 @@ class Asignaturas(models.Model):
 
     class Meta:
         ordering = ['asignatura']
+        db_table = "asignaturas"
 
 class Imparte(models.Model):
     idProfesor = models.ForeignKey('Usuarios', on_delete=models.CASCADE)
     idAsignatura = models.ForeignKey('Asignaturas', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "imparte"
     
 class EsAlumno(models.Model):
     idAlumno = models.ForeignKey('Usuarios', on_delete=models.CASCADE)
     idAsignatura = models.ForeignKey('Asignaturas', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "es_alumno"
 
 
 class Notas(models.Model):
     idAlumno = models.ForeignKey('Usuarios', on_delete=models.CASCADE)
     idCuestionario = models.ForeignKey('Cuestionarios', on_delete=models.CASCADE)
     nota = models.IntegerField(default= 0, verbose_name='nota')
+
+    class Meta:
+        db_table = "notas"
 
 class RespuestasEnviadasTest(models.Model):
     idCuestionario = models.ForeignKey('Cuestionarios', on_delete=models.CASCADE)
@@ -109,6 +130,7 @@ class RespuestasEnviadasTest(models.Model):
 
     class Meta:
         ordering = ['idPregunta']
+        db_table = "respuestas_enviadas_test"
 
 class RespuestasEnviadasText(models.Model):
     idCuestionario = models.ForeignKey('Cuestionarios', on_delete=models.CASCADE)
@@ -118,3 +140,4 @@ class RespuestasEnviadasText(models.Model):
 
     class Meta:
         ordering = ['idPregunta']
+        db_table = "respuestas_enviadas_text"
