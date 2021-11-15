@@ -17,6 +17,7 @@ class App extends React.Component{
       contra:"",
       questionList:[],
       allow:false,
+      login:false,
     };
     
     this.getTest = this.getTest.bind(this);
@@ -140,36 +141,42 @@ class App extends React.Component{
   }
 
   render(){
+
+    if(!this.state.login){
+
+    }
     
-    if(!this.state.allow){
-      return  <Router>
-          <Switch>
+    else {
+      if (!this.state.allow){
+        return  <Router>
+            <Switch>
+              <Route render={() => {
+                return <div>
+                    <h1> Bienvenido! </h1>
+                    <input type="text" onChange={this.getPass}></input>
+                    <button onClick={this.comprobarPassword}>Empezar Test</button>
+                  </div>
+              }}>
+              </Route>
+            </Switch>
+          </Router>
+      }
+      else{
+        
+        return <Router>
+          <Switch>       
             <Route render={() => {
               return <div>
-                  <h1> Bienvenido! </h1>
-                  <input type="text" onChange={this.getPass}></input>
-                  <button onClick={this.comprobarPassword}>Empezar Test</button>
-                </div>
+                <h1> El Test ha empezado! </h1>
+                <QuestionContainer questionList={this.state.questionList} 
+                sendTest = {this.sendTest} addAnswerMethod = {this.addAnswer}
+                />
+              </div>
             }}>
             </Route>
           </Switch>
         </Router>
-    }
-    else{
-      
-      return <Router>
-        <Switch>       
-          <Route render={() => {
-            return <div>
-              <h1> El Test ha empezado! </h1>
-              <QuestionContainer questionList={this.state.questionList} 
-              sendTest = {this.sendTest} addAnswerMethod = {this.addAnswer}
-              />
-            </div>
-          }}>
-          </Route>
-        </Switch>
-      </Router>
+      }
     }
   }
   
