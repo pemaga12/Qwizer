@@ -28,7 +28,7 @@ class App extends React.Component{
     this.cifrarTest = this.cifrarTest.bind(this);
     this.addAnswer = this.addAnswer.bind(this);
     this.initAnswerList = this.initAnswerList.bind(this);
-    
+    this.restorePassword = this.restorePassword.bind(this);
   };
 
   
@@ -139,12 +139,33 @@ class App extends React.Component{
     this.setState({contra: event.target.value});
   }
 
+  restorePassword = () => {
+    alert("¡Contacta con tu profesor o el administrador!");
+  }
+
   render(){
 
     if(!this.state.login){
       return <Router>
-        <body className="main-container body-bg">
-          <h1>Hola!</h1>
+        <body className="main-container">
+          <form action="">
+            <div className="form-inputs">
+              <h2 className="title">Qwizer</h2>
+              <p></p>
+              <br/>
+              <h5>Nombre de usuario</h5>
+              <input className="form-control" id="username" placeholder="Nombre de usuario"></input>
+              <p></p>
+              <h5>Contraseña</h5>
+              <input type="password" className="form-control" id="password" placeholder="Contraseña"></input>
+            </div>
+            <p></p>
+            <div class="buttons">
+              <button className="btn btn-primary login-button" type="submit">login</button>
+              <p></p>
+              <a onClick={this.restorePassword}>¿Has olvidado la contraseña?</a>
+            </div>
+          </form>
         </body>
       </Router>
     }

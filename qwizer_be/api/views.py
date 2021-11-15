@@ -159,9 +159,7 @@ def test(request):
 @login_required
 @api_view(['POST'])
 def response(request):
-    print(request.data)
-    #Comienza el desencriptado de el mensaje
-       
+    print(request.data)       
     return Response(request.data)
     
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
