@@ -1,5 +1,4 @@
 import logo from './logo.svg';
-import './App.css';
 import React from 'react';
 import CryptoJS from 'crypto-js'
 
@@ -55,7 +54,7 @@ class App extends React.Component{
   }
 
   componentWillMount(){
-    this.getTest();
+    //this.getTest();
   }
 
   getTest = () => {
@@ -143,11 +142,16 @@ class App extends React.Component{
   render(){
 
     if(!this.state.login){
-
+      return <Router>
+        <body className="main-container body-bg">
+          <h1>Hola!</h1>
+        </body>
+      </Router>
     }
     
     else {
       if (!this.state.allow){
+
         return  <Router>
             <Switch>
               <Route render={() => {
