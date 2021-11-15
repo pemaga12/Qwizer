@@ -12,9 +12,96 @@ import json
 import codecs
 import base64
 import binascii
+
+#-------------------------
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+from .models import User #cogemos el modelo de usuario autenticado
+
+from .models import Asignaturas,EsAlumno
+
 # Create your views here.
 
+"""
+Llega un json:
+{
+    "email": "pepe@gmail.com",
+   "password": "1234"
+}
+"""
+@api_view(['POST'])
+def iniciar_sesion(request):
 
+    returnValue = 'Logged in'
+    info = request.data
+    correo = info['email']
+    print(correo)
+    contra = info['password']
+    print(contra)
+    user = authenticate(username=correo, password=contra)
+    print(user)
+    if user is not None:
+        login(request, user)
+        # Redirect to a success page.
+    else:
+        # Return an 'invalid login' error message.
+        returnValue = 'Invalid login'
+
+    return Response(returnValue)
+
+@login_required
+@api_view(['GET'])
+def cerrar_sesion(request):
+    logout(request)
+    return Response('Logged out')
+
+
+"""
+{
+    "email": "maria@gmail.com",
+    "first_name": "Maria",
+    "last_name": "Perez",
+    "password": "1234"
+}
+
+"""
+#registro
+@api_view(['POST'])
+def registro(request):
+    
+    if request.user.is_authenticated:
+        return Response('Ya estas registrado')
+    info = request.data
+    user = User.objects.create_user(info['email'],info['first_name'],info['last_name'],info['password'])
+    
+    return Response('Registrado correctamente intenta logearte')
+
+"""
+{
+    "asignaturas": [FAL,EDA,PCOM]
+}
+
+"""
+#get_asignaturas
+@login_required
+@api_view(['GET'])
+def get_asignaturas(request):
+    listaAsignaturas = []
+    identif = str(request.user.id)
+    print(identif)
+    listaIdAsignaturas = EsAlumno.objects.filter(idAlumno_id=identif)#.idAsignatura_id
+    print(listaIdAsignaturas)
+    for idAsignartura in listaIdAsignaturas:
+        nombre = Asignaturas.objects.get(id=idAsignartura.idAsignatura_id)
+        print(nombre.asignatura)
+        listaAsignaturas.append(nombre.asignatura)
+
+    return Response({'asignaturas':listaAsignaturas})
+
+
+
+@login_required
 @api_view(['GET'])
 def test(request):
     quiz = { 
@@ -68,6 +155,8 @@ def test(request):
 
     return Response(content)
 
+
+@login_required
 @api_view(['POST'])
 def response(request):
     print(request.data)

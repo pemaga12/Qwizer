@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'api'
+
 ]
 
 MIDDLEWARE = [
@@ -58,6 +59,13 @@ MIDDLEWARE = [
 
      'corsheaders.middleware.CorsMiddleware',
 ]
+
+AUTH_USER_MODEL = 'api.User'
+
+AUTHENTICATION_BACKENDS = [
+     'django.contrib.auth.backends.ModelBackend'
+]
+
 
 ROOT_URLCONF = 'qwizer_be.urls'
 
