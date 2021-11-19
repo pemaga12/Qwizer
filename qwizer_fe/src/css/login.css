@@ -32,7 +32,7 @@
     min-width: 100vw;
 }
 
-body{
+.login-body{
     display:flex;
     align-items: center;
     justify-content: center;

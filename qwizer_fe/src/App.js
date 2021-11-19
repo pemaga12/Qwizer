@@ -1,12 +1,18 @@
 import logo from './logo.svg';
 import React from 'react';
 import CryptoJS from 'crypto-js'
+import $, { get } from 'jquery';
+import Popper from 'popper.js';
 
 import {BrowserRouter as Router,Route,Switch} from 'react-router-dom';
 
-
-import QuestionContainer from './components/QuestionContainer.js'
+import IndexContainer from './components/IndexContainer';
+import QuestionContainer from './components/QuestionContainer.js';
 import TestQuestion from './components/TestQuestion';
+import LoginComponent from './components/LoginComponent';
+import NavBar from './components/common/NavBar';
+
+
 
 class App extends React.Component{
 
@@ -15,8 +21,10 @@ class App extends React.Component{
     this.state = {
       contra:"",
       questionList:[],
-      allow:false,
-      login:false,
+      allow:false,                      //Indica si se ha desbloqueado el test
+      login:false,                      //Guarda si se ha hecho login
+      currentPage: "login",             //Página actual que está mostrando el login
+      username: "admin@admin.com",
     };
     
     this.getTest = this.getTest.bind(this);
@@ -29,6 +37,12 @@ class App extends React.Component{
     this.addAnswer = this.addAnswer.bind(this);
     this.initAnswerList = this.initAnswerList.bind(this);
     this.restorePassword = this.restorePassword.bind(this);
+    this.changeCurrentPage = this.changeCurrentPage.bind(this);
+    //Login functions
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
+    this.getAsignaturas = this.getAsignaturas.bind(this);
+
   };
 
   
@@ -120,7 +134,6 @@ class App extends React.Component{
     })
   }
 
-
   comprobarPassword = () => {
 
     if(this.state.contra != ""){
@@ -143,36 +156,101 @@ class App extends React.Component{
     alert("¡Contacta con tu profesor o el administrador!");
   }
 
+  changeCurrentPage = (page) =>{                                    //Funcion usada para cambiar la página en la que nos encontramos actualmente
+    if(page == "logout"){
+      this.setState({
+        currentPage : "login",
+        login : false
+      });
+      console.log("Nos vamos a ", page);
+    } 
+    else{
+      this.setState({
+        currentPage : page,
+      });
+      console.log("Nos vamos a inicio")
+    }
+    
+  }
+
+  login = (username, password) => {
+    //Creo el objeto que se va a enviar
+    const loginInfo = new Map([["email", username], ["password", password]]);
+    
+    const obj = JSON.stringify(Object.fromEntries(loginInfo));
+    
+    var url = "http://127.0.0.1:8000/api/login";
+    fetch(url, {
+      method: 'POST',
+      headers:{
+        'Content-type': 'application/json',
+      },
+      body: obj
+    }).then(data => data.json())
+    .then(
+      data => {
+          //Manejo del login
+          if(data.respuesta == "invalid login"){
+            window.alert("¡Contraseña incorrecta!")
+          }
+          else{
+            this.setState({
+              username: data.username,
+              login: true,
+              currentPage: "index",
+            });
+          }
+      }
+    )
+
+  }
+
+  logout = () => {
+    console.log("logout");
+    fetch('http://127.0.0.1:8000/api/logout')
+    .then(function(response){return response.json();})
+    .then(data => {
+      window.alert(data);
+    });
+    
+  }
+
+  getAsignaturas = () => {
+    fetch('http://127.0.0.1:8000/api/get-asignaturas')
+    .then(function(response){return response.json();})
+    .then(data => {
+      console.log(data);
+    });
+  }
+
   render(){
 
-    if(!this.state.login){
+    if(!this.state.login){                              //Login de la página
+      document.title = "Login";
       return <Router>
-        <body className="main-container">
-          <form action="">
-            <div className="form-inputs">
-              <h2 className="title">Qwizer</h2>
-              <p></p>
-              <br/>
-              <h5>Nombre de usuario</h5>
-              <input className="form-control" id="username" placeholder="Nombre de usuario"></input>
-              <p></p>
-              <h5>Contraseña</h5>
-              <input type="password" className="form-control" id="password" placeholder="Contraseña"></input>
-            </div>
-            <p></p>
-            <div class="buttons">
-              <button className="btn btn-primary login-button" type="submit">login</button>
-              <p></p>
-              <a onClick={this.restorePassword}>¿Has olvidado la contraseña?</a>
-            </div>
-          </form>
+        <Route render={() => {
+          return <div> 
+            <LoginComponent login={this.login}></LoginComponent> 
+            </div>  
+          }}>
+        </Route>
+        
+      </Router>
+    }
+
+    else if(this.state.currentPage == "index"){         //Página de inicio de la web
+      document.title = "Inicio"
+      return <Router>
+        <body>
+          <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} logout={this.logout}></NavBar>
+          <IndexContainer></IndexContainer>
         </body>
       </Router>
     }
     
     else {
       if (!this.state.allow){
-
+        document.title = "Password Check";
         return  <Router>
             <Switch>
               <Route render={() => {
