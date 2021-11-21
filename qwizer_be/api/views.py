@@ -32,8 +32,7 @@ Llega un json:
 """
 @api_view(['POST'])
 def iniciar_sesion(request):
-
-    returnValue = 'Logged in'
+    returnValue = ''
     info = request.data
     correo = info['email']
     print(correo)
@@ -43,10 +42,16 @@ def iniciar_sesion(request):
     print(user)
     if user is not None:
         login(request, user)
+        returnValue = {
+            "respuesta" : "ok login",
+            "username" : correo,
+        }
         # Redirect to a success page.
     else:
         # Return an 'invalid login' error message.
-        returnValue = 'Invalid login'
+        returnValue = {"respuesta" : "invalid login"}
+
+
 
     return Response(returnValue)
 
@@ -159,9 +164,7 @@ def test(request):
 @login_required
 @api_view(['POST'])
 def response(request):
-    print(request.data)
-    #Comienza el desencriptado de el mensaje
-       
+    print(request.data)       
     return Response(request.data)
     
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------

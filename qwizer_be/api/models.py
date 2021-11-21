@@ -117,6 +117,7 @@ class Cuestionarios(models.Model):
     idProfesor = models.ForeignKey(User, on_delete=models.CASCADE)
     idAsignatura = models.ForeignKey('Asignaturas', on_delete=models.CASCADE)
     nPreguntas = models.IntegerField(default=0, verbose_name='nPreguntas')
+    secuencial =  models.CharField(blank=True, max_length=100, verbose_name='secuencial')
 
     def __str__(self):
         return self.titulo
