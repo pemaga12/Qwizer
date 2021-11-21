@@ -38,10 +38,12 @@ class App extends React.Component{
     this.initAnswerList = this.initAnswerList.bind(this);
     this.restorePassword = this.restorePassword.bind(this);
     this.changeCurrentPage = this.changeCurrentPage.bind(this);
+    
     //Login functions
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
     this.getAsignaturas = this.getAsignaturas.bind(this);
+    
 
   };
 
@@ -173,17 +175,18 @@ class App extends React.Component{
     
   }
 
+
   login = (username, password) => {
     //Creo el objeto que se va a enviar
     const loginInfo = new Map([["email", username], ["password", password]]);
-    
     const obj = JSON.stringify(Object.fromEntries(loginInfo));
-    
+  
     var url = "http://127.0.0.1:8000/api/login";
     fetch(url, {
-      method: 'POST',
+      method: 'POST', 
       headers:{
         'Content-type': 'application/json',
+        
       },
       body: obj
     }).then(data => data.json())
@@ -194,6 +197,7 @@ class App extends React.Component{
             window.alert("¡Contraseña incorrecta!")
           }
           else{
+            this.getAsignaturas();
             this.setState({
               username: data.username,
               login: true,
@@ -203,7 +207,7 @@ class App extends React.Component{
       }
     )
 
-  }
+  }  
 
   logout = () => {
     console.log("logout");
@@ -216,10 +220,14 @@ class App extends React.Component{
   }
 
   getAsignaturas = () => {
-    fetch('http://127.0.0.1:8000/api/get-asignaturas')
-    .then(function(response){return response.json();})
-    .then(data => {
-      console.log(data);
+    
+    var url = 'http://127.0.0.1:8000/api/get-asignaturas';
+
+    fetch(url , {
+      method: 'GET'})
+      .then(function(response){return response.json();})
+      .then(data => {
+        console.log(data);
     });
   }
 
