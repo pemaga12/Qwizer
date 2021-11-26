@@ -40,11 +40,15 @@ INSTALLED_APPS = [
 
     #Lo nuevo que he añadido
 
-    'corsheaders',
+    'corsheaders', #ELIMINARLOS ANTES DE LA ENTREGA FINAL PORQUE ES UNA VULNERABILIDAD
     'rest_framework',
+    'rest_framework.authtoken',
     'api'
 
 ]
+
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -140,6 +144,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.TokenAuthentication']
+}
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

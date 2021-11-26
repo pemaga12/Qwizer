@@ -186,13 +186,13 @@ class App extends React.Component{
       method: 'POST', 
       headers:{
         'Content-type': 'application/json',
-        
       },
       body: obj
     }).then(data => data.json())
     .then(
       data => {
           //Manejo del login
+          localStorage.setItem('token',data.token);
           if(data.respuesta == "invalid login"){
             window.alert("¡Contraseña incorrecta!")
           }
@@ -222,9 +222,14 @@ class App extends React.Component{
   getAsignaturas = () => {
     
     var url = 'http://127.0.0.1:8000/api/get-asignaturas';
+    var token = localStorage.getItem('token');
 
     fetch(url , {
-      method: 'GET'})
+      method: 'GET',
+      headers:{
+        'Authorization': token
+      }
+      })
       .then(function(response){return response.json();})
       .then(data => {
         console.log(data);

@@ -15,12 +15,14 @@ import binascii
 
 #-------------------------
 
-from django.contrib.auth.decorators import login_required
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
 from .models import User #cogemos el modelo de usuario autenticado
 
 from .models import Asignaturas,EsAlumno
 
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 """
@@ -51,12 +53,13 @@ def iniciar_sesion(request):
         # Return an 'invalid login' error message.
         returnValue = {"respuesta" : "invalid login"}
 
+    token, _ = Token.objects.get_or_create(user=user)
+
+    return Response({"token": "Token"+" "+token.key})
 
 
-    return Response(returnValue)
-
-@login_required
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def cerrar_sesion(request):
     logout(request)
     return Response('Logged out')
@@ -89,8 +92,9 @@ def registro(request):
 
 """
 #get_asignaturas
-@login_required
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_asignaturas(request):
     listaAsignaturas = []
     identif = str(request.user.id)
@@ -106,8 +110,9 @@ def get_asignaturas(request):
 
 
 
-@login_required
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def test(request):
     quiz = { 
         'questions':[
@@ -161,8 +166,9 @@ def test(request):
     return Response(content)
 
 
-@login_required
+
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def response(request):
     print(request.data)       
     return Response(request.data)
