@@ -1,4 +1,5 @@
 import React from 'react'
+import TarjetaAsignatura from './TarjetaAsignatura';
 
 
 
@@ -11,26 +12,13 @@ class IndexContainer extends React.Component {
     render() {  
         return(
             <div className="index-body">
-                <div className="card-container">
-                    <div className="card">
-                        <div className="card-content">
-                            <h3>Fundamentos de la algoritmia</h3>
-                            <p>Numero de test: 3</p>
-                            <p>Numero de tests corregidos: 2</p>
-                            <p>Numero de tests pendientes 1</p>
-                        </div>
-                    </div>
-                </div> 
-                <div className="card-container">
-                    <div className="card">
-                        <div className="card-content">
-                            <h3>Fundamentos de la algoritmia</h3>
-                            <p>Numero de test: 3</p>
-                            <p>Numero de tests corregidos: 2</p>
-                            <p>Numero de tests pendientes 1</p>
-                        </div>
-                    </div>
-                </div> 
+                {this.props.asignaturas.map(function(asignatura,indx){
+                  return (
+                      <div key={asignatura}>
+                        <TarjetaAsignatura asignatura={asignatura}></TarjetaAsignatura>
+                      </div>
+                  )
+                })}   
             </div>
          );
       }

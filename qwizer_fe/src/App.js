@@ -1,8 +1,6 @@
-import logo from './logo.svg';
 import React from 'react';
 import CryptoJS from 'crypto-js'
-import $, { get } from 'jquery';
-import Popper from 'popper.js';
+
 
 import {BrowserRouter as Router,Route,Switch} from 'react-router-dom';
 
@@ -11,6 +9,7 @@ import QuestionContainer from './components/QuestionContainer.js';
 import TestQuestion from './components/TestQuestion';
 import LoginComponent from './components/LoginComponent';
 import NavBar from './components/common/NavBar';
+import TarjetaAsignatura from './components/TarjetaAsignatura.js';
 
 
 
@@ -25,6 +24,7 @@ class App extends React.Component{
       login:false,                      //Guarda si se ha hecho login
       currentPage: "login",             //Página actual que está mostrando el login
       username: "admin@admin.com",
+      asignaturas: [],
     };
     
     this.getTest = this.getTest.bind(this);
@@ -33,7 +33,6 @@ class App extends React.Component{
     this.descifrarTest = this.descifrarTest.bind(this);
     this.comprobarPassword = this.comprobarPassword.bind(this);
     this.getPass = this.getPass.bind(this);
-    this.cifrarTest = this.cifrarTest.bind(this);
     this.addAnswer = this.addAnswer.bind(this);
     this.initAnswerList = this.initAnswerList.bind(this);
     this.restorePassword = this.restorePassword.bind(this);
@@ -71,6 +70,7 @@ class App extends React.Component{
 
   componentWillMount(){
     //this.getTest();
+
   }
 
   getTest = () => {
@@ -125,17 +125,6 @@ class App extends React.Component{
    
   }
   
-  cifrarTest = () => {
-    var aCifrar = localStorage.getItem('questionList');
-
-    //Usaremos la misma key para cifrar el test
-    var key = CryptoJS.enc.Hex.parse(this.state.password);
-    //Usaremos el mismo IV
-    var iv = CryptoJS.enc.Hex.parse(this.state.iv);
-    var cipher = CryptoJS.lib.CipherParams.create({
-    })
-  }
-
   comprobarPassword = () => {
 
     if(this.state.contra != ""){
@@ -232,7 +221,11 @@ class App extends React.Component{
       })
       .then(function(response){return response.json();})
       .then(data => {
-        console.log(data);
+        this.setState({
+          asignaturas: data.asignaturas,
+        });
+        
+        
     });
   }
 
@@ -256,7 +249,7 @@ class App extends React.Component{
       return <Router>
         <body>
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} logout={this.logout}></NavBar>
-          <IndexContainer></IndexContainer>
+          <IndexContainer asignaturas={this.state.asignaturas}></IndexContainer>
         </body>
       </Router>
     }

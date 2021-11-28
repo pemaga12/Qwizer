@@ -36,7 +36,7 @@ class LoginComponent extends React.Component {
   
   render() { 
     return(
-        <body className="main-container login-body">
+        <div className="main-container login-body">
         <form onSubmit={this.handleSubmit}>
           <div className="form-inputs">
             <h2 className="title">Qwizer</h2>
@@ -55,7 +55,7 @@ class LoginComponent extends React.Component {
             <a onClick={this.restorePassword}>¿Has olvidado la contraseña?</a>
           </div>
         </form>
-      </body>
+      </div>
     );
  
   }
