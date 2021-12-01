@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'corsheaders', #ELIMINARLOS ANTES DE LA ENTREGA FINAL PORQUE ES UNA VULNERABILIDAD
     'rest_framework',
     'rest_framework.authtoken',
-    'api'
+    'api',
+    'django_createuser'
 
 ]
 

@@ -14,9 +14,9 @@ from rest_framework.authtoken.models import Token
 class UserManager(BaseUserManager):
     def create_user(
             self, email, first_name, last_name, password=None,
-            commit=True):
+            commit=True,**extra_fields):
         """
-            Crea  y saves a User with the given email, first name, last name
+            Creates  and saves a User with the given email, first name, last name
             and password.
         """
         if not email:
@@ -25,11 +25,15 @@ class UserManager(BaseUserManager):
             raise ValueError(_('Users must have a first name'))
         if not last_name:
             raise ValueError(_('Users must have a last name'))
+        
+        if extra_fields.get('role') not in ['student','teacher']:
+            raise ValueError(_('Users must have student or teacher role'))
 
         user = self.model(
             email=self.normalize_email(email),
             first_name=first_name,
             last_name=last_name,
+            **extra_fields
         )
 
         user.set_password(password)
@@ -37,7 +41,7 @@ class UserManager(BaseUserManager):
             user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, first_name, last_name, password):
+    def create_superuser(self, email, first_name, last_name, password,**extra_fields):
         """
             Creates and saves a superuser with the given email, first name,
             last name and password.
@@ -48,7 +52,10 @@ class UserManager(BaseUserManager):
             first_name=first_name,
             last_name=last_name,
             commit=False,
+            **extra_fields
         )
+
+        extra_fields.setdefault('role','admin')
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
@@ -63,6 +70,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     # last_login field supplied by AbstractBaseUser
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=150, blank=True)
+
+    #Añadir campo rol del usuario
+    userRole = models.TextChoices('userRole','student teacher admin')
+    role = models.CharField(_('role'),choices=userRole.choices,max_length=7, blank=False)
 
     is_active = models.BooleanField(
         _('active'),
@@ -90,7 +101,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    REQUIRED_FIELDS = ['first_name', 'last_name','role']
 
     def get_full_name(self):
         """
@@ -208,6 +219,7 @@ class Imparte(models.Model):
 
     class Meta:
         db_table = "imparte"
+        unique_together = ['idProfesor', 'idAsignatura']
     
 class EsAlumno(models.Model):
     idAlumno = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -215,6 +227,7 @@ class EsAlumno(models.Model):
 
     class Meta:
         db_table = "es_alumno"
+        unique_together = ['idAlumno', 'idAsignatura']
 
 
 class Notas(models.Model):

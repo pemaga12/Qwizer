@@ -20,7 +20,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
 from .models import User #cogemos el modelo de usuario autenticado
 
-from .models import Asignaturas,EsAlumno
+from .models import Asignaturas,EsAlumno,Imparte
 
 from rest_framework.permissions import IsAuthenticated
 # Create your views here.
@@ -98,13 +98,25 @@ def registro(request):
 def get_asignaturas(request):
     listaAsignaturas = []
     identif = str(request.user.id)
-    print(identif)
-    listaIdAsignaturas = EsAlumno.objects.filter(idAlumno_id=identif)#.idAsignatura_id
-    print(listaIdAsignaturas)
-    for idAsignartura in listaIdAsignaturas:
-        nombre = Asignaturas.objects.get(id=idAsignartura.idAsignatura_id)
-        print(nombre.asignatura)
-        listaAsignaturas.append(nombre.asignatura)
+    role = str(request.user.role)
+    print(role)
+
+    if role == 'student':
+        listaIdAsignaturas = EsAlumno.objects.filter(idAlumno_id=identif)
+        for idAsignartura in listaIdAsignaturas:
+            nombre = Asignaturas.objects.get(id=idAsignartura.idAsignatura_id)
+            listaAsignaturas.append(nombre.asignatura)
+        
+    elif role == 'teacher':
+        listaIdAsignaturas = Imparte.objects.filter(idProfesor_id=identif)
+        for idAsignartura in listaIdAsignaturas:
+            nombre = Asignaturas.objects.get(id=idAsignartura.idAsignatura_id)
+            listaAsignaturas.append(nombre.asignatura)
+        
+    else:
+        return Response('El admin no tiene ninguna asignatura')
+
+    
 
     return Response({'asignaturas':listaAsignaturas})
 
