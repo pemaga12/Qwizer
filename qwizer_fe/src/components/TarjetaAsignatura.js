@@ -8,7 +8,8 @@ class TarjetaAsignatura extends React.Component {
         super(props);
     }
 
-    render() {  
+    render() { 
+        const startTest = this.props.startTest;
         return(
             <div className="card-container">
                 <div className="card">
@@ -20,7 +21,7 @@ class TarjetaAsignatura extends React.Component {
                             <p>Numero de tests pendientes 1</p>
                         </div>
                         <div className="col-3 button-section">
-                            <button className="btn btn-primary login-button">Ver mas</button>
+                            <button className="btn btn-primary login-button" onClick={startTest}>Ver mas</button>
                         </div>
                     </div>
                 </div>

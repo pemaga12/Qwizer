@@ -55,16 +55,16 @@ class QuestionContainer extends React.Component {
 
   renderButtons = () =>{
     if(this.state.indPregunta == 0){
-      return <button onClick={this.updateIndNext}>Siguiente</button>
+      return <div class="p-2 col text-center"><button type="button" class="btn btn-success" onClick={this.updateIndNext}>Siguiente</button></div>
     }else if(this.state.indPregunta > 0 && this.state.indPregunta < this.state.numPreguntas-1){
-      return <div>
-          <button onClick={this.updateIndBack}>Atras</button>
-          <button onClick={this.updateIndNext}>Siguiente</button>
+      return <div class="p-2 col text-center">
+          <button type="button" class="btn btn-success" onClick={this.updateIndBack}>Atras</button>
+          <button type="button" class="btn btn-success" onClick={this.updateIndNext}>Siguiente</button>
         </div>
     }else{ //this.state.indPregunta == this.state.numPreguntas-1
-      return <div>
-          <button onClick={this.updateIndBack}>Atras</button>
-          <button onClick={this.props.sendTest}>Terminar y Enviar</button>
+      return <div class="p-2 col text-center">
+          <button type="button" class="btn btn-success" onClick={this.updateIndBack}>Atras</button>
+          <button type="button" class="btn btn-warning" onClick={this.props.sendTest}>Terminar y Enviar</button>
         </div>
     }
 
@@ -82,15 +82,36 @@ class QuestionContainer extends React.Component {
     const pregunta = this.props.questionList[this.state.indPregunta]
     
     return(
-      <div id="questions">
-        <div id="question-nav">
-          <QuestionNav navigationHandler={this.navHandler} listaPreguntas={this.props.questionList}/>
+      <div class="index-body container-fluid" id="questions">
+
+        <div class="p-4 row-1">
+          <div class="col" className="card">
+            <h1 class="text-center" >Nombre del Test</h1>
+          </div>
         </div>
-        <div key={pregunta.id}>
-          <h2> {this.state.indPregunta+1}{".-" + pregunta.question}</h2>
-          {renderQtype(pregunta)}
+
+        <div class="p-4 row">
+          <div class="p-2 col-9" id="question">
+              <div className="card">      
+                    <div key={pregunta.id}>
+                      <h2 className="p-2 m-2 card"> {this.state.indPregunta+1}{".-" + pregunta.question}</h2>
+                      {renderQtype(pregunta)}
+                    </div>
+              </div>
+          </div>
+
+          <div class="p-2 col-3" id="question-nav">
+            <QuestionNav navigationHandler={this.navHandler} listaPreguntas={this.props.questionList}/>
+          </div>
+
         </div>
-        {this.renderButtons()}
+
+        <div class="p-4 row">
+          <div class="col">
+            {this.renderButtons()}
+          </div>
+        </div>
+
       </div>
     );
     

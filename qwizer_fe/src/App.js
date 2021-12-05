@@ -42,6 +42,8 @@ class App extends React.Component{
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
     this.getAsignaturas = this.getAsignaturas.bind(this);
+
+    this.startTest = this.startTest.bind(this);
     
 
   };
@@ -74,7 +76,14 @@ class App extends React.Component{
   }
 
   getTest = () => {
-    fetch('http://127.0.0.1:8000/api/test')
+    var url = 'http://127.0.0.1:8000/api/test';
+    var token = localStorage.getItem('token');
+    fetch(url , {
+      method: 'GET',
+      headers:{
+        'Authorization': token
+      }
+      })
     .then(function(response){return response.json();})
     .then(data => {
       this.setState({
@@ -229,6 +238,13 @@ class App extends React.Component{
     });
   }
 
+  startTest = () =>{
+
+    this.getTest();
+
+    this.changeCurrentPage('test');
+  }
+
   render(){
 
     if(!this.state.login){                              //Login de la página
@@ -243,28 +259,41 @@ class App extends React.Component{
         
       </Router>
     }
-
     else if(this.state.currentPage == "index"){         //Página de inicio de la web
       document.title = "Inicio"
       return <Router>
         <body>
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} logout={this.logout}></NavBar>
-          <IndexContainer asignaturas={this.state.asignaturas}></IndexContainer>
+          <IndexContainer empezarTest={this.startTest} asignaturas={this.state.asignaturas}></IndexContainer>
         </body>
       </Router>
     }
     
-    else {
+    else if (this.state.currentPage == "test"){
       if (!this.state.allow){
         document.title = "Password Check";
         return  <Router>
             <Switch>
               <Route render={() => {
-                return <div>
-                    <h1> Bienvenido! </h1>
-                    <input type="text" onChange={this.getPass}></input>
-                    <button onClick={this.comprobarPassword}>Empezar Test</button>
-                  </div>
+                return <div class="index-body container-fluid">
+                          <div class="p-4 row"></div>
+                          <div class="row" className="card">
+                            <div class="col text-center">
+                              <h1>Introduce la contraseña</h1>
+                              <h1>para empezar el examen!</h1>
+                            </div>
+                          </div>
+                          <div class="p-4 row">
+                            <div class="col text-center">
+                              <input type="text" className="center" onChange={this.getPass}></input>
+                            </div>
+                          </div>
+                          <div class="p-4 row">
+                            <div class="col text-center">
+                              <button type="button" class="btn btn-success" onClick={this.comprobarPassword}>Empezar Test</button>
+                            </div>
+                          </div>
+                      </div>  
               }}>
               </Route>
             </Switch>
@@ -275,12 +304,8 @@ class App extends React.Component{
         return <Router>
           <Switch>       
             <Route render={() => {
-              return <div>
-                <h1> El Test ha empezado! </h1>
-                <QuestionContainer questionList={this.state.questionList} 
-                sendTest = {this.sendTest} addAnswerMethod = {this.addAnswer}
-                />
-              </div>
+              return <QuestionContainer questionList={this.state.questionList} 
+              sendTest = {this.sendTest} addAnswerMethod = {this.addAnswer}/>
             }}>
             </Route>
           </Switch>

@@ -9,18 +9,24 @@ class IndexContainer extends React.Component {
         super(props);
     }
 
-    render() {  
-        return(
-            <div className="index-body">
-                {this.props.asignaturas.map(function(asignatura,indx){
-                  return (
-                      <div key={asignatura}>
-                        <TarjetaAsignatura asignatura={asignatura}></TarjetaAsignatura>
-                      </div>
-                  )
-                })}   
-            </div>
-         );
+    render() {
+        const empezarTest = this.props.empezarTest;
+        if(empezarTest){
+            return(
+                <div className="index-body">
+                    {this.props.asignaturas.map(function(asignatura,indx){
+                      return (
+                          <div key={asignatura}>
+                            <TarjetaAsignatura startTest={empezarTest} asignatura={asignatura}></TarjetaAsignatura>
+                          </div>
+                      )
+                    })}   
+                </div>
+             );
+        }else{
+            return <h1>Loading...</h1>
+        }
+        
       }
 }
 

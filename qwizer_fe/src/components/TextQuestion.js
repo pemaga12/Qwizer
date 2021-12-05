@@ -26,7 +26,7 @@ class TextQuestion extends React.Component {
 
     render() {  
         return(
-            <div>
+            <div class="p-4 m-2 text-center">
                 <textarea rows="9" cols="70" name="textValue" onChange={this.handleChange} />
             </div>
          );

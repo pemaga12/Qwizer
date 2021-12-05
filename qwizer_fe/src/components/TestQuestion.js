@@ -29,7 +29,7 @@ class TestQuestion extends React.Component {
         if(this.props.options){
             return(
             
-                <table onChange={this.handleOnClick}>
+                <table class="m-4" onChange={this.handleOnClick}>
                     <tbody>
                         {this.props.options.map(function(option,indx){
                          return (<tr key={option.id}><td>

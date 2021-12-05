@@ -16,10 +16,10 @@ class QuestionNav extends React.Component {
     
     const navigate = this.navigateQuestion;
     return(
-            <div>
+            <div class="container">
                 {this.props.listaPreguntas.map(function(pregunta,indx){
                     return (
-                        <button key={indx} onClick={navigate} value={indx}>{"Pegunta : "}{indx+1}</button>
+                        <button type="button" class="btn btn-outline-dark" key={indx} onClick={navigate} value={indx}>{"Pegunta : "}{indx+1}</button>
                     );
                     })           
 
