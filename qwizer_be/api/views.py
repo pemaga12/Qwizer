@@ -18,7 +18,7 @@ import binascii
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
-from .models import User #cogemos el modelo de usuario autenticado
+from .models import Cuestionarios, User #cogemos el modelo de usuario autenticado
 
 from .models import Asignaturas,EsAlumno,Imparte
 
@@ -31,6 +31,7 @@ Llega un json:
     "email": "pepe@gmail.com",
    "password": "1234"
 }
+{"email": "admin@admin.com", "password": "admin"}
 """
 @api_view(['POST'])
 def iniciar_sesion(request):
@@ -119,6 +120,35 @@ def get_asignaturas(request):
     
 
     return Response({'asignaturas':listaAsignaturas})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_cuestionarios(request):
+    listaCuestionarios = []
+    identif = str(request.user.id)
+    role = str(request.user.role)
+    print(role)
+    nombreAsignatura = str(request.asignatura)
+    asignatura = Asignaturas.objects.get(asignatura=nombreAsignatura)
+    idAsignatura = asignatura.id
+    
+    if role == 'student':
+        listaIdCuestionarios = Cuestionarios.objects.filter(idAsignartura_id = idAsignatura)
+        for cuestionario in listaIdCuestionarios:
+            nombre = cuestionario.titulo
+            listaCuestionarios.append(nombre)
+        
+    elif role == 'teacher':
+        listaIdCuestionarios = Cuestionarios.objects.filter(idAsignartura_id = idAsignatura)
+        for cuestionario in listaIdCuestionarios:
+            nombre = cuestionario.titulo
+            listaCuestionarios.append(nombre)
+    else:
+        return Response('El admin no tiene ningun test')
+
+    
+    print(listaCuestionarios)
+    return Response({'cuestionarios':listaCuestionarios})
 
 
 
