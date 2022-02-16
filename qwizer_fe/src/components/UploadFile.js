@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 
 
+
 export default class UploadFile extends Component {
 
     constructor(props) {
@@ -22,28 +23,30 @@ export default class UploadFile extends Component {
     }
 
     uploadFile = () => {
-        /*
-        var inputfile = '/' + this.state.file.name,
-            outputfile = '',
-            yaml = require('js-yaml'),
-            fs = require('fs'),
-            obj = yaml.load(fs.readFileSync(inputfile, {encoding: 'utf-8'}));
-        // this code if you want to save
-        outputfile = JSON.stringify(obj, null, 2);
-
-        console.log(outputfile);
-        */
-        YAML = require('yamljs');
-        console.log(this.state.file)
-        fetch('http://127.0.0.1:8000/api/upload', {
+        
+        let reader = new FileReader();
+        reader.readAsText(this.state.file,'utf-8');
+        reader.onload = (e) =>{
+            
+            const fichero_yaml = new Map([["fichero_yaml", e.target.result]]);
+            const jsonObject = JSON.stringify(Object.fromEntries(fichero_yaml));
+            console.log(jsonObject)
+      
+            fetch('http://127.0.0.1:8000/api/upload', {
             method: 'POST',
-            body: this.state.file
-        })
-        .then(response => response.json())
-        .then(success => {
-            alert("Test Subido correctamente")
-        })
-        .catch(error => console.log(error));
+            headers:{
+                'Content-type': 'application/json',
+              },
+            body: jsonObject
+            })
+            .then(response => response.json())
+            .then(success => {
+                alert("Test Subido correctamente")
+            })
+            .catch(error => console.log(error));
+        }
+
+        
  
     }
 

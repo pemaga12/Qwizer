@@ -23,6 +23,10 @@ from .models import Cuestionarios, User #cogemos el modelo de usuario autenticad
 from .models import Asignaturas,EsAlumno,Imparte
 
 from rest_framework.permissions import IsAuthenticated
+
+
+import yaml
+
 # Create your views here.
 
 """
@@ -210,7 +214,9 @@ def test(request):
 @api_view(['POST'])
 #@permission_classes([IsAuthenticated])
 def upload(request):
-    print(request.data)
+    print(request.data["fichero_yaml"])
+    yamlplscomeon = yaml.load(request.data["fichero_yaml"],Loader=yaml.FullLoader)
+    print(yamlplscomeon)
     return Response(request.data)
 
 
