@@ -217,6 +217,7 @@ def upload(request):
     print(request.data["fichero_yaml"])
     yamlplscomeon = yaml.load(request.data["fichero_yaml"],Loader=yaml.FullLoader)
     print(yamlplscomeon)
+    print(yamlplscomeon["cuestionario"]["duracion"])
     return Response(request.data)
 
 
