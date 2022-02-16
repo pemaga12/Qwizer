@@ -6,6 +6,10 @@
     width: 100%;
 }
 
+.body-main{
+    background-color: white;
+}
+
 @keyframes gradient {
     0% {
         background-position: 0% 50%;

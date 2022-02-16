@@ -1,0 +1,21 @@
+cuestionario:
+  titulo: "Tema1"
+  asignatura: "Estructura de Datos"
+  nPreguntas: 2
+  secuencial: 0 #0 es que no es secuencial, 1 es secuencial
+  duracion: 10 #minutos que durara el test
+  questions:
+    - type: "test"
+      question: "En colas, nosotros solo podemos acceder al..."
+      options:  ["Al elementos que nosotros queremos", "Primer y último elemento."]
+      correct: 0 #id de opcion correcta
+      positive: 1    #puntos que suma
+      negative: 0.3 #puntos que resta
+
+    - type: "test"
+      question: "La vida es una lenteja"
+      options:  ["Opcion1", "Opcion2"]
+      correct: 1 #id de opcion correcta
+      positive: 1    #puntos que suma
+      negative: 0.3 #puntos que resta
+    

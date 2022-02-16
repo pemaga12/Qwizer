@@ -29,7 +29,7 @@ class NavBar extends React.Component {
                             </a>
                             <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a className="dropdown-item" href="#">Mi perfil</a>
-                            <a className="dropdown-item" onClick={() => this.props.changeCurrentPage("logout")}>Cerrar sesión</a>
+                            <a className="dropdown-item" onClick={this.props.logout}>Cerrar sesión</a>
                             </div>
                         </div>
                 </span> 

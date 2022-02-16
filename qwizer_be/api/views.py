@@ -207,6 +207,11 @@ def test(request):
 
     return Response(content)
 
+@api_view(['POST'])
+#@permission_classes([IsAuthenticated])
+def upload(request):
+    print(request.data)
+    return Response(request.data)
 
 
 @api_view(['POST'])

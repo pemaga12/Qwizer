@@ -10,7 +10,7 @@ import TestQuestion from './components/TestQuestion';
 import LoginComponent from './components/LoginComponent';
 import NavBar from './components/common/NavBar';
 import TarjetaAsignatura from './components/TarjetaAsignatura.js';
-
+import UploadFile from './components/UploadFile';
 
 
 class App extends React.Component{
@@ -44,7 +44,7 @@ class App extends React.Component{
     this.getAsignaturas = this.getAsignaturas.bind(this);
 
     this.startTest = this.startTest.bind(this);
-    
+    this.checkLogged = this.checkLogged.bind(this);
 
   };
 
@@ -71,8 +71,37 @@ class App extends React.Component{
   }
 
   componentWillMount(){
-    //this.getTest();
+    this.checkLogged();
+    var actual_page = localStorage.getItem('page');
+    if(actual_page == null){
+      localStorage.setItem('page', "login");
+    }else{
+      if(actual_page == "index"){
+        this.getAsignaturas();
+      }
+      this.getTest();
+      this.setState({currentPage:actual_page});
+    }
+  }
 
+  
+  checkLogged = () => {
+    var token = localStorage.getItem('token');
+    var usern = localStorage.getItem('username');
+    
+    if(token !== null && usern !== null){
+      var url = "http://127.0.0.1:8000/api/";
+      fetch(url)
+      .then((data) => {
+        let pagina = "index";
+        if(data.url == url){
+          this.getAsignaturas();
+          this.setState({login:true,username:usern,currentPage: pagina})
+        }
+        localStorage.setItem('page', pagina);
+      })
+      .catch((error) => console.log(error))
+    }
   }
 
   getTest = () => {
@@ -131,7 +160,6 @@ class App extends React.Component{
     });
     return text.questions;
     //Inicializamos la lista de respuestas para el test
-   
   }
   
   comprobarPassword = () => {
@@ -148,6 +176,7 @@ class App extends React.Component{
     
   }
 
+
   getPass = event => {
     this.setState({contra: event.target.value});
   }
@@ -158,11 +187,10 @@ class App extends React.Component{
 
   changeCurrentPage = (page) =>{                                    //Funcion usada para cambiar la página en la que nos encontramos actualmente
     if(page == "logout"){
-      this.setState({
-        currentPage : "login",
-        login : false
-      });
-      console.log("Nos vamos a ", page);
+      this.logout();
+      
+      
+      console.log("Nos vamos a", page);
     } 
     else{
       this.setState({
@@ -170,7 +198,7 @@ class App extends React.Component{
       });
       console.log("Nos vamos a inicio")
     }
-    
+    localStorage.setItem('page', this.state.currentPage);
   }
 
 
@@ -190,18 +218,21 @@ class App extends React.Component{
     .then(
       data => {
           //Manejo del login
-          localStorage.setItem('token',data.token);
           if(data.respuesta == "invalid login"){
             window.alert("¡Contraseña incorrecta!")
           }
           else{
+            localStorage.setItem('token',data.token);
+            localStorage.setItem('username',username);
             this.getAsignaturas();
             this.setState({
-              username: data.username,
+              username: username,
               login: true,
               currentPage: "index",
             });
+            this.changeCurrentPage("index");
           }
+          
       }
     )
 
@@ -209,12 +240,16 @@ class App extends React.Component{
 
   logout = () => {
     console.log("logout");
+    localStorage.clear();
     fetch('http://127.0.0.1:8000/api/logout')
     .then(function(response){return response.json();})
     .then(data => {
-      window.alert(data);
+      this.setState({
+        currentPage : "login",
+        login : false
+      });
     });
-    
+   
   }
 
   getAsignaturas = () => {
@@ -246,7 +281,7 @@ class App extends React.Component{
   }
 
   render(){
-
+    /*
     if(!this.state.login){                              //Login de la página
       document.title = "Login";
       return <Router>
@@ -259,7 +294,7 @@ class App extends React.Component{
         
       </Router>
     }
-    else if(this.state.currentPage == "index"){         //Página de inicio de la web
+    else if(this.state.currentPage == "index" && this.state.username){         //Página de inicio de la web
       document.title = "Inicio"
       return <Router>
         <body>
@@ -312,6 +347,8 @@ class App extends React.Component{
         </Router>
       }
     }
+    */
+    return <UploadFile></UploadFile>
   }
   
 }

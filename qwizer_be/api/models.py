@@ -136,7 +136,9 @@ class Cuestionarios(models.Model):
     idProfesor = models.ForeignKey(User, on_delete=models.CASCADE)
     idAsignatura = models.ForeignKey('Asignaturas', on_delete=models.CASCADE)
     nPreguntas = models.IntegerField(default=0, verbose_name='nPreguntas')
-    secuencial =  models.CharField(blank=True, max_length=100, verbose_name='secuencial')
+    duracion = models.IntegerField(default=10, verbose_name='duracion')
+    #0 no es secuencial, 1 es secuencial
+    secuencial =  models.IntegerField(default=1, verbose_name='secuencial')
 
     def __str__(self):
         return self.titulo
@@ -160,11 +162,13 @@ class PerteneceACuestionario(models.Model):
     idPregunta = models.ForeignKey('Preguntas', on_delete=models.CASCADE)
     idCuestionario = models.ForeignKey('Cuestionarios', on_delete=models.CASCADE)
     nQuestion = models.IntegerField(verbose_name='nPregunta')
-    puntosAcierto = models.IntegerField(default= 0, verbose_name='puntos_acierto')
-    puntosFallo = models.IntegerField(default=0, verbose_name='puntosFallo')
+    puntosAcierto = models.DecimalField(default=0, max_digits=30, decimal_places=2, verbose_name='puntosAcierto')
+    #puntosAcierto = models.IntegerField(default= 0, verbose_name='puntos_acierto')
+    #puntosFallo = models.IntegerField(default=0, verbose_name='puntosFallo')
+    puntosFallo = models.DecimalField(default=0, max_digits=30, decimal_places=2, verbose_name='puntosFallo')
 
     def __str__(self):
-        return self.idPregunta
+        return str(self.idPregunta) + "/" + str(self.idCuestionario)
 
     class Meta:
         ordering = ['idPregunta']
@@ -195,12 +199,13 @@ class RespuestasTexto(models.Model):
 class RespuestasTest(models.Model):
     idPregunta = models.ForeignKey('Preguntas', on_delete=models.CASCADE)
     idOpcion = models.ForeignKey('OpcionesTest', on_delete=models.CASCADE)
-    
+
     def __str__(self):
-        return self.respuesta
-    
+        return str(self.idPregunta) + "/" +  str(self.idOpcion) 
+
     class Meta:
         db_table = "respuestas_test"
+        unique_together = ['idPregunta', 'idOpcion']
 
 
 class Asignaturas(models.Model):
