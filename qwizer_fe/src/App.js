@@ -23,8 +23,9 @@ class App extends React.Component{
       allow:false,                      //Indica si se ha desbloqueado el test
       login:false,                      //Guarda si se ha hecho login
       currentPage: "login",             //Página actual que está mostrando el login
-      username: "admin@admin.com",
+      username: "",
       asignaturas: [],
+      rol: "",
     };
     
     this.getTest = this.getTest.bind(this);
@@ -188,17 +189,19 @@ class App extends React.Component{
   changeCurrentPage = (page) =>{                                    //Funcion usada para cambiar la página en la que nos encontramos actualmente
     if(page == "logout"){
       this.logout();
-      
-      
-      console.log("Nos vamos a", page);
-    } 
-    else{
       this.setState({
         currentPage : page,
       });
-      console.log("Nos vamos a inicio")
+      
+    } 
+    else{
+      localStorage.setItem('page', page);
+      this.setState({
+        currentPage : page,
+      });
+      
     }
-    localStorage.setItem('page', this.state.currentPage);
+   
   }
 
 
@@ -229,6 +232,7 @@ class App extends React.Component{
               username: username,
               login: true,
               currentPage: "index",
+              rol: data.rol
             });
             this.changeCurrentPage("index");
           }
@@ -281,7 +285,7 @@ class App extends React.Component{
   }
 
   render(){
-    
+    console.log("quiero cambiar de pagina a " + this.state.currentPage)
     if(!this.state.login){                              //Login de la página
       document.title = "Login";
       return <Router>
@@ -294,20 +298,21 @@ class App extends React.Component{
         
       </Router>
     }
-    else if(this.state.currentPage == "index" && this.state.username){         //Página de inicio de la web
+    else if(this.state.currentPage === "index" && this.state.username){         //Página de inicio de la web
       document.title = "Inicio"
       return <Router>
         <body>
-          <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} logout={this.logout}></NavBar>
+          <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
           <IndexContainer empezarTest={this.startTest} asignaturas={this.state.asignaturas}></IndexContainer>
         </body>
       </Router>
     }
     
-    else if (this.state.currentPage == "test"){
+    else if (this.state.currentPage === "test"){
       if (!this.state.allow){
         document.title = "Password Check";
         return  <Router>
+          <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
             <Switch>
               <Route render={() => {
                 return <div class="index-body container-fluid">
@@ -334,12 +339,6 @@ class App extends React.Component{
             </Switch>
           </Router>
       }
-      else if (this.state.currentPage == "upload"){
-         return <Router>
-            <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} logout={this.logout}></NavBar>
-            <UploadFile></UploadFile>
-          </Router>
-      }
       else{
         
         return <Router>
@@ -352,6 +351,13 @@ class App extends React.Component{
           </Switch>
         </Router>
       }
+    }
+    else if (this.state.currentPage === "upload"){
+      console.log("quiero ir a upload")
+       return <Router>
+          <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
+          <UploadFile></UploadFile>
+        </Router>
     }
     
    /*

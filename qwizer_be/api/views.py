@@ -49,18 +49,26 @@ def iniciar_sesion(request):
     print(user)
     if user is not None:
         login(request, user)
+        token, _ = Token.objects.get_or_create(user=user)
+        tokenvalue = "Token" + " "+ token.key
         returnValue = {
             "respuesta" : "ok login",
             "username" : correo,
+            "token" : token.key,
+            "rol" : user.role,
+            "token" : tokenvalue
         }
+        print(user.role)
+        
         # Redirect to a success page.
     else:
         # Return an 'invalid login' error message.
         returnValue = {"respuesta" : "invalid login"}
 
-    token, _ = Token.objects.get_or_create(user=user)
 
-    return Response({"token": "Token"+" "+token.key})
+    
+
+    return Response(returnValue)
 
 
 @api_view(['GET'])
