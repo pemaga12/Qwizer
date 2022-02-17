@@ -18,9 +18,9 @@ import binascii
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
-from .models import Cuestionarios, User #cogemos el modelo de usuario autenticado
+from .models import Cuestionarios, PerteneceACuestionario, User #cogemos el modelo de usuario autenticado
 
-from .models import Asignaturas,EsAlumno,Imparte
+from .models import Asignaturas,EsAlumno,Imparte, Cuestionarios, User, Preguntas, PerteneceACuestionario, OpcionesTest, RespuestasTest, RespuestasTexto
 
 from rest_framework.permissions import IsAuthenticated
 
@@ -214,11 +214,77 @@ def test(request):
 @api_view(['POST'])
 #@permission_classes([IsAuthenticated])
 def upload(request):
-    print(request.data["fichero_yaml"])
-    yamlplscomeon = yaml.load(request.data["fichero_yaml"],Loader=yaml.FullLoader)
-    print(yamlplscomeon)
-    print(yamlplscomeon["cuestionario"]["duracion"])
-    return Response(request.data)
+    try:
+        yamlplscomeon = yaml.load(request.data["fichero_yaml"],Loader=yaml.FullLoader)
+    except:
+        content = {
+            'inserted' : 'false',
+            'message': 'Error: El cuestionario está mal formado. Por favor, revisa que lo hayas escrito bien.'         
+        }
+        return Response(content)  
+    #1. Generamos el test 
+    title = yamlplscomeon["cuestionario"]["titulo"]
+    idAs = 1
+    idPr = 1
+    nPreg = yamlplscomeon["cuestionario"]["nPreguntas"]
+    sec = yamlplscomeon["cuestionario"]["secuencial"]
+    durat = yamlplscomeon["cuestionario"]["duracion"]
+    asignatura = Asignaturas.objects.get(id=idAs)
+    profesor = User.objects.get(id = idPr)
+    cuestionario = Cuestionarios(titulo=title, nPreguntas=nPreg, secuencial=sec, idAsignatura=asignatura, idProfesor=profesor, duracion=durat)
+    try:
+        cuestionario.save()  
+    except:
+        content = {
+            'inserted' : 'false',
+            'message': 'Error: El cuestionario ya existe'         
+        }
+        return Response(content)  
+    #Obtenemos el id del cuestionario que acabamos de crear y empezamos a guardar las preguntas. Si existen simplemente se las añadimos al cuestionario
+    cuestionario = Cuestionarios.objects.get(titulo=title, nPreguntas=nPreg, secuencial=sec, idAsignatura=asignatura, idProfesor=profesor, duracion=durat)
+    cuestionario.id
+    preguntas = yamlplscomeon["cuestionario"]["preguntas"]
+    i = 0
+    for q in preguntas:
+        print(q["tipo"])
+        encontrado = 1
+        try:
+            pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"])
+        except:
+            print("No se ha encontrado la pregunta")
+            encontrado = 0
+        if encontrado == 0: 
+            pregunta = Preguntas(tipoPregunta=q["tipo"], pregunta = q["pregunta"])
+            pregunta.save()
+            pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"])
+            pertenece = PerteneceACuestionario(nQuestion = i, puntosAcierto = q["punt_positiva"], puntosFallo=q["punt_negativa"], idCuestionario = cuestionario, idPregunta = pregunta)
+            pertenece.save()
+
+        else:
+            print("La pregunta ya existe")
+            #Guarda la pregunta que ha encontrado en el la tabla
+            pertenece = PerteneceACuestionario(nQuestion = i, puntosAcierto = q["punt_positiva"], puntosFallo=q["punt_negativa"], idCuestionario = cuestionario, idPregunta = pregunta)
+            pertenece.save()
+        #Guardamos las opciones
+        if(q["tipo"] == "test"):
+            j = 0
+            opciones = q["opciones"]
+            for o in opciones:
+                opcion = OpcionesTest(opcion = o, idPregunta = pregunta)
+                opcion.save()
+                if j == q["op_correcta"]:
+                    respuesta = RespuestasTest(idOpcion = opcion, idPregunta = pregunta)
+                    respuesta.save()
+                j += 1
+        elif q["tipo"] == "text":
+            respuestaText = RespuestasTexto(respuesta = q["opciones"], idPregunta = pregunta)
+        i += 1
+        content = {
+            'inserted' : 'true',
+            'message': 'El cuestionario se ha insertado correctamente'         
+        }
+       
+    return Response(content)
 
 
 @api_view(['POST'])

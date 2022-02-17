@@ -146,6 +146,7 @@ class Cuestionarios(models.Model):
     class Meta:
         ordering = ['titulo']
         db_table = "cuestionarios"
+        unique_together = ('idAsignatura', 'titulo',)                   #No puede haber dos cuestionarios con el mismo nombre para una asignatura
 
 class Preguntas(models.Model):
     tipoPregunta = models.CharField(blank=True, max_length=100, verbose_name='tipoPregunta')
@@ -157,6 +158,7 @@ class Preguntas(models.Model):
     class Meta:
         ordering = ['pregunta']
         db_table = "preguntas"
+        unique_together = ['pregunta', 'tipoPregunta']                  #No pueden haber preguntas iguales
 
 class PerteneceACuestionario(models.Model):
     idPregunta = models.ForeignKey('Preguntas', on_delete=models.CASCADE)

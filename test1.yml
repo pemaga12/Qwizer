@@ -4,18 +4,18 @@ cuestionario:
   nPreguntas: 2
   secuencial: 0 #0 es que no es secuencial, 1 es secuencial
   duracion: 10 #minutos que durara el test
-  questions:
-    - type: "test"
-      question: "En colas, nosotros solo podemos acceder al..."
-      options:  ["Al elementos que nosotros queremos", "Primer y último elemento."]
-      correct: 0 #id de opcion correcta
-      positive: 1    #puntos que suma
-      negative: 0.3 #puntos que resta
+  preguntas:
+    - tipo: "test"
+      pregunta: "En colas, nosotros solo podemos acceder al..."
+      opciones:  ["Al elementos que nosotros queremos", "Primer y último elemento."]
+      op_correcta: 0 #id de opcion correcta
+      punt_positiva: 1    #puntos que suma
+      punt_negativa: 0.3 #puntos que resta
 
-    - type: "test"
-      question: "La vida es una lenteja"
-      options:  ["Opcion1", "Opcion2"]
-      correct: 1 #id de opcion correcta
-      positive: 1    #puntos que suma
-      negative: 0.3 #puntos que resta
+    - tipo: "test"
+      pregunta: "La vida es una lenteja"
+      opciones:  ["Opcion1", "Opcion2"]
+      op_correcta: 1 #id de opcion correcta
+      punt_positiva: 1    #puntos que suma
+      punt_negativa: 0.3 #puntos que resta
     

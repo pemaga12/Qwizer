@@ -281,7 +281,7 @@ class App extends React.Component{
   }
 
   render(){
-    /*
+    
     if(!this.state.login){                              //Login de la página
       document.title = "Login";
       return <Router>
@@ -334,6 +334,12 @@ class App extends React.Component{
             </Switch>
           </Router>
       }
+      else if (this.state.currentPage == "upload"){
+         return <Router>
+            <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} logout={this.logout}></NavBar>
+            <UploadFile></UploadFile>
+          </Router>
+      }
       else{
         
         return <Router>
@@ -347,8 +353,13 @@ class App extends React.Component{
         </Router>
       }
     }
-    */
-    return <UploadFile></UploadFile>
+    
+   /*
+    return <Router>
+            <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} logout={this.logout}></NavBar>
+            <UploadFile></UploadFile>
+          </Router>
+   */
   }
   
 }
