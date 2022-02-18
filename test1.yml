@@ -1,5 +1,5 @@
 cuestionario:
-  titulo: "Tema1"
+  titulo: "Tema3"
   asignatura: "Estructura de Datos"
   nPreguntas: 2
   secuencial: 0 #0 es que no es secuencial, 1 es secuencial
@@ -7,13 +7,13 @@ cuestionario:
   preguntas:
     - tipo: "test"
       pregunta: "En colas, nosotros solo podemos acceder al..."
-      opciones:  ["Al elementos que nosotros queremos", "Primer y último elemento."]
+      opciones:  ["Al elementos que nosotros queremos", "Primer y último elemento.", "Jaja te culié"]
       op_correcta: 0 #id de opcion correcta
       punt_positiva: 1    #puntos que suma
       punt_negativa: 0.3 #puntos que resta
 
     - tipo: "test"
-      pregunta: "La vida es una lenteja"
+      pregunta: "En verdad esto es otro test :)"
       opciones:  ["Opcion1", "Opcion2"]
       op_correcta: 1 #id de opcion correcta
       punt_positiva: 1    #puntos que suma

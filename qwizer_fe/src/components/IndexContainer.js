@@ -9,6 +9,10 @@ class IndexContainer extends React.Component {
         super(props);
     }
 
+    componentWillMount(){
+        this.props.getAsignaturas();
+    }
+
     render() {
         
         const empezarTest = this.props.empezarTest;
@@ -19,9 +23,11 @@ class IndexContainer extends React.Component {
                 <div className="index-body">
                     { this.props.asignaturas.map(function(asignatura,indx){
                       return (
-                          <div key={asignatura}>
-                            <TarjetaAsignatura startTest={empezarTest} asignatura={asignatura} idAsignatura={idAsignaturas[indx]} getCuestionarios={getCuestionarios}></TarjetaAsignatura>
-                          </div>
+                        <div className='d-flex justify-content-center'>
+                            <TarjetaAsignatura asignatura={asignatura} idAsignatura={idAsignaturas[indx]} getCuestionarios={getCuestionarios}></TarjetaAsignatura>
+                        </div>
+                            
+                        
                       )
                     })
                     }   
@@ -30,7 +36,6 @@ class IndexContainer extends React.Component {
         }else{
             return <h1>Loading...</h1>
         }
-        
       }
 }
 

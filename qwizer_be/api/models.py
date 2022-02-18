@@ -185,6 +185,7 @@ class OpcionesTest(models.Model):
     
     class Meta:
         db_table = "opciones_test"
+        unique_together = ['opcion', 'idPregunta']
 
 
 class RespuestasTexto(models.Model):

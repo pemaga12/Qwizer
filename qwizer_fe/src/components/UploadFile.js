@@ -70,7 +70,7 @@ export default class UploadFile extends Component {
                             <div className="input-group">
                                 <div className="custom-file">
                                     <input type="file" className="custom-file-input" aria-describedby="inputGroupFileAddon01" onChange={(e) => this.setFile(e)} id="myfile"  name="myfile"/>
-                                     <label className="custom-file-label" for="inputGroupFile01">{this.state.file.name}</label>
+                                     <label className="custom-file-label" htmlFor="inputGroupFile01">{this.state.file.name}</label>
                                 </div>
                             </div>
                             <div className="upload-message-section">

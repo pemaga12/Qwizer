@@ -52,7 +52,7 @@ class TarjetaAsignatura extends React.Component {
         
         //const startTest = this.props.startTest;
         return(
-            <div className="card asignatura-section" name={this.props.asignatura} id={this.props.idAsignatura}>
+            <div className="card asignatura-section " name={this.props.asignatura} id={this.props.idAsignatura}>
                 <div className="header bg-blue-grey">
                     <h2>{this.props.asignatura}</h2>
                 </div>

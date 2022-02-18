@@ -24,7 +24,7 @@ class NavBar extends React.Component {
                                 <a className="nav-link" onClick={() => this.props.changeCurrentPage("index")}>Inicio <span className="sr-only"></span></a>
                                 
                             </li>
-                            {this.props.rol == "teacher" && <li className="nav-item active">
+                            {localStorage.getItem("rol") == "teacher" && <li className="nav-item active">
                                 <a className="nav-link" onClick={() => this.props.changeCurrentPage("upload")}>Subir test <span className="sr-only"></span></a>
                             </li>}
                             

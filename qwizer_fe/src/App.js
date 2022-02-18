@@ -11,6 +11,7 @@ import LoginComponent from './components/LoginComponent';
 import NavBar from './components/common/NavBar';
 
 import UploadFile from './components/UploadFile';
+import CuestionariosContainer from './components/CuestionariosContainer';
 
 
 class App extends React.Component{
@@ -26,10 +27,13 @@ class App extends React.Component{
       username: "",
       asignaturas: [],                  //Guarda los nombres de las asignaturas
       idAsignaturas: [],                //Guarda los IDs de las asignaturas 
+      cuestionarios: [],                //Guarda los nombres de los cuestionarios
+      idCuestionarios: [],              //Guarda los IDs de los cuestionarios
       rol: "",
+      currentTest: "",
     };
     
-    this.getTest = this.getTest.bind(this);
+  
     this.sendTest = this.sendTest.bind(this);
     
     this.descifrarTest = this.descifrarTest.bind(this);
@@ -81,9 +85,10 @@ class App extends React.Component{
       localStorage.setItem('page', "login");
     }else{
       if(actual_page === "index"){
+        console.log("hola");
         this.getAsignaturas();
+        
       }
-      this.getTest();
       this.setState({currentPage:actual_page});
     }
   }
@@ -95,6 +100,7 @@ class App extends React.Component{
     
     if(token !== null && usern !== null){
       var url = "http://127.0.0.1:8000/api/";
+      /* 
       fetch(url)
       .then((data) => {
         let pagina = "index";
@@ -105,28 +111,19 @@ class App extends React.Component{
         localStorage.setItem('page', pagina);
       })
       .catch((error) => console.log(error))
+    
+    */
+    //this.getAsignaturas();
+    let pagina = localStorage.getItem("page");
+    if(pagina === "") pagina = "index";
+    this.setState({login:true,username:usern,currentPage: pagina});
+    
+    localStorage.setItem('page', pagina);
     }
   }
+  
 
-  getTest = () => {
-    var url = 'http://127.0.0.1:8000/api/test';
-    var token = localStorage.getItem('token');
-    fetch(url , {
-      method: 'GET',
-      headers:{
-        'Authorization': token
-      }
-      })
-    .then(function(response){return response.json();})
-    .then(data => {
-      this.setState({
-        password: data.password,
-        iv: data.iv
-      });
-      localStorage.setItem('questions', data.encrypted_message);
-    });
-    
-  }
+ 
 
   sendTest = () => {
     var url = "http://127.0.0.1:8000/api/response";
@@ -144,10 +141,13 @@ class App extends React.Component{
   
   
   descifrarTest = () => {
-    var cifradas = localStorage.getItem('questions');
+    let testInfo = localStorage.getItem(this.state.currentTest);
+    var input = JSON.parse(testInfo);
     
-    var key = CryptoJS.enc.Hex.parse(this.state.password);
-    var iv = CryptoJS.enc.Hex.parse(this.state.iv);
+    var cifradas = input.encrypted_message;
+    console.log(input);
+    var key = CryptoJS.enc.Hex.parse(input.password);
+    var iv = CryptoJS.enc.Hex.parse(input.iv);
     var cipher = CryptoJS.lib.CipherParams.create({
           ciphertext: CryptoJS.enc.Base64.parse(cifradas)
     });
@@ -169,7 +169,10 @@ class App extends React.Component{
   comprobarPassword = () => {
 
     if(this.state.contra !== ""){
-      if(CryptoJS.SHA256(this.state.contra) === this.state.password){
+      let testInfo = localStorage.getItem(this.state.currentTest);
+      var text = JSON.parse(testInfo);
+     
+      if(CryptoJS.SHA256(this.state.contra).toString() === text.password){
         var list = this.descifrarTest();
         this.initAnswerList(list);
         
@@ -230,6 +233,7 @@ class App extends React.Component{
           else{
             localStorage.setItem('token',data.token);
             localStorage.setItem('username',username);
+            localStorage.setItem('rol', data.rol);
             this.getAsignaturas();
             this.setState({
               username: username,
@@ -246,14 +250,19 @@ class App extends React.Component{
   }  
 
   logout = () => {
-    localStorage.clear();
-    fetch('http://127.0.0.1:8000/api/logout')
+    var token = localStorage.getItem('token');
+    
+    fetch('http://127.0.0.1:8000/api/logout', 
+    {method: 'GET',
+    headers:{
+      'Authorization': token}})
     .then(function(response){return response.json();})
     .then(data => {
       this.setState({
         currentPage : "login",
         login : false
       });
+      localStorage.clear();
     });
    
   }
@@ -294,17 +303,19 @@ class App extends React.Component{
       })
       .then(function(response){return response.json();})
       .then(data => {
+        console.log(data);
         this.setState({
           cuestionarios: data.cuestionarios,
           idCuestionarios: data.idCuestionarios
         });        
     });
+    this.changeCurrentPage("cuestionarios");
   }
 
-  startTest = () =>{
-
-    this.getTest();
-
+  startTest = (id) =>{ 
+    this.setState({
+      currentTest: id,
+    });
     this.changeCurrentPage('test');
   }
 
@@ -312,22 +323,14 @@ class App extends React.Component{
     if(!this.state.login){                              //Login de la página
       document.title = "Login";
       return <Router>
-        <Route render={() => {
-          return <div> 
-            <LoginComponent login={this.login}></LoginComponent> 
-            </div>  
-          }}>
-        </Route>
-        
-      </Router>
+              <LoginComponent login={this.login}></LoginComponent> 
+            </Router>
     }
     else if(this.state.currentPage === "index" && this.state.username){         //Página de inicio de la web
       document.title = "Inicio"
-      return <Router>
-        
+      return <Router> 
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-          <IndexContainer empezarTest={this.startTest} idAsignaturas={this.state.idAsignaturas} asignaturas={this.state.asignaturas} getCuestionarios={this.getCuestionarios}></IndexContainer>
-        
+          <IndexContainer getAsignaturas={this.getAsignaturas} empezarTest={this.startTest} idAsignaturas={this.state.idAsignaturas} asignaturas={this.state.asignaturas} getCuestionarios={this.getCuestionarios}></IndexContainer>  
       </Router>
     }
     
@@ -362,17 +365,20 @@ class App extends React.Component{
             </Switch>
           </Router>
       }
-      else{
-        
+      else{   
         return <Router>
-          <Switch>       
-            <Route render={() => {
-              return <QuestionContainer questionList={this.state.questionList} 
-              sendTest = {this.sendTest} addAnswerMethod = {this.addAnswer}/>
-            }}>
-            </Route>
-          </Switch>
-        </Router>
+              <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
+              <QuestionContainer questionList={this.state.questionList} sendTest = {this.sendTest} addAnswerMethod = {this.addAnswer}/>
+              </Router>
+      }
+    }
+    else if (this.state.currentPage === "cuestionarios"){
+      if (!this.state.allow){
+        document.title = "Cuestionarios";
+        return  <Router>
+          <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
+          <CuestionariosContainer cuestionarios={this.state.cuestionarios} idCuestionarios={this.state.idCuestionarios} empezarTest={this.startTest}></CuestionariosContainer> 
+          </Router>
       }
     }
     else if (this.state.currentPage === "upload"){

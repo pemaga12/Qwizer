@@ -8,10 +8,12 @@ from Crypto.Cipher import AES                           #Usado para cifrar el te
 from Crypto.Random import get_random_bytes
 import hashlib
 #Para pasar quiz a string
-import json
+
 import codecs
 import base64
 import binascii
+
+import json 
 
 #-------------------------
 
@@ -176,10 +178,11 @@ def get_info_asignatura(request):
 
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def test(request):
     quiz = { 
+        
         'questions':[
             {
             'id': 1 ,
@@ -205,8 +208,34 @@ def test(request):
             }
         ]
     }
+   
+    idCuestionario = request.data["idCuestionario"]
+    cuestionario = Cuestionarios.objects.get(id = idCuestionario)
+    pertenecen = PerteneceACuestionario.objects.filter(idCuestionario = cuestionario.id)
     
-    quizString = json.dumps(quiz)
+    questions = []
+    for pertenece in pertenecen:
+        pregunta = Preguntas.objects.get(id = pertenece.idPregunta.id)
+        preguntaJSON = {}
+        preguntaJSON["id"] = pregunta.id
+        preguntaJSON["question"] = pregunta.pregunta
+        preguntaJSON["type"] = pregunta.tipoPregunta 
+        if pregunta.tipoPregunta == "test":
+            opcionesLista = []
+            opciones = OpcionesTest.objects.filter(idPregunta = pregunta.id)
+            for opcion in opciones:
+                opcionesJSON = {}
+                opcionesJSON["id"] = opcion.id
+                opcionesJSON["op"] = opcion.opcion
+                opcionesLista.append(opcionesJSON)
+            preguntaJSON["options"] = opcionesLista
+        questions.append(preguntaJSON)
+
+    messageJSON = {}
+    messageJSON["questions"] = questions
+    print(messageJSON)
+
+    quizString = json.dumps(messageJSON)
     #Hay que hacer que el texto se pueda enviar en bloques de 16 bytes, sino no funciona
     message = _pad_string(quizString)
     #Proceso de generación de la key a partir del password
@@ -233,6 +262,13 @@ def test(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload(request):
+    if str(request.user.role) == "student":
+        content = {
+            'inserted' : 'false',
+            'message': 'Error: Para poder crear tests debes de ser administrador o profesor.'         
+        }
+        return Response(content) 
+
     try:
         yamlplscomeon = yaml.load(request.data["fichero_yaml"],Loader=yaml.FullLoader)
     except:
@@ -272,6 +308,7 @@ def upload(request):
         except:
             print("No se ha encontrado la pregunta")
             encontrado = 0
+        
         if encontrado == 0: 
             pregunta = Preguntas(tipoPregunta=q["tipo"], pregunta = q["pregunta"])
             pregunta.save()
@@ -290,11 +327,14 @@ def upload(request):
             opciones = q["opciones"]
             for o in opciones:
                 opcion = OpcionesTest(opcion = o, idPregunta = pregunta)
-                opcion.save()
-                if j == q["op_correcta"]:
-                    respuesta = RespuestasTest(idOpcion = opcion, idPregunta = pregunta)
-                    respuesta.save()
-                j += 1
+                try:
+                    opcion.save()
+                    if j == q["op_correcta"]:
+                        respuesta = RespuestasTest(idOpcion = opcion, idPregunta = pregunta)
+                        respuesta.save()
+                    j += 1
+                except:
+                    print("La pregunta ya existia")
         elif q["tipo"] == "text":
             respuestaText = RespuestasTexto(respuesta = q["opciones"], idPregunta = pregunta)
         i += 1

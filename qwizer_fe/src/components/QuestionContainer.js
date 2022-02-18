@@ -69,7 +69,7 @@ class QuestionContainer extends React.Component {
     }
 
   }
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
     this.setState({numPreguntas:this.props.questionList.length});
   }
   navHandler = (val) =>{
@@ -86,7 +86,7 @@ class QuestionContainer extends React.Component {
 
         <div class="p-4 row-1">
           <div class="col" className="card">
-            <h1 class="text-center" >Nombre del Test</h1>
+            <h1 class="text-center">Nombre del Test</h1>
           </div>
         </div>
 
