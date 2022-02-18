@@ -23,7 +23,7 @@ export default class UploadFile extends Component {
     }
 
     uploadFile = () => {
-        if(this.state.file.name != ""){
+        if(this.state.file.name !== ""){
             let reader = new FileReader();
             reader.readAsText(this.state.file,'utf-8');
             reader.onload = (e) =>{
@@ -31,11 +31,13 @@ export default class UploadFile extends Component {
                 const fichero_yaml = new Map([["fichero_yaml", e.target.result]]);
                 const jsonObject = JSON.stringify(Object.fromEntries(fichero_yaml));
                 console.log(jsonObject)
-        
+                var token = localStorage.getItem('token');
+
                 fetch('http://127.0.0.1:8000/api/upload', {
                 method: 'POST',
                 headers:{
                     'Content-type': 'application/json',
+                    'Authorization': token
                 },
                 body: jsonObject
                 })
@@ -54,7 +56,8 @@ export default class UploadFile extends Component {
 
 
     render() {
-        if(this.state.file != ''){
+
+        //if(this.state.file !== ''){
             console.log(this.state.file)
             return (
                 <div className="upload-body">
@@ -67,39 +70,19 @@ export default class UploadFile extends Component {
                             <div className="input-group">
                                 <div className="custom-file">
                                     <input type="file" className="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" onChange={(e) => this.setFile(e)} id="myfile"  name="myfile"/>
-                                    <label className="custom-file-label" for="inputGroupFile01">{this.state.file.name}</label>
+                                     <label className="custom-file-label" for="inputGroupFile01">{this.state.file.name}</label>
                                 </div>
                             </div>
-                            <button type="button" className="btn btn-success btn-submit" onClick={this.uploadFile}>Subir Cuestionario</button>
-                            <div class="upload-message-section">
-                                <p id="message_paragraph"></p>
+                            <div className="upload-message-section">
+                            {this.state.file !== '' && 
+                                <button type="button" className="btn btn-success btn-submit" onClick={this.uploadFile}>Subir Cuestionario</button>
+                            }
+                            <p id="message_paragraph"></p>
                             </div>
                         </div>                        
                     </div>
                 </div>
             )
-        }else{
-            return (
-                <div className="upload-body">
-                    <div className="card upload-section ">
-                        <div class="header bg-blue-grey">
-                            <h2>Sube tu cuestionario en formato : YAML</h2>
-                        </div>
-                        <div className='upload-inner-body'>
-                            <h4><label htmlFor="myfile">Selecciona un archivo:</label></h4>
-                            <div className="input-group">
-                                <div className="custom-file">
-                                    <input type="file" className="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" onChange={(e) => this.setFile(e)} id="myfile"  name="myfile"/>
-                                    <label className="custom-file-label" for="inputGroupFile01">Selecciona un fichero</label>
-                                </div>
-                            </div>
-                            <div class="upload-message-section">
-                                <p id="message_paragraph"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )
-        } 
+       
     }
 }

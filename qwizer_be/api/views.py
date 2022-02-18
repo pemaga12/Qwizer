@@ -135,35 +135,35 @@ def get_asignaturas(request):
 
     return Response({'asignaturas':listaAsignaturas, 'idAsignaturas': listaIds})
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def get_cuestionarios(request):
+    
+    print(request)
     listaCuestionarios = []
-    identif = str(request.user.id)
-    role = str(request.user.role)
-    print(role)
-    nombreAsignatura = str(request.asignatura)
-    asignatura = Asignaturas.objects.get(asignatura=nombreAsignatura)
-    idAsignatura = asignatura.id
+    asignatura = Asignaturas.objects.get(id= request.data["idAsignatura"])
     
-    if role == 'student':
-        listaIdCuestionarios = Cuestionarios.objects.filter(idAsignartura_id = idAsignatura)
-        for cuestionario in listaIdCuestionarios:
-            nombre = cuestionario.titulo
-            listaCuestionarios.append(nombre)
-        
-    elif role == 'teacher':
-        listaIdCuestionarios = Cuestionarios.objects.filter(idAsignartura_id = idAsignatura)
-        for cuestionario in listaIdCuestionarios:
-            nombre = cuestionario.titulo
-            listaCuestionarios.append(nombre)
-    else:
-        return Response('El admin no tiene ningun test')
+    cuestionarios = Cuestionarios.objects.filter(idAsignatura = request.data["idAsignatura"])
+    idCuestionarios = []
+    for cuestionario in cuestionarios:
+        listaCuestionarios.append(cuestionario.titulo)
+        idCuestionarios.append(cuestionario.id)
+    return Response({'cuestionarios':listaCuestionarios, 'idCuestionarios': idCuestionarios})
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_info_asignatura(request):
     
-    print(listaCuestionarios)
-    return Response({'cuestionarios':listaCuestionarios})
-
+    print(request)
+    listaCuestionarios = []
+    asignatura = Asignaturas.objects.get(id= request.data["idAsignatura"])
+    
+    cuestionarios = Cuestionarios.objects.filter(idAsignatura = request.data["idAsignatura"])
+    idCuestionarios = []
+    n = 0
+    for cuestionario in cuestionarios:
+        n += 1
+    return Response({'nCuestionarios':n})
 
 
 
@@ -222,7 +222,7 @@ def test(request):
     return Response(content)
 
 @api_view(['POST'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def upload(request):
     try:
         yamlplscomeon = yaml.load(request.data["fichero_yaml"],Loader=yaml.FullLoader)

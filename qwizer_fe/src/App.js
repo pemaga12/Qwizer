@@ -6,10 +6,10 @@ import {BrowserRouter as Router,Route,Switch} from 'react-router-dom';
 
 import IndexContainer from './components/IndexContainer';
 import QuestionContainer from './components/QuestionContainer.js';
-import TestQuestion from './components/TestQuestion';
+
 import LoginComponent from './components/LoginComponent';
 import NavBar from './components/common/NavBar';
-import TarjetaAsignatura from './components/TarjetaAsignatura.js';
+
 import UploadFile from './components/UploadFile';
 
 
@@ -43,10 +43,14 @@ class App extends React.Component{
     //Login functions
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
+
+    //Funciones relacionadas con las asignaturas
     this.getAsignaturas = this.getAsignaturas.bind(this);
+    this.getCuestionarios = this.getCuestionarios.bind(this)
 
     this.startTest = this.startTest.bind(this);
     this.checkLogged = this.checkLogged.bind(this);
+    ;
 
   };
 
@@ -59,14 +63,12 @@ class App extends React.Component{
     });
     var respuestas = JSON.stringify(Object.fromEntries(newlist));
     localStorage.setItem('answers', respuestas);
-    console.log(this.state.answerList);
 
   }
 
   initAnswerList = (questionList) => {
     let list = new Map();
     questionList.forEach(pregunta => list.set(pregunta.id, {"type": pregunta.type, "answr": "NULL"}));
-    console.log(list);
     this.setState({
       answerList: list
     });
@@ -78,7 +80,7 @@ class App extends React.Component{
     if(actual_page == null){
       localStorage.setItem('page', "login");
     }else{
-      if(actual_page == "index"){
+      if(actual_page === "index"){
         this.getAsignaturas();
       }
       this.getTest();
@@ -96,7 +98,7 @@ class App extends React.Component{
       fetch(url)
       .then((data) => {
         let pagina = "index";
-        if(data.url == url){
+        if(data.url === url){
           this.getAsignaturas();
           this.setState({login:true,username:usern,currentPage: pagina})
         }
@@ -166,8 +168,8 @@ class App extends React.Component{
   
   comprobarPassword = () => {
 
-    if(this.state.contra != ""){
-      if(CryptoJS.SHA256(this.state.contra) == this.state.password){
+    if(this.state.contra !== ""){
+      if(CryptoJS.SHA256(this.state.contra) === this.state.password){
         var list = this.descifrarTest();
         this.initAnswerList(list);
         
@@ -188,7 +190,7 @@ class App extends React.Component{
   }
 
   changeCurrentPage = (page) =>{                                    //Funcion usada para cambiar la página en la que nos encontramos actualmente
-    if(page == "logout"){
+    if(page === "logout"){
       this.logout();
       this.setState({
         currentPage : page,
@@ -222,7 +224,7 @@ class App extends React.Component{
     .then(
       data => {
           //Manejo del login
-          if(data.respuesta == "invalid login"){
+          if(data.respuesta === "invalid login"){
             window.alert("¡Contraseña incorrecta!")
           }
           else{
@@ -244,7 +246,6 @@ class App extends React.Component{
   }  
 
   logout = () => {
-    console.log("logout");
     localStorage.clear();
     fetch('http://127.0.0.1:8000/api/logout')
     .then(function(response){return response.json();})
@@ -278,6 +279,28 @@ class App extends React.Component{
     });
   }
 
+  getCuestionarios = (idAsignatura) => {
+    var url = 'http://127.0.0.1:8000/api/get-cuestionarios';
+    var token = localStorage.getItem('token');
+    const message = new Map([["idAsignatura", idAsignatura]]);
+    const obj = JSON.stringify(Object.fromEntries(message));
+    fetch(url , {
+      method: 'POST',
+      headers:{
+        'Content-type': 'application/json',
+        'Authorization': token
+      },
+      body: obj
+      })
+      .then(function(response){return response.json();})
+      .then(data => {
+        this.setState({
+          cuestionarios: data.cuestionarios,
+          idCuestionarios: data.idCuestionarios
+        });        
+    });
+  }
+
   startTest = () =>{
 
     this.getTest();
@@ -286,7 +309,6 @@ class App extends React.Component{
   }
 
   render(){
-    console.log("quiero cambiar de pagina a " + this.state.currentPage)
     if(!this.state.login){                              //Login de la página
       document.title = "Login";
       return <Router>
@@ -304,7 +326,7 @@ class App extends React.Component{
       return <Router>
         <body>
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-          <IndexContainer empezarTest={this.startTest} idAsignaturas={this.state.idAsignaturas} asignaturas={this.state.asignaturas}></IndexContainer>
+          <IndexContainer empezarTest={this.startTest} idAsignaturas={this.state.idAsignaturas} asignaturas={this.state.asignaturas} getCuestionarios={this.getCuestionarios}></IndexContainer>
         </body>
       </Router>
     }
@@ -354,7 +376,6 @@ class App extends React.Component{
       }
     }
     else if (this.state.currentPage === "upload"){
-      console.log("quiero ir a upload")
        return <Router>
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
           <UploadFile></UploadFile>

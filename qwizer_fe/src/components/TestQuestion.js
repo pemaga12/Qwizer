@@ -24,7 +24,7 @@ class TestQuestion extends React.Component {
 
     render() { 
         const preguntaId = this.props.id; 
-        const onclick = this.props.handleOnClick;
+        //const onclick = this.props.handleOnClick;
 
         if(this.props.options){
             return(

@@ -1,5 +1,5 @@
 import React from 'react'
-import $ from 'jquery'
+
 
 
 class NavBar extends React.Component {
@@ -10,8 +10,7 @@ class NavBar extends React.Component {
 
   
   render() { 
-      console.log(this.props.rol)
-      localStorage.getItem("rol");
+    localStorage.getItem("rol");
     if(this.props.rol == "teacher")
             return(
                 <nav className="navbar navbar-expand-lg navbar-light bg-light">

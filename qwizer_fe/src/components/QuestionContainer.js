@@ -30,7 +30,7 @@ class QuestionContainer extends React.Component {
 
     if(pregunta != null){
 
-      if(pregunta.type == 'test'){
+      if(pregunta.type === 'test'){
         return  <TestQuestion key={pregunta.id} question={pregunta.question} options={pregunta.options} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
       } // else type = 'text'
 
@@ -54,7 +54,7 @@ class QuestionContainer extends React.Component {
   }
 
   renderButtons = () =>{
-    if(this.state.indPregunta == 0){
+    if(this.state.indPregunta === 0){
       return <div class="p-2 col text-center"><button type="button" class="btn btn-success" onClick={this.updateIndNext}>Siguiente</button></div>
     }else if(this.state.indPregunta > 0 && this.state.indPregunta < this.state.numPreguntas-1){
       return <div class="p-2 col text-center">
