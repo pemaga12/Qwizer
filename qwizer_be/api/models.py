@@ -139,7 +139,7 @@ class Cuestionarios(models.Model):
     duracion = models.IntegerField(default=10, verbose_name='duracion')
     #0 no es secuencial, 1 es secuencial
     secuencial =  models.IntegerField(default=1, verbose_name='secuencial')
-    password = models.CharField(blank=True, max_length=100, verbose_name='password')
+    password = models.CharField(blank=True, max_length=300, verbose_name='password')
 
     def __str__(self):
         return self.titulo
@@ -147,7 +147,7 @@ class Cuestionarios(models.Model):
     class Meta:
         ordering = ['titulo']
         db_table = "cuestionarios"
-        unique_together = ('idAsignatura', 'titulo',)                   #No puede haber dos cuestionarios con el mismo nombre para una asignatura
+        unique_together = ('idAsignatura', 'titulo')                   #No puede haber dos cuestionarios con el mismo nombre para una asignatura
 
 class Preguntas(models.Model):
     tipoPregunta = models.CharField(blank=True, max_length=100, verbose_name='tipoPregunta')
