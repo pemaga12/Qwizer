@@ -3,7 +3,7 @@
     min-height: 95vh;
     height: 100%;
     justify-content: center;
-        
+    display: grid;    
 }
 
 .card{
@@ -87,4 +87,23 @@
 
 .upload-message-section{
     margin-top:5%;
+}
+
+.asignatura-section{
+    justify-content: center;
+    align-items: center;
+    display: block;
+    background-color: white;
+    border-radius: 10px !important;
+    height: auto;
+    width: 80vw;
+    margin-top: 1vw;
+}
+
+.asignatura-inner-body{
+    margin-left: 1vw;
+    margin-top: 1vh;
+    justify-content: center;
+    align-items: center;
+    display: fex;
 }

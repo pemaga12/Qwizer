@@ -24,7 +24,8 @@ class App extends React.Component{
       login:false,                      //Guarda si se ha hecho login
       currentPage: "login",             //Página actual que está mostrando el login
       username: "",
-      asignaturas: [],
+      asignaturas: [],                  //Guarda los nombres de las asignaturas
+      idAsignaturas: [],                //Guarda los IDs de las asignaturas 
       rol: "",
     };
     
@@ -269,11 +270,11 @@ class App extends React.Component{
       })
       .then(function(response){return response.json();})
       .then(data => {
+       
         this.setState({
           asignaturas: data.asignaturas,
-        });
-        
-        
+          idAsignaturas: data.idAsignaturas
+        });        
     });
   }
 
@@ -303,7 +304,7 @@ class App extends React.Component{
       return <Router>
         <body>
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-          <IndexContainer empezarTest={this.startTest} asignaturas={this.state.asignaturas}></IndexContainer>
+          <IndexContainer empezarTest={this.startTest} idAsignaturas={this.state.idAsignaturas} asignaturas={this.state.asignaturas}></IndexContainer>
         </body>
       </Router>
     }

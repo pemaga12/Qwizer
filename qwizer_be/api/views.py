@@ -110,6 +110,7 @@ def registro(request):
 @permission_classes([IsAuthenticated])
 def get_asignaturas(request):
     listaAsignaturas = []
+    listaIds = []
     identif = str(request.user.id)
     role = str(request.user.role)
     print(role)
@@ -119,19 +120,20 @@ def get_asignaturas(request):
         for idAsignartura in listaIdAsignaturas:
             nombre = Asignaturas.objects.get(id=idAsignartura.idAsignatura_id)
             listaAsignaturas.append(nombre.asignatura)
+            listaIds.append(idAsignartura.idAsignatura_id)
         
     elif role == 'teacher':
         listaIdAsignaturas = Imparte.objects.filter(idProfesor_id=identif)
         for idAsignartura in listaIdAsignaturas:
             nombre = Asignaturas.objects.get(id=idAsignartura.idAsignatura_id)
             listaAsignaturas.append(nombre.asignatura)
-        
+            listaIds.append(idAsignartura.idAsignatura_id)
     else:
         return Response('El admin no tiene ninguna asignatura')
 
     
 
-    return Response({'asignaturas':listaAsignaturas})
+    return Response({'asignaturas':listaAsignaturas, 'idAsignaturas': listaIds})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

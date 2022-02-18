@@ -10,17 +10,20 @@ class IndexContainer extends React.Component {
     }
 
     render() {
+        
         const empezarTest = this.props.empezarTest;
+        const idAsignaturas = this.props.idAsignaturas;
         if(empezarTest){
             return(
                 <div className="index-body">
-                    {this.props.asignaturas.map(function(asignatura,indx){
+                    { this.props.asignaturas.map(function(asignatura,indx){
                       return (
                           <div key={asignatura}>
-                            <TarjetaAsignatura startTest={empezarTest} asignatura={asignatura}></TarjetaAsignatura>
+                            <TarjetaAsignatura startTest={empezarTest} asignatura={asignatura} idAsignatura={idAsignaturas[indx]}></TarjetaAsignatura>
                           </div>
                       )
-                    })}   
+                    })
+                    }   
                 </div>
              );
         }else{
