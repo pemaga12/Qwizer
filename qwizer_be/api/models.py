@@ -139,6 +139,7 @@ class Cuestionarios(models.Model):
     duracion = models.IntegerField(default=10, verbose_name='duracion')
     #0 no es secuencial, 1 es secuencial
     secuencial =  models.IntegerField(default=1, verbose_name='secuencial')
+    password = models.CharField(blank=True, max_length=100, verbose_name='password')
 
     def __str__(self):
         return self.titulo
