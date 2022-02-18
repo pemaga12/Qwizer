@@ -13,6 +13,8 @@ import NavBar from './components/common/NavBar';
 import UploadFile from './components/UploadFile';
 import CuestionariosContainer from './components/CuestionariosContainer';
 
+import {comprobarPassword} from './utils/test.js'
+
 
 class App extends React.Component{
 
@@ -36,8 +38,7 @@ class App extends React.Component{
   
     this.sendTest = this.sendTest.bind(this);
     
-    this.descifrarTest = this.descifrarTest.bind(this);
-    this.comprobarPassword = this.comprobarPassword.bind(this);
+  
     this.getPass = this.getPass.bind(this);
     this.addAnswer = this.addAnswer.bind(this);
     this.initAnswerList = this.initAnswerList.bind(this);
@@ -140,48 +141,7 @@ class App extends React.Component{
   }
   
   
-  descifrarTest = () => {
-    let testInfo = localStorage.getItem(this.state.currentTest);
-    var input = JSON.parse(testInfo);
-    
-    var cifradas = input.encrypted_message;
-    console.log(input);
-    var key = CryptoJS.enc.Hex.parse(input.password);
-    var iv = CryptoJS.enc.Hex.parse(input.iv);
-    var cipher = CryptoJS.lib.CipherParams.create({
-          ciphertext: CryptoJS.enc.Base64.parse(cifradas)
-    });
-
-    var result = CryptoJS.AES.decrypt(cipher, key, {iv: iv, mode: CryptoJS.mode.CFB});
-
-    var text = result.toString(CryptoJS.enc.Utf8);
-
-    text = JSON.parse(text);
-
-    this.setState({
-      questionList: text.questions,
-      allow:true
-    });
-    return text.questions;
-    //Inicializamos la lista de respuestas para el test
-  }
   
-  comprobarPassword = () => {
-
-    if(this.state.contra !== ""){
-      let testInfo = localStorage.getItem(this.state.currentTest);
-      var text = JSON.parse(testInfo);
-     
-      if(CryptoJS.SHA256(this.state.contra).toString() === text.password){
-        var list = this.descifrarTest();
-        this.initAnswerList(list);
-        
-      }else{
-        alert("Wrong Password");
-      }
-    }
-    
-  }
 
 
   getPass = event => {
@@ -356,7 +316,7 @@ class App extends React.Component{
                           </div>
                           <div class="p-4 row">
                             <div class="col text-center">
-                              <button type="button" class="btn btn-success" onClick={this.comprobarPassword}>Empezar Test</button>
+                              <button type="button" class="btn btn-success" onClick={comprobarPassword}>Empezar Test</button>
                             </div>
                           </div>
                       </div>  
