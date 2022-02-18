@@ -326,7 +326,7 @@ class App extends React.Component{
               <LoginComponent login={this.login}></LoginComponent> 
             </Router>
     }
-    else if(this.state.currentPage === "index" && this.state.username){         //Página de inicio de la web
+    else if((this.state.currentPage === "index" || this.state.currentPage === "" ) && this.state.username){         //Página de inicio de la web
       document.title = "Inicio"
       return <Router> 
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
