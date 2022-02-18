@@ -324,10 +324,10 @@ class App extends React.Component{
     else if(this.state.currentPage === "index" && this.state.username){         //Página de inicio de la web
       document.title = "Inicio"
       return <Router>
-        <body>
+        
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
           <IndexContainer empezarTest={this.startTest} idAsignaturas={this.state.idAsignaturas} asignaturas={this.state.asignaturas} getCuestionarios={this.getCuestionarios}></IndexContainer>
-        </body>
+        
       </Router>
     }
     

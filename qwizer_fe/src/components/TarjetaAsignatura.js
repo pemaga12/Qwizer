@@ -38,7 +38,7 @@ class TarjetaAsignatura extends React.Component {
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            
             this.setState({
                 nCuestionarios: data.nCuestionarios,
                 nPendientes: data.nPendientes,
@@ -46,9 +46,6 @@ class TarjetaAsignatura extends React.Component {
             });         
             })
         .catch(error => console.log(error));
-        console.log(this.state.nCuestionarios);
-        console.log(this.state.nCorregidos);
-        console.log(this.state.nPendientes);
     }
 
     render() { 
