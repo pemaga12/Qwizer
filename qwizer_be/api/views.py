@@ -20,7 +20,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
 from .models import Cuestionarios, PerteneceACuestionario, User #cogemos el modelo de usuario autenticado
 
-from .models import Asignaturas,EsAlumno,Imparte, Cuestionarios, User, Preguntas, PerteneceACuestionario, OpcionesTest, RespuestasTest, RespuestasTexto
+from .models import Asignaturas,EsAlumno,Imparte, Cuestionarios, User, Preguntas, PerteneceACuestionario, OpcionesTest, RespuestasTest, RespuestasTexto, Notas
 
 from rest_framework.permissions import IsAuthenticated
 
@@ -154,16 +154,25 @@ def get_cuestionarios(request):
 @permission_classes([IsAuthenticated])
 def get_info_asignatura(request):
     
-    print(request)
-    listaCuestionarios = []
-    asignatura = Asignaturas.objects.get(id= request.data["idAsignatura"])
     
+    listaCuestionarios = []
+    asignatura = Asignaturas.objects.get(id = request.data["idAsignatura"])
+    current_user = request.user
     cuestionarios = Cuestionarios.objects.filter(idAsignatura = request.data["idAsignatura"])
     idCuestionarios = []
+    c = 0
     n = 0
     for cuestionario in cuestionarios:
-        n += 1
-    return Response({'nCuestionarios':n})
+        c += 1
+        try:
+            notas = Notas.objects.get(idAlumno = current_user.id, idCuestionario = cuestionario.id)
+        except:
+            print("No he encontrado nota")
+            continue
+        print("He encontrado una nota")
+        n+=1
+    p = c - n
+    return Response({'nCuestionarios':c, 'nCorregidos':n, 'nPendientes': p})
 
 
 

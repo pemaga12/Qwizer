@@ -7,7 +7,9 @@ class TarjetaAsignatura extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            nCuestionarios: 0
+            nCuestionarios: 0,
+            nPendientes: 0,
+            nCorregidos: 0
         };
        
         
@@ -36,11 +38,17 @@ class TarjetaAsignatura extends React.Component {
         })
         .then(response => response.json())
         .then(data => {
+            console.log(data);
             this.setState({
-                nCuestionarios: data.nCuestionarios
+                nCuestionarios: data.nCuestionarios,
+                nPendientes: data.nPendientes,
+                nCorregidos: data.nCorregidos
             });         
             })
         .catch(error => console.log(error));
+        console.log(this.state.nCuestionarios);
+        console.log(this.state.nCorregidos);
+        console.log(this.state.nPendientes);
     }
 
     render() { 
@@ -54,8 +62,8 @@ class TarjetaAsignatura extends React.Component {
                 <div className='asignatura-inner-body row'>
                     <div className="col-9">
                         <p>Numero de test: {this.state.nCuestionarios}</p>
-                        <p>Numero de tests corregidos: 2</p>
-                        <p>Numero de tests pendientes 1</p>
+                        <p>Numero de tests corregidos: {this.state.nCorregidos}</p>
+                        <p>Numero de tests pendientes: {this.state.nPendientes}</p>
                     </div>
                     <div className="col-3 button-section">
                         <button className="btn btn-primary login-button" onClick={() => this.props.getCuestionarios(this.props.idAsignatura)}>Ver mas</button>

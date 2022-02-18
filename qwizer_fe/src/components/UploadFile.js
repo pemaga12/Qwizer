@@ -69,7 +69,7 @@ export default class UploadFile extends Component {
                             <h4><label htmlFor="myfile">Selecciona un archivo:</label></h4>
                             <div className="input-group">
                                 <div className="custom-file">
-                                    <input type="file" className="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" onChange={(e) => this.setFile(e)} id="myfile"  name="myfile"/>
+                                    <input type="file" className="custom-file-input" aria-describedby="inputGroupFileAddon01" onChange={(e) => this.setFile(e)} id="myfile"  name="myfile"/>
                                      <label className="custom-file-label" for="inputGroupFile01">{this.state.file.name}</label>
                                 </div>
                             </div>
