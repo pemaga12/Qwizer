@@ -25,7 +25,6 @@ class UserManager(BaseUserManager):
             raise ValueError(_('Users must have a first name'))
         if not last_name:
             raise ValueError(_('Users must have a last name'))
-        
         if extra_fields.get('role') not in ['student','teacher']:
             raise ValueError(_('Users must have student or teacher role'))
 

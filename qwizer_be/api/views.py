@@ -82,10 +82,11 @@ def cerrar_sesion(request):
 
 """
 {
-    "email": "maria@gmail.com",
+    "email": "profe@profe.es",
     "first_name": "Maria",
     "last_name": "Perez",
-    "password": "1234"
+    "password": "1234",
+    "role": "teacher"
 }
 
 """
@@ -279,14 +280,14 @@ def upload(request):
         return Response(content)  
     #1. Generamos el test 
     title = yamlplscomeon["cuestionario"]["titulo"]
-    idAs = 1
-    idPr = 1
+    nombreAsig = yamlplscomeon["cuestionario"]["asignatura"]
+    idPr = int(request.user.id)
     nPreg = yamlplscomeon["cuestionario"]["nPreguntas"]
     sec = yamlplscomeon["cuestionario"]["secuencial"]
     durat = yamlplscomeon["cuestionario"]["duracion"]
-    asignatura = Asignaturas.objects.get(id=idAs)
+    asignatura = Asignaturas.objects.get(asignatura=nombreAsig)
     profesor = User.objects.get(id = idPr)
-    cuestionario = Cuestionarios(titulo=title, nPreguntas=nPreg, secuencial=sec, idAsignatura=asignatura, idProfesor=profesor, duracion=durat)
+    cuestionario = Cuestionarios(titulo=title, nPreguntas=nPreg, secuencial=sec, idAsignatura=asignatura, idProfesor=profesor, duracion=durat,password=1234)
     try:
         cuestionario.save()  
     except:
