@@ -1,6 +1,4 @@
 import React from 'react';
-import CryptoJS from 'crypto-js'
-
 
 import {BrowserRouter as Router,Route,Switch} from 'react-router-dom';
 
@@ -12,6 +10,10 @@ import NavBar from './components/common/NavBar';
 
 import UploadFile from './components/UploadFile';
 import CuestionariosContainer from './components/CuestionariosContainer';
+
+import {comprobarPassword,descifrarTest,sendTest} from './utils/manage_test.js'
+import {logIn,logOut} from './utils/manage_user.js'
+import {getSubjects,getSubjectTests} from './utils/manage_subjects'
 
 
 class App extends React.Component{
@@ -30,53 +32,33 @@ class App extends React.Component{
       cuestionarios: [],                //Guarda los nombres de los cuestionarios
       idCuestionarios: [],              //Guarda los IDs de los cuestionarios
       rol: "",
-      currentTest: "",
+      currentTest: undefined,
     };
-    
-  
-    this.sendTest = this.sendTest.bind(this);
-    
-    this.descifrarTest = this.descifrarTest.bind(this);
-    this.comprobarPassword = this.comprobarPassword.bind(this);
-    this.getPass = this.getPass.bind(this);
-    this.addAnswer = this.addAnswer.bind(this);
-    this.initAnswerList = this.initAnswerList.bind(this);
-    this.restorePassword = this.restorePassword.bind(this);
-    this.changeCurrentPage = this.changeCurrentPage.bind(this);
     
     //Login functions
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
+    this.checkLogged = this.checkLogged.bind(this);
 
     //Funciones relacionadas con las asignaturas
     this.getAsignaturas = this.getAsignaturas.bind(this);
-    this.getCuestionarios = this.getCuestionarios.bind(this)
+    this.getCuestionarios = this.getCuestionarios.bind(this);
 
+    // Funciones relacionadas con el test
+    this.unlockTest = this.unlockTest.bind(this);
+    this.initAnswerList = this.initAnswerList.bind(this);
+    this.addAnswer = this.addAnswer.bind(this);
     this.startTest = this.startTest.bind(this);
-    this.checkLogged = this.checkLogged.bind(this);
-    ;
+    this.enviarTest = this.enviarTest.bind(this);
+
+    // Funciones auxiliares
+    this.getPass = this.getPass.bind(this);
+    this.restorePassword = this.restorePassword.bind(this);
+    this.changeCurrentPage = this.changeCurrentPage.bind(this);
+
+    this.insertTestPasswordPage = this.insertTestPasswordPage.bind(this);
 
   };
-
-  
-  addAnswer = (answer) => {
-    var newlist = this.state.answerList;
-    newlist.set(answer.id, {"type": answer.respuesta.type, "answr": answer.respuesta.answer});
-    this.setState({
-      answerList: newlist
-    });
-    var respuestas = JSON.stringify(Object.fromEntries(newlist));
-    localStorage.setItem('answers', respuestas);
-
-  }
-
-  initAnswerList = (questionList) => {
-    let list = new Map();
-    questionList.forEach(pregunta => list.set(pregunta.id, {"type": pregunta.type, "answr": "NULL"}));
-    this.setState({
-      answerList: list
-    });
-  }
 
   componentWillMount(){
     this.checkLogged();
@@ -93,307 +75,237 @@ class App extends React.Component{
     }
   }
 
-  
+  //// Funciones Login, Logout y manejo de la sesion del usuario >>>>>>>>>>>>>>>>>>>
+
+  login = (username, password) => {
+    
+    logIn(username, password).then(role => {
+
+      if(role == " "){
+        window.alert("¡Contraseña incorrecta!")
+      }else{
+        this.getAsignaturas();
+        this.setState({
+          username: username,
+          login: true,
+          currentPage: "index",
+          rol: role
+        });
+        this.changeCurrentPage("index");
+      }
+    })
+
+  }  
+
+  logout = () => {
+
+    logOut();
+    this.setState({
+      currentPage : "login",
+      login : false
+    });
+    localStorage.clear();
+  }
+
   checkLogged = () => {
     var token = localStorage.getItem('token');
     var usern = localStorage.getItem('username');
     
     if(token !== null && usern !== null){
-      var url = "http://127.0.0.1:8000/api/";
-      /* 
-      fetch(url)
-      .then((data) => {
-        let pagina = "index";
-        if(data.url === url){
-          this.getAsignaturas();
-          this.setState({login:true,username:usern,currentPage: pagina})
-        }
+      
+      let pagina = localStorage.getItem("page");
+      if(pagina === null){
+        pagina = "index";
         localStorage.setItem('page', pagina);
-      })
-      .catch((error) => console.log(error))
-    
-    */
-    //this.getAsignaturas();
-    let pagina = localStorage.getItem("page");
-    if(pagina === "") pagina = "index";
-    this.setState({login:true,username:usern,currentPage: pagina});
-    
-    localStorage.setItem('page', pagina);
+      } 
+      this.setState({login:true,username:usern,currentPage: pagina});
     }
   }
+
+  //  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
   
 
- 
+  //// Funciones para guardar las repuestas del Test >>>>>>>>>>>>>>>>>>>
+  
+  initAnswerList = (questionList) => {
+    let list = new Map();
+    questionList.forEach(pregunta => list.set(pregunta.id, {"type": pregunta.type, "answr": "NULL"}));
+    this.setState({
+      answerList: list
+    });
 
-  sendTest = () => {
-    var url = "http://127.0.0.1:8000/api/response";
-    var listaRespuestas = localStorage.getItem('answers');
-    fetch(url, {
-      method: 'POST',
-      headers:{
-        'Content-type': 'application/json',
-      },
-      body: listaRespuestas
+  }
+
+  addAnswer = (answer) => {
+    var newlist = this.state.answerList;
+    newlist.set(answer.id, {"type": answer.respuesta.type, "answr": answer.respuesta.answer});
+
+    var listaRespuestas = []
+    for (var [key, value] of newlist.entries()) {
+      var pregunta = {}
+      pregunta.id = key
+      pregunta.type = value.type
+      pregunta.answr = value.answr
+      listaRespuestas.push(pregunta);
+    }
+
+    var respuestas = {"idCuestionario":this.state.currentTest,"respuestas":listaRespuestas}
+    localStorage.setItem('answers', JSON.stringify(respuestas));
+
+
+    this.setState({
+      answerList: newlist
+    });
+
+  }
+
+  //  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+  //// Funciones para desbloquear, empezar, enviarTest el test >>>>>>>>>>>>>>>>>>>
+  unlockTest = () =>{
+    if(comprobarPassword(this.state.contra,this.state.currentTest)){
+      var list = descifrarTest(this.state.currentTest);
+      this.initAnswerList(list);
+      this.setState({
+        questionList: list,
+        allow:true
+      });
+    }
+  }
+
+  startTest = (id) => { 
+    this.setState({
+      currentTest: id,
+    });
+    this.changeCurrentPage('test');
+  }
+  
+  enviarTest = () => {
+    sendTest().then(data => {
+      this.changeCurrentPage('cuestionarios');
     }).catch(function(error){
       console.log("Error", error)
     })
   }
-  
-  
-  descifrarTest = () => {
-    let testInfo = localStorage.getItem(this.state.currentTest);
-    var input = JSON.parse(testInfo);
+  //  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+  //// Funciones para obtener asignaturas y cuestionarios >>>>>>>>>>>>>>>>>>>
+  getAsignaturas = () => {
     
-    var cifradas = input.encrypted_message;
-    console.log(input);
-    var key = CryptoJS.enc.Hex.parse(input.password);
-    var iv = CryptoJS.enc.Hex.parse(input.iv);
-    var cipher = CryptoJS.lib.CipherParams.create({
-          ciphertext: CryptoJS.enc.Base64.parse(cifradas)
+    getSubjects().then(data => {
+      this.setState({
+        asignaturas: data.asignaturas,
+        idAsignaturas: data.idAsignaturas
+      }); 
     });
-
-    var result = CryptoJS.AES.decrypt(cipher, key, {iv: iv, mode: CryptoJS.mode.CFB});
-
-    var text = result.toString(CryptoJS.enc.Utf8);
-
-    text = JSON.parse(text);
-
-    this.setState({
-      questionList: text.questions,
-      allow:true
-    });
-    return text.questions;
-    //Inicializamos la lista de respuestas para el test
-  }
-  
-  comprobarPassword = () => {
-
-    if(this.state.contra !== ""){
-      let testInfo = localStorage.getItem(this.state.currentTest);
-      var text = JSON.parse(testInfo);
-     
-      if(CryptoJS.SHA256(this.state.contra).toString() === text.password){
-        var list = this.descifrarTest();
-        this.initAnswerList(list);
-        
-      }else{
-        alert("Wrong Password");
-      }
-    }
-    
   }
 
+  getCuestionarios = (idAsignatura) => {
 
-  getPass = event => {
-    this.setState({contra: event.target.value});
+    getSubjectTests(idAsignatura).then(data => {
+      this.setState({
+        cuestionarios: data.cuestionarios,
+        idCuestionarios: data.idCuestionarios
+      });
+      this.changeCurrentPage("cuestionarios");   
+    });
+          
+  }
+  //  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+  //// Funciones auxiliares >>>>>>>>>>>>>>>>>>>
+
+  getPass = (e) => { //Funcion para conseguir la contraseña del test introducida por el usuario
+    this.setState({contra: e.target.value});
   }
 
   restorePassword = () => {
     alert("¡Contacta con tu profesor o el administrador!");
   }
 
-  changeCurrentPage = (page) =>{                                    //Funcion usada para cambiar la página en la que nos encontramos actualmente
+  changeCurrentPage = (page) =>{ //Funcion usada para cambiar de página 
     if(page === "logout"){
       this.logout();
-      this.setState({
-        currentPage : page,
-      });
-      
     } 
     else{
       localStorage.setItem('page', page);
-      this.setState({
-        currentPage : page,
-      });
-      
     }
-   
-  }
 
-
-  login = (username, password) => {
-    //Creo el objeto que se va a enviar
-    const loginInfo = new Map([["email", username], ["password", password]]);
-    const obj = JSON.stringify(Object.fromEntries(loginInfo));
-  
-    var url = "http://127.0.0.1:8000/api/login";
-    fetch(url, {
-      method: 'POST', 
-      headers:{
-        'Content-type': 'application/json',
-      },
-      body: obj
-    }).then(data => data.json())
-    .then(
-      data => {
-          //Manejo del login
-          if(data.respuesta === "invalid login"){
-            window.alert("¡Contraseña incorrecta!")
-          }
-          else{
-            localStorage.setItem('token',data.token);
-            localStorage.setItem('username',username);
-            localStorage.setItem('rol', data.rol);
-            this.getAsignaturas();
-            this.setState({
-              username: username,
-              login: true,
-              currentPage: "index",
-              rol: data.rol
-            });
-            this.changeCurrentPage("index");
-          }
-          
-      }
-    )
-
-  }  
-
-  logout = () => {
-    var token = localStorage.getItem('token');
-    
-    fetch('http://127.0.0.1:8000/api/logout', 
-    {method: 'GET',
-    headers:{
-      'Authorization': token}})
-    .then(function(response){return response.json();})
-    .then(data => {
-      this.setState({
-        currentPage : "login",
-        login : false
-      });
-      localStorage.clear();
-    });
-   
-  }
-
-  getAsignaturas = () => {
-    
-    var url = 'http://127.0.0.1:8000/api/get-asignaturas';
-    var token = localStorage.getItem('token');
-
-    fetch(url , {
-      method: 'GET',
-      headers:{
-        'Authorization': token
-      }
-      })
-      .then(function(response){return response.json();})
-      .then(data => {
-       
-        this.setState({
-          asignaturas: data.asignaturas,
-          idAsignaturas: data.idAsignaturas
-        });        
-    });
-  }
-
-  getCuestionarios = (idAsignatura) => {
-    var url = 'http://127.0.0.1:8000/api/get-cuestionarios';
-    var token = localStorage.getItem('token');
-    const message = new Map([["idAsignatura", idAsignatura]]);
-    const obj = JSON.stringify(Object.fromEntries(message));
-    fetch(url , {
-      method: 'POST',
-      headers:{
-        'Content-type': 'application/json',
-        'Authorization': token
-      },
-      body: obj
-      })
-      .then(function(response){return response.json();})
-      .then(data => {
-        console.log(data);
-        this.setState({
-          cuestionarios: data.cuestionarios,
-          idCuestionarios: data.idCuestionarios
-        });        
-    });
-    this.changeCurrentPage("cuestionarios");
-  }
-
-  startTest = (id) =>{ 
     this.setState({
-      currentTest: id,
+      currentPage : page,
     });
-    this.changeCurrentPage('test');
+   
   }
 
+  //  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+  //  -----------------------------------------------------------------------------------------
+
+  insertTestPasswordPage = () => { //Pagina para insertar contrasenia para hacer el test
+    return <div class="index-body container-fluid">
+        <div class="p-4 row"></div>
+        <div class="row" className="card">
+          <div class="col text-center">
+            <h1>Introduce la contraseña</h1>
+            <h1>para empezar el examen!</h1>
+          </div>
+        </div>
+        <div class="p-4 row">
+          <div class="col text-center">
+            <input type="text" className="center" onChange={this.getPass}></input>
+          </div>
+        </div>
+        <div class="p-4 row">
+          <div class="col text-center">
+            <button type="button" class="btn btn-success" onClick={this.unlockTest}>Empezar Test</button>
+          </div>
+        </div>
+    </div>  
+  }
+  
   render(){
-    if(!this.state.login){                              //Login de la página
+
+    if(!this.state.login){//Pagina de login (usuario no logeado)
       document.title = "Login";
       return <Router>
-              <LoginComponent login={this.login}></LoginComponent> 
-            </Router>
-    }
-    else if((this.state.currentPage === "index" || this.state.currentPage === "" ) && this.state.username){         //Página de inicio de la web
-      document.title = "Inicio"
-      return <Router> 
+        <LoginComponent login={this.login}></LoginComponent> 
+      </Router>
+
+    }else{//Usuario logeado
+      
+      if(this.state.currentPage === "index"){//Pagina de inicio (muestra las asignaturas)
+        document.title = "Inicio"
+        return <Router> 
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
           <IndexContainer getAsignaturas={this.getAsignaturas} empezarTest={this.startTest} idAsignaturas={this.state.idAsignaturas} asignaturas={this.state.asignaturas} getCuestionarios={this.getCuestionarios}></IndexContainer>  
-      </Router>
-    }
-    
-    else if (this.state.currentPage === "test"){
-      if (!this.state.allow){
-        document.title = "Password Check";
-        return  <Router>
-          <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-            <Switch>
-              <Route render={() => {
-                return <div class="index-body container-fluid">
-                          <div class="p-4 row"></div>
-                          <div class="row" className="card">
-                            <div class="col text-center">
-                              <h1>Introduce la contraseña</h1>
-                              <h1>para empezar el examen!</h1>
-                            </div>
-                          </div>
-                          <div class="p-4 row">
-                            <div class="col text-center">
-                              <input type="text" className="center" onChange={this.getPass}></input>
-                            </div>
-                          </div>
-                          <div class="p-4 row">
-                            <div class="col text-center">
-                              <button type="button" class="btn btn-success" onClick={this.comprobarPassword}>Empezar Test</button>
-                            </div>
-                          </div>
-                      </div>  
-              }}>
-              </Route>
-            </Switch>
-          </Router>
-      }
-      else{   
-        return <Router>
-              <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-              <QuestionContainer questionList={this.state.questionList} sendTest = {this.sendTest} addAnswerMethod = {this.addAnswer}/>
-              </Router>
-      }
-    }
-    else if (this.state.currentPage === "cuestionarios"){
-      if (!this.state.allow){
-        document.title = "Cuestionarios";
-        return  <Router>
-          <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-          <CuestionariosContainer cuestionarios={this.state.cuestionarios} idCuestionarios={this.state.idCuestionarios} empezarTest={this.startTest}></CuestionariosContainer> 
-          </Router>
-      }
-    }
-    else if (this.state.currentPage === "upload"){
-       return <Router>
-          <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-          <UploadFile></UploadFile>
         </Router>
-    }
-    
-   /*
-    return <Router>
-            <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} logout={this.logout}></NavBar>
+      }else if (this.state.currentPage === "cuestionarios"){//Pagina que muestra los cuestionarios para la asignatura seleccionada
+          document.title = "Cuestionarios";
+          return  <Router>
+            <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
+            <CuestionariosContainer cuestionarios={this.state.cuestionarios} idCuestionarios={this.state.idCuestionarios} empezarTest={this.startTest}></CuestionariosContainer> 
+            </Router>
+      }else if (this.state.currentPage === "test"){//Pagina del test
+        if (!this.state.allow){ //Introduce la contrasenia del test para poder hacerlo
+          document.title = "Password Check";
+          return  <Router>
+            <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
+            {this.insertTestPasswordPage()}
+            </Router>
+        }else{ 
+          return <Router>
+            <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
+            <QuestionContainer idCuestionario={this.state.currentTest} questionList={this.state.questionList} sendTest = {this.enviarTest} addAnswerMethod = {this.addAnswer}/>
+          </Router>
+        }
+      }else if (this.state.currentPage === "upload"){ //Pagina para subir cuestionarios
+         return <Router>
+            <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
             <UploadFile></UploadFile>
           </Router>
-   */
+      }
+    }
+    
   }
   
 }

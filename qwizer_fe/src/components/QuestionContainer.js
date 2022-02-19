@@ -18,12 +18,7 @@ class QuestionContainer extends React.Component {
     this.renderButtons = this.renderButtons.bind(this);
     this.updateIndNext = this.updateIndNext.bind(this);
     this.updateIndBack = this.updateIndBack.bind(this);
-    this.sendAnswers = this.sendAnswers.bind(this);
     this.navHandler = this.navHandler.bind(this);
-  }
-
-  sendAnswers = () =>{
-    alert("Funcion de questionContainer");
   }
   
   questionType = (pregunta) => {
@@ -31,10 +26,10 @@ class QuestionContainer extends React.Component {
     if(pregunta != null){
 
       if(pregunta.type === 'test'){
-        return  <TestQuestion key={pregunta.id} question={pregunta.question} options={pregunta.options} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
+        return  <TestQuestion key={pregunta.id} idCuestionario={this.props.idCuestionario} question={pregunta.question} options={pregunta.options} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
       } // else type = 'text'
 
-      return <TextQuestion key={pregunta.id} question={pregunta.question} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
+      return <TextQuestion key={pregunta.id} idCuestionario={this.props.idCuestionario} question={pregunta.question} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
     }
   
   }
