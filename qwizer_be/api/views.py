@@ -1,3 +1,4 @@
+from ast import If
 from django.shortcuts import render
 from django.http import JsonResponse
 
@@ -9,9 +10,8 @@ from Crypto.Random import get_random_bytes
 import hashlib
 #Para pasar quiz a string
 
-import codecs
-import base64
 import binascii
+from api.utils.cifrado import _pad_string,decrypt,_unpad_string
 
 import json 
 
@@ -22,7 +22,9 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
 from .models import Cuestionarios, PerteneceACuestionario, User #cogemos el modelo de usuario autenticado
 
-from .models import Asignaturas,EsAlumno,Imparte, Cuestionarios, User, Preguntas, PerteneceACuestionario, OpcionesTest, RespuestasTest, RespuestasTexto, Notas
+from .models import Asignaturas,EsAlumno,Imparte, Cuestionarios, User
+from .models import Preguntas, PerteneceACuestionario, OpcionesTest, Notas
+from .models import RespuestasTest,RespuestasTexto,RespuestasEnviadasTest,RespuestasEnviadasText
 
 from rest_framework.permissions import IsAuthenticated
 
@@ -346,39 +348,70 @@ def upload(request):
        
     return Response(content)
 
-
+"""
+Llegan las respuestas de un test:
+{
+    'idCuestionario': 1,
+     'respuestas': [
+        {'id': 1, 'type': 'test', 'answr': '2'},
+        {'id': 2, 'type': 'test', 'answr': '5'},
+    ]
+}
+"""
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def response(request):
-    print(request.data)       
-    return Response(request.data)
+    #comporbar que es alumno
+
+    cuestionario = Cuestionarios.objects.get(id=request.data["idCuestionario"])
+    alumno = request.user
     
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-def _pad_string(in_string):
-    '''Pad an input string according to PKCS#7'''
-    in_len = len(in_string)
-    pad_size = 16 - (in_len % 16)
-    return in_string.ljust(in_len + pad_size, chr(pad_size))
+    respuestas = request.data["respuestas"]
+    for respuesta in respuestas:  
+        pregunta = Preguntas.objects.get(id=respuesta["id"])      
+        if respuesta["type"] == "test":
+            opcion = OpcionesTest.objects.get(id=respuesta["answr"])
+            respuestaEnviada = RespuestasEnviadasTest(idCuestionario=cuestionario,idAlumno = alumno,idPregunta = pregunta,idRespuesta= opcion)
+            respuestaEnviada.save()
+        if respuesta["type"] == "text":
+            respuestaEnviada = RespuestasEnviadasText(idCuestionario=cuestionario,idAlumno = alumno,idPregunta = pregunta,Respuesta=respuesta["answr"])
+            respuestaEnviada.save()
+
+    nota = calcularNota(alumno,cuestionario,respuestas)
+
+    content = {
+        'nota' : nota,
+        'preguntasAcertadas': 'NULL',
+        'preguntasFalladas': 'NULL'             
+    }
+
+    return Response(content)
+
+"""
+Funcion que calcula la nota del cuestionario realizado
+"""   
+def calcularNota(alumno,cuestionario,respuestas):
+
+    notaTest = 0
+
+    for respuesta in respuestas:  
+        pregunta = Preguntas.objects.get(id=respuesta["id"])
+        pregunta_info = PerteneceACuestionario.objects.get(idPregunta =pregunta ,idCuestionario = cuestionario)
+        if respuesta["type"] == "test":
+            opcionUsuario = int(respuesta["answr"])
+            opcionCorrecta = RespuestasTest.objects.get(idPregunta=respuesta["id"])
+            opcionCorrecta = opcionCorrecta.idOpcion.id
+            
+            if opcionUsuario == opcionCorrecta:
+                notaTest = notaTest + pregunta_info.puntosAcierto
+            else:
+                notaTest = notaTest - pregunta_info.puntosFallo
+            
+        if respuesta["type"] == "text":
+            valor = "Todavia no hace nada, esta por implementar"
+    
+    notaAlumno = Notas(idAlumno = alumno,idCuestionario=cuestionario,nota = notaTest)
+    notaAlumno.save()
 
 
-def decrypt(message, in_iv, in_key):
-		'''
-		Return encrypted string.
-		@in_encrypted: Base64 encoded 
-		@key: hexified key
-		@iv: hexified iv
-		'''
-		key = binascii.a2b_hex(in_key)
-		iv = binascii.a2b_hex(in_iv)
-		aes = AES.new(key, AES.MODE_CFB, iv, segment_size=128)		
-		
-		decrypted = aes.decrypt(binascii.a2b_base64(message).rstrip())
-		return _unpad_string(decrypted)
-
-def _unpad_string(in_string):
-		'''Remove the PKCS#7 padding from a text string'''
-		in_len = len(in_string)
-		pad_size = ord(in_string[-1])
-		if pad_size > 16:
-			raise ValueError('Input is not padded or padding is corrupt')
-		return in_string[:in_len - pad_size]
+    return notaTest

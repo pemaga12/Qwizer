@@ -32,7 +32,7 @@ class App extends React.Component{
       cuestionarios: [],                //Guarda los nombres de los cuestionarios
       idCuestionarios: [],              //Guarda los IDs de los cuestionarios
       rol: "",
-      currentTest: "",
+      currentTest: undefined,
     };
     
     //Login functions
@@ -49,6 +49,7 @@ class App extends React.Component{
     this.initAnswerList = this.initAnswerList.bind(this);
     this.addAnswer = this.addAnswer.bind(this);
     this.startTest = this.startTest.bind(this);
+    this.enviarTest = this.enviarTest.bind(this);
 
     // Funciones auxiliares
     this.getPass = this.getPass.bind(this);
@@ -98,14 +99,12 @@ class App extends React.Component{
 
   logout = () => {
 
-    logOut().then(data =>{
-      this.setState({
-        currentPage : "login",
-        login : false
-      });
-      localStorage.clear();
-    })
-    
+    logOut();
+    this.setState({
+      currentPage : "login",
+      login : false
+    });
+    localStorage.clear();
   }
 
   checkLogged = () => {
@@ -134,22 +133,35 @@ class App extends React.Component{
     this.setState({
       answerList: list
     });
+
   }
 
   addAnswer = (answer) => {
     var newlist = this.state.answerList;
     newlist.set(answer.id, {"type": answer.respuesta.type, "answr": answer.respuesta.answer});
+
+    var listaRespuestas = []
+    for (var [key, value] of newlist.entries()) {
+      var pregunta = {}
+      pregunta.id = key
+      pregunta.type = value.type
+      pregunta.answr = value.answr
+      listaRespuestas.push(pregunta);
+    }
+
+    var respuestas = {"idCuestionario":this.state.currentTest,"respuestas":listaRespuestas}
+    localStorage.setItem('answers', JSON.stringify(respuestas));
+
+
     this.setState({
       answerList: newlist
     });
-    var respuestas = JSON.stringify(Object.fromEntries(newlist));
-    localStorage.setItem('answers', respuestas);
 
   }
 
   //  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-  //// Funciones para desbloquear, empezar el test >>>>>>>>>>>>>>>>>>>
+  //// Funciones para desbloquear, empezar, enviarTest el test >>>>>>>>>>>>>>>>>>>
   unlockTest = () =>{
     if(comprobarPassword(this.state.contra,this.state.currentTest)){
       var list = descifrarTest(this.state.currentTest);
@@ -168,6 +180,13 @@ class App extends React.Component{
     this.changeCurrentPage('test');
   }
   
+  enviarTest = () => {
+    sendTest().then(data => {
+      this.changeCurrentPage('cuestionarios');
+    }).catch(function(error){
+      console.log("Error", error)
+    })
+  }
   //  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
   //// Funciones para obtener asignaturas y cuestionarios >>>>>>>>>>>>>>>>>>>
@@ -261,13 +280,11 @@ class App extends React.Component{
           <IndexContainer getAsignaturas={this.getAsignaturas} empezarTest={this.startTest} idAsignaturas={this.state.idAsignaturas} asignaturas={this.state.asignaturas} getCuestionarios={this.getCuestionarios}></IndexContainer>  
         </Router>
       }else if (this.state.currentPage === "cuestionarios"){//Pagina que muestra los cuestionarios para la asignatura seleccionada
-        if (!this.state.allow){
           document.title = "Cuestionarios";
           return  <Router>
             <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
             <CuestionariosContainer cuestionarios={this.state.cuestionarios} idCuestionarios={this.state.idCuestionarios} empezarTest={this.startTest}></CuestionariosContainer> 
             </Router>
-        }
       }else if (this.state.currentPage === "test"){//Pagina del test
         if (!this.state.allow){ //Introduce la contrasenia del test para poder hacerlo
           document.title = "Password Check";
@@ -278,7 +295,7 @@ class App extends React.Component{
         }else{ 
           return <Router>
             <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-            <QuestionContainer questionList={this.state.questionList} sendTest = {sendTest} addAnswerMethod = {this.addAnswer}/>
+            <QuestionContainer questionList={this.state.questionList} sendTest = {this.enviarTest} addAnswerMethod = {this.addAnswer}/>
           </Router>
         }
       }else if (this.state.currentPage === "upload"){ //Pagina para subir cuestionarios

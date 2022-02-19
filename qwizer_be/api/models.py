@@ -241,7 +241,7 @@ class EsAlumno(models.Model):
 class Notas(models.Model):
     idAlumno = models.ForeignKey(User, on_delete=models.CASCADE)
     idCuestionario = models.ForeignKey('Cuestionarios', on_delete=models.CASCADE)
-    nota = models.IntegerField(default= 0, verbose_name='nota')
+    nota = models.DecimalField(default=0, max_digits=10, decimal_places=2, verbose_name='nota')
 
     class Meta:
         db_table = "notas"

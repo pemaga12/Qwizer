@@ -3,7 +3,7 @@ import CryptoJS from 'crypto-js'
 
 export const descifrarTest = (currentTest) => {
 
-  let testInfo = localStorage.getItem(currentTest);
+  let testInfo = localStorage.getItem("test_" + currentTest);
   var input = JSON.parse(testInfo);
   
   var cifradas = input.encrypted_message;
@@ -23,7 +23,7 @@ export const descifrarTest = (currentTest) => {
 export const comprobarPassword = (contra,currentTest) => {
 
   if(contra !== ""){
-    let testInfo = localStorage.getItem(currentTest);
+    let testInfo = localStorage.getItem("test_" + currentTest);
     var text = JSON.parse(testInfo);
     
     if(CryptoJS.SHA256(contra).toString() === text.password) return true 
@@ -34,15 +34,17 @@ export const comprobarPassword = (contra,currentTest) => {
 
 
 export const sendTest = () => {
+
+  var token = localStorage.getItem('token');
   var url = "http://127.0.0.1:8000/api/response";
   var listaRespuestas = localStorage.getItem('answers');
-  fetch(url, {
+
+  return fetch(url, {
     method: 'POST',
     headers:{
       'Content-type': 'application/json',
+      'Authorization': token
     },
     body: listaRespuestas
-  }).catch(function(error){
-    console.log("Error", error)
   })
 }

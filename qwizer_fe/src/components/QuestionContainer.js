@@ -18,12 +18,7 @@ class QuestionContainer extends React.Component {
     this.renderButtons = this.renderButtons.bind(this);
     this.updateIndNext = this.updateIndNext.bind(this);
     this.updateIndBack = this.updateIndBack.bind(this);
-    this.sendAnswers = this.sendAnswers.bind(this);
     this.navHandler = this.navHandler.bind(this);
-  }
-
-  sendAnswers = () =>{
-    alert("Funcion de questionContainer");
   }
   
   questionType = (pregunta) => {
