@@ -70,6 +70,13 @@
     border-top-right-radius: 10px !important;
 }
 
+.bg-blue-green{
+    background: #59ac79;
+    color: white !important;
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+}
+
 .upload-inner-body{
     margin-top: 10%;
     margin-left: 5%;

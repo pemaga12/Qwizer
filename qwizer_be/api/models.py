@@ -139,6 +139,8 @@ class Cuestionarios(models.Model):
     #0 no es secuencial, 1 es secuencial
     secuencial =  models.IntegerField(default=1, verbose_name='secuencial')
     password = models.CharField(blank=True, max_length=300, verbose_name='password')
+    fecha_apertura = models.DateTimeField(blank=False, verbose_name='fecha_apertura')
+    fecha_cierre = models.DateTimeField(blank=False,  verbose_name='fecha_cierre')
 
     def __str__(self):
         return self.titulo
@@ -151,6 +153,7 @@ class Cuestionarios(models.Model):
 class Preguntas(models.Model):
     tipoPregunta = models.CharField(blank=True, max_length=100, verbose_name='tipoPregunta')
     pregunta = models.CharField(blank=True, max_length=254, verbose_name='pregunta')
+    idAsignatura = models.ForeignKey('Asignaturas', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.pregunta
@@ -158,7 +161,7 @@ class Preguntas(models.Model):
     class Meta:
         ordering = ['pregunta']
         db_table = "preguntas"
-        unique_together = ['pregunta', 'tipoPregunta']                  #No pueden haber preguntas iguales
+        unique_together = ['pregunta', 'tipoPregunta', 'idAsignatura']                  #No pueden haber preguntas iguales para una asignatura
 
 class PerteneceACuestionario(models.Model):
     idPregunta = models.ForeignKey('Preguntas', on_delete=models.CASCADE)
@@ -185,7 +188,7 @@ class OpcionesTest(models.Model):
     
     class Meta:
         db_table = "opciones_test"
-        unique_together = ['opcion', 'idPregunta']
+        #unique_together = ['opcion', 'idPregunta']
 
 
 class RespuestasTexto(models.Model):

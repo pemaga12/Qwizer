@@ -27,6 +27,7 @@ from .models import Preguntas, PerteneceACuestionario, OpcionesTest, Notas
 from .models import RespuestasTest,RespuestasTexto,RespuestasEnviadasTest,RespuestasEnviadasText
 
 from rest_framework.permissions import IsAuthenticated
+from datetime import datetime
 
 
 import yaml
@@ -158,13 +159,9 @@ def get_cuestionarios(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def get_info_asignatura(request):
-    
-    
-    listaCuestionarios = []
-    asignatura = Asignaturas.objects.get(id = request.data["idAsignatura"])
     current_user = request.user
     cuestionarios = Cuestionarios.objects.filter(idAsignatura = request.data["idAsignatura"])
-    idCuestionarios = []
+    
     c = 0
     n = 0
     for cuestionario in cuestionarios:
@@ -179,39 +176,27 @@ def get_info_asignatura(request):
     p = c - n
     return Response({'nCuestionarios':c, 'nCorregidos':n, 'nPendientes': p})
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_info_cuestionario(request):
+    cuestionario = Cuestionarios.objects.get(id = request.data["idCuestionario"])
+    duracion = cuestionario.duracion
+    fechaApertura = cuestionario.fecha_apertura.strftime("%d/%m/%Y, %H:%M:%S")
+    fechaCierre = cuestionario.fecha_cierre.strftime("%d/%m/%Y, %H:%M:%S")
+    notaCuestionario = 0
+    try:
+        nota = Notas.objects.get(idCuestionario = cuestionario, idAlumno = request.user)
+        corregido = 1
+        notaCuestionario = nota.nota
+    except:
+        corregido = 0
+    return Response({'duracion': duracion, 'fechaApertura': fechaApertura, 'fechaCierre': fechaCierre, 'corregido': corregido, 'nota': notaCuestionario})
 
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def test(request):
-    quiz = { 
-        
-        'questions':[
-            {
-            'id': 1 ,
-            'question':'En colas, nosotros solo podemos acceder al...',
-            'type': 'test',
-            'options': [{'id':10,'op':'Al elementos que nosotros queremos.'},
-                        {'id':11,'op':'Primer y último elemento.'}]
-            
-            },
-            {
-            'id': 2 ,
-            'question':'En colas, nosotros solo podemos acceder al...',
-            'type': 'test',
-            'options': [{'id':20,'op':'Al elementos que nosotros queremos.'},
-                        {'id':21,'op':'Primer y último elemento.'}]
-            
-            },
-            {
-            'id': 3 ,
-            'question':'De que curso es la asignatura de EDA? (Escribe la respuesta como texto)',
-            'type': 'text'
-            
-            }
-        ]
-    }
-   
+    
     idCuestionario = request.data["idCuestionario"]
     cuestionario = Cuestionarios.objects.get(id = idCuestionario)
     pertenecen = PerteneceACuestionario.objects.filter(idCuestionario = cuestionario.id)
@@ -262,6 +247,7 @@ def test(request):
 
     return Response(content)
 
+#Un profesor solo puede subir tests de una asignatura que matricule
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload(request):
@@ -281,15 +267,27 @@ def upload(request):
         }
         return Response(content)  
     #1. Generamos el test 
+    fecha_apertura = yamlplscomeon["cuestionario"]["fecha_apertura"]
+    passw = yamlplscomeon["cuestionario"]["password"]
+    date_time_apertura = datetime.strptime(fecha_apertura, '%y/%m/%d %H:%M:%S')
+    fecha_cierre = yamlplscomeon["cuestionario"]["fecha_cierre"]
+    date_time_cierre = datetime.strptime(fecha_cierre, '%y/%m/%d %H:%M:%S')
     title = yamlplscomeon["cuestionario"]["titulo"]
     nombreAsig = yamlplscomeon["cuestionario"]["asignatura"]
     idPr = int(request.user.id)
     nPreg = yamlplscomeon["cuestionario"]["nPreguntas"]
     sec = yamlplscomeon["cuestionario"]["secuencial"]
     durat = yamlplscomeon["cuestionario"]["duracion"]
-    asignatura = Asignaturas.objects.get(asignatura=nombreAsig)
+    try:
+        asignatura = Asignaturas.objects.get(asignatura=nombreAsig)
+    except:
+        content = {
+            'inserted' : 'false',
+            'message': 'Error: La asignatura no existe!'         
+        }
+        return Response(content) 
     profesor = User.objects.get(id = idPr)
-    cuestionario = Cuestionarios(titulo=title, nPreguntas=nPreg, secuencial=sec, idAsignatura=asignatura, idProfesor=profesor, duracion=durat,password=1234)
+    cuestionario = Cuestionarios(titulo=title, nPreguntas=nPreg, secuencial=sec, idAsignatura=asignatura, idProfesor=profesor, duracion=durat, password=passw, fecha_cierre = date_time_cierre, fecha_apertura = date_time_apertura)
     try:
         cuestionario.save()  
     except:
@@ -303,27 +301,25 @@ def upload(request):
     cuestionario.id
     preguntas = yamlplscomeon["cuestionario"]["preguntas"]
     i = 0
+    preguntaExistente = False
+    
     for q in preguntas:
         print(q["tipo"])
-        encontrado = 1
+         
+       
         try:
-            pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"])
-        except:
-            print("No se ha encontrado la pregunta")
-            encontrado = 0
-        
-        if encontrado == 0: 
-            pregunta = Preguntas(tipoPregunta=q["tipo"], pregunta = q["pregunta"])
+            pregunta = Preguntas(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
             pregunta.save()
-            pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"])
+        except:
+            pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
             pertenece = PerteneceACuestionario(nQuestion = i, puntosAcierto = q["punt_positiva"], puntosFallo=q["punt_negativa"], idCuestionario = cuestionario, idPregunta = pregunta)
             pertenece.save()
+            continue
 
-        else:
-            print("La pregunta ya existe")
-            #Guarda la pregunta que ha encontrado en el la tabla
-            pertenece = PerteneceACuestionario(nQuestion = i, puntosAcierto = q["punt_positiva"], puntosFallo=q["punt_negativa"], idCuestionario = cuestionario, idPregunta = pregunta)
-            pertenece.save()
+        pertenece = PerteneceACuestionario(nQuestion = i, puntosAcierto = q["punt_positiva"], puntosFallo=q["punt_negativa"], idCuestionario = cuestionario, idPregunta = pregunta)
+        pertenece.save()
+
+        pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
         #Guardamos las opciones
         if(q["tipo"] == "test"):
             j = 0
@@ -340,12 +336,14 @@ def upload(request):
                     print("La pregunta ya existia")
         elif q["tipo"] == "text":
             respuestaText = RespuestasTexto(respuesta = q["opciones"], idPregunta = pregunta)
+            respuestaText.save()    
         i += 1
-        content = {
-            'inserted' : 'true',
-            'message': 'El cuestionario se ha insertado correctamente'         
-        }
-       
+        
+               
+    content = {
+        'inserted' : 'true',
+        'message': 'El cuestionario se ha insertado correctamente'         
+    }    
     return Response(content)
 
 """

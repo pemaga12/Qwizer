@@ -1,19 +1,23 @@
 cuestionario:
-  titulo: "Tema8"
-  asignatura: "ASOR"
+  titulo: "Tema1"
+  password: "1234"
+  asignatura: "Fundamentos de la algoritmia"
   nPreguntas: 2
   secuencial: 0 #0 es que no es secuencial, 1 es secuencial
   duracion: 10 #minutos que durara el test
+  fecha_apertura: '22/02/18 11:00:00' #Formato esperado: yy:mm:dd hh:mm:ss
+  fecha_cierre: '23/02/18 11:59:59' #Formato esperado: yy:mm:dd hh:mm:ss
   preguntas:
     - tipo: "test"
       pregunta: "En colas, nosotros solo podemos acceder al..."
-      opciones:  ["Al elementos que nosotros queremos", "Primer y último elemento.", "Jaja te culié"]
+      opciones: ["Al elementos que nosotros queremos", "Primer y último elemento.", "Jaja te culié"]
       op_correcta: 0 #id de opcion correcta
       punt_positiva: 1    #puntos que suma
       punt_negativa: 0.3 #puntos que resta
 
     - tipo: "text"
-      pregunta: "En verdad esto es otro test :)"
+      pregunta: "Bueno, que tal estas? :)"
+      opciones: "Al elementos que nosotros queremos"
       punt_positiva: 1    #puntos que suma
       punt_negativa: 0.3 #puntos que resta
     
