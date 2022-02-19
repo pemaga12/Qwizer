@@ -26,10 +26,10 @@ class QuestionContainer extends React.Component {
     if(pregunta != null){
 
       if(pregunta.type === 'test'){
-        return  <TestQuestion key={pregunta.id} question={pregunta.question} options={pregunta.options} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
+        return  <TestQuestion key={pregunta.id} idCuestionario={this.props.idCuestionario} question={pregunta.question} options={pregunta.options} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
       } // else type = 'text'
 
-      return <TextQuestion key={pregunta.id} question={pregunta.question} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
+      return <TextQuestion key={pregunta.id} idCuestionario={this.props.idCuestionario} question={pregunta.question} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
     }
   
   }

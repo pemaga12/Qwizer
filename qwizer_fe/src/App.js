@@ -295,7 +295,7 @@ class App extends React.Component{
         }else{ 
           return <Router>
             <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-            <QuestionContainer questionList={this.state.questionList} sendTest = {this.enviarTest} addAnswerMethod = {this.addAnswer}/>
+            <QuestionContainer idCuestionario={this.state.currentTest} questionList={this.state.questionList} sendTest = {this.enviarTest} addAnswerMethod = {this.addAnswer}/>
           </Router>
         }
       }else if (this.state.currentPage === "upload"){ //Pagina para subir cuestionarios

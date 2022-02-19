@@ -1,6 +1,6 @@
 cuestionario:
-  titulo: "Tema3"
-  asignatura: "Estructura de Datos"
+  titulo: "Tema8"
+  asignatura: "ASOR"
   nPreguntas: 2
   secuencial: 0 #0 es que no es secuencial, 1 es secuencial
   duracion: 10 #minutos que durara el test
@@ -12,10 +12,8 @@ cuestionario:
       punt_positiva: 1    #puntos que suma
       punt_negativa: 0.3 #puntos que resta
 
-    - tipo: "test"
+    - tipo: "text"
       pregunta: "En verdad esto es otro test :)"
-      opciones:  ["Opcion1", "Opcion2"]
-      op_correcta: 1 #id de opcion correcta
       punt_positiva: 1    #puntos que suma
       punt_negativa: 0.3 #puntos que resta
     
