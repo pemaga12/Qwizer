@@ -1,5 +1,6 @@
 import React from 'react'
 import $ from 'jquery'; 
+import ErrorModal from './common/ErrorModal';
 
 
 class TarjetaCuestionario extends React.Component {
@@ -12,19 +13,23 @@ class TarjetaCuestionario extends React.Component {
             calificacion: 0,
             corregido: false,
             fecha_apertura: "",
-            fecha_cierre: ""
+            fecha_cierre: "",
+            bloqueado: false,
+            fecha_apertura_formateada: "",
+            fecha_cierre_formateada: ""
         };
        
         
         this.get_info = this.get_info.bind(this);
         this.getTest = this.getTest.bind(this);
+        this.comprobar_fecha = this.comprobar_fecha.bind(this);
+        this.show_modal = this.show_modal.bind(this);
     }
 
     
     componentWillMount(){
         this.get_info();
         if(localStorage.getItem("test_" + this.props.idCuestionario) != null){
-            console.log(localStorage.getItem("test_" + this.props.idCuestionario));
             this.setState({
                 downloaded: true
             });
@@ -39,7 +44,6 @@ class TarjetaCuestionario extends React.Component {
 
         const data = new Map([["idCuestionario", idCuestionario]]);
         const obj = JSON.stringify(Object.fromEntries(data));
-        console.log(obj)
         fetch(url , {
           method: 'POST',
           headers:{
@@ -84,10 +88,14 @@ class TarjetaCuestionario extends React.Component {
                 duracion: data.duracion,
                 calificacion: data.nota,
                 corregido: corregido,
-                fecha_apertura: data.fechaApertura,
-                fecha_cierre: data.fechaCierre
+                fecha_apertura_formateada: data.formattedFechaApertura,
+                fecha_cierre_formateada: data.formattedFechaCierre,
+                fecha_apertura: data.FechaApertura,
+                fecha_cierre: data.FechaCierre
             });
-            
+
+            this.comprobar_fecha();
+
             if(this.state.calificacion >= 5 && corregido){
                 var idCuestionario = "#cuestionario_" + this.props.idCuestionario;
                 $(idCuestionario).css("background-color", "#59ac79");
@@ -100,25 +108,48 @@ class TarjetaCuestionario extends React.Component {
         .catch(error => console.log(error));
     }
 
+    comprobar_fecha = () => {
+        const fechaApertura = new Date(this.state.fecha_apertura);
+        const fechaCierre = new Date(this.state.fecha_cierre);
+        var today = Date.now();
+
+        today = new Date(today);
+
+        if(fechaApertura > today || today > fechaCierre){
+            this.setState({
+                bloqueado: true
+            });
+        }
+    }
+
+    show_modal = () => {
+        const id = "#fecha_" + this.props.idCuestionario;
+        window.$(id).modal('show');
+    }
+
+
     render() { 
         return(
             <div className="card asignatura-section " name={this.props.cuestionario} id={this.props.idCuestionario}>
                 <div id={"cuestionario_" + this.props.idCuestionario} className="header bg-blue-grey">
-                    <h2>{this.props.cuestionario}</h2>
+                    <h2>{this.props.cuestionario}</h2>{this.state.corregido && <h5>Calificación: {this.state.calificacion}</h5>}
                 </div>
                 <div className='asignatura-inner-body row'>
                     <div className="col-9">
+                        
                         <p>Duracion: {this.state.duracion} minutos</p>
-                        <p>Fecha de apertura: {this.state.fecha_apertura}</p>
-                        <p>Fecha de cierre: {this.state.fecha_cierre}</p>
-                        {this.state.corregido && <p>Calificación: {this.state.calificacion}</p>}
+                        <p>Fecha de apertura: {this.state.fecha_apertura_formateada}</p>
+                        <p>Fecha de cierre: {this.state.fecha_cierre_formateada}</p>
+                        
                         
                     </div>
                    <div className="col-3 button-section">
-                        {(this.state.downloaded && !this.state.corregido) && <button className="btn btn-primary login-button" onClick={() => this.props.empezarTest(this.props.idCuestionario)}>Realizar</button>}
-                        {!this.state.downloaded && <button className="btn btn-success login-button" onClick={() => this.getTest(this.props.idCuestionario)}>Descargar test</button>}
+                        {(this.state.downloaded && !this.state.corregido && !this.state.bloqueado) && <button className="btn btn-primary login-button" onClick={() => this.props.empezarTest(this.props.idCuestionario)}>Realizar</button>}
+                        {!this.state.downloaded && !this.state.corregido &&<button className="btn btn-success login-button" onClick={() => this.getTest(this.props.idCuestionario)}>Descargar test</button>}
+                        {(this.state.downloaded && !this.state.corregido && this.state.bloqueado) && <button type="button" className="btn btn-primary" data-toggle="modal" onClick={this.show_modal}>Realizar</button>}
                         {this.state.corregido && <button className="btn btn-primary login-button" >Revisar</button>}
                     </div>
+                    <ErrorModal id={"fecha_" + this.props.idCuestionario} message={["El test solo se puede resolver entre las siguientes fechas:", <br/> , this.state.fecha_apertura_formateada, <br/> ,this.state.fecha_cierre_formateada]}></ErrorModal>
                 </div>                        
             </div>                
         );

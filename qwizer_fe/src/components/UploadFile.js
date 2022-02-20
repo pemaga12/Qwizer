@@ -19,7 +19,6 @@ export default class UploadFile extends Component {
     
     setFile = (e) =>{
         this.setState({file: e.target.files[0]})
-        console.log(e.target.files[0]);
     }
 
     uploadFile = () => {
@@ -30,7 +29,6 @@ export default class UploadFile extends Component {
                 
                 const fichero_yaml = new Map([["fichero_yaml", e.target.result]]);
                 const jsonObject = JSON.stringify(Object.fromEntries(fichero_yaml));
-                console.log(jsonObject)
                 var token = localStorage.getItem('token');
 
                 fetch('http://127.0.0.1:8000/api/upload', {
@@ -58,7 +56,6 @@ export default class UploadFile extends Component {
     render() {
 
         //if(this.state.file !== ''){
-            console.log(this.state.file)
             return (
                 <div className="upload-body">
                     <div className="card upload-section ">

@@ -3,8 +3,30 @@
 
 body{
     font-family: 'Open Sans', sans-serif   !important;
+    
 }
 
 a{
     cursor:pointer;
+}
+
+.error-modal-header{
+    color:white;
+    background-color: #d45461;
+}
+
+.btn.btn-error{
+    background-color: #d45461;
+    border-color: #d45461;
+    color:white;
+}
+
+.btn.btn-error:hover{
+    background-color: #963d46;
+    border-color: #963d46;
+}
+
+.sidepanel-body{
+    background-color: #F5E3DC;
+    height: 100%;
 }

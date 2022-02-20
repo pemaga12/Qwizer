@@ -122,14 +122,14 @@ def get_asignaturas(request):
     print(role)
 
     if role == 'student':
-        listaIdAsignaturas = EsAlumno.objects.filter(idAlumno_id=identif)
+        listaIdAsignaturas = EsAlumno.objects.filter(idAlumno_id=identif).order_by('idAsignatura')
         for idAsignartura in listaIdAsignaturas:
             nombre = Asignaturas.objects.get(id=idAsignartura.idAsignatura_id)
             listaAsignaturas.append(nombre.asignatura)
             listaIds.append(idAsignartura.idAsignatura_id)
         
     elif role == 'teacher':
-        listaIdAsignaturas = Imparte.objects.filter(idProfesor_id=identif)
+        listaIdAsignaturas = Imparte.objects.filter(idProfesor_id=identif).order_by('idAsignatura')
         for idAsignartura in listaIdAsignaturas:
             nombre = Asignaturas.objects.get(id=idAsignartura.idAsignatura_id)
             listaAsignaturas.append(nombre.asignatura)
@@ -149,7 +149,7 @@ def get_cuestionarios(request):
     listaCuestionarios = []
     asignatura = Asignaturas.objects.get(id= request.data["idAsignatura"])
     
-    cuestionarios = Cuestionarios.objects.filter(idAsignatura = request.data["idAsignatura"])
+    cuestionarios = Cuestionarios.objects.filter(idAsignatura = request.data["idAsignatura"]).order_by('-fecha_cierre')
     idCuestionarios = []
     for cuestionario in cuestionarios:
         listaCuestionarios.append(cuestionario.titulo)
@@ -181,8 +181,8 @@ def get_info_asignatura(request):
 def get_info_cuestionario(request):
     cuestionario = Cuestionarios.objects.get(id = request.data["idCuestionario"])
     duracion = cuestionario.duracion
-    fechaApertura = cuestionario.fecha_apertura.strftime("%d/%m/%Y, %H:%M:%S")
-    fechaCierre = cuestionario.fecha_cierre.strftime("%d/%m/%Y, %H:%M:%S")
+    fechaApertura = cuestionario.fecha_apertura
+    fechaCierre = cuestionario.fecha_cierre
     notaCuestionario = 0
     try:
         nota = Notas.objects.get(idCuestionario = cuestionario, idAlumno = request.user)
@@ -190,7 +190,8 @@ def get_info_cuestionario(request):
         notaCuestionario = nota.nota
     except:
         corregido = 0
-    return Response({'duracion': duracion, 'fechaApertura': fechaApertura, 'fechaCierre': fechaCierre, 'corregido': corregido, 'nota': notaCuestionario})
+    return Response({'duracion': duracion, 'formattedFechaApertura': fechaApertura.strftime("%d/%m/%Y, %H:%M:%S"), 
+    'formattedFechaCierre': fechaCierre.strftime("%d/%m/%Y, %H:%M:%S"), "FechaApertura": fechaApertura, "FechaCierre": fechaCierre, 'corregido': corregido, 'nota': notaCuestionario})
 
 
 @api_view(['POST'])
@@ -242,7 +243,11 @@ def test(request):
     content = {
         'password': key.hex(),
         'iv': in_iv,
-        'encrypted_message': binascii.b2a_base64(encrypted).rstrip(),        
+        'encrypted_message': binascii.b2a_base64(encrypted).rstrip(), 
+        'formatted_fecha_apertura': cuestionario.fecha_apertura.strftime("%d/%m/%Y, %H:%M:%S"),
+        'formatted_fecha_cierre': cuestionario.fecha_cierre.strftime("%d/%m/%Y, %H:%M:%S"),
+        'fecha_cierre': cuestionario.fecha_apertura,
+        'fecha_apertura': cuestionario.fecha_apertura
     }
 
     return Response(content)

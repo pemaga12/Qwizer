@@ -1,12 +1,12 @@
 cuestionario:
-  titulo: "Tema1"
+  titulo: "Tema4"
   password: "1234"
-  asignatura: "Fundamentos de la algoritmia"
+  asignatura: "Estructura de datos"
   nPreguntas: 2
   secuencial: 0 #0 es que no es secuencial, 1 es secuencial
   duracion: 10 #minutos que durara el test
-  fecha_apertura: '22/02/18 11:00:00' #Formato esperado: yy:mm:dd hh:mm:ss
-  fecha_cierre: '23/02/18 11:59:59' #Formato esperado: yy:mm:dd hh:mm:ss
+  fecha_apertura: '21/02/20 11:00:00' #Formato esperado: yy:mm:dd hh:mm:ss
+  fecha_cierre: '22/02/23 11:59:59' #Formato esperado: yy:mm:dd hh:mm:ss
   preguntas:
     - tipo: "test"
       pregunta: "En colas, nosotros solo podemos acceder al..."

@@ -63,7 +63,7 @@ class TarjetaAsignatura extends React.Component {
                         <p>Numero de tests pendientes: {this.state.nPendientes}</p>
                     </div>
                     <div className="col-3 button-section">
-                        <button className="btn btn-primary login-button" onClick={() => this.props.getCuestionarios(this.props.idAsignatura)}>Ver mas</button>
+                        <button className="btn btn-primary login-button" onClick={() => this.props.getCuestionarios(this.props.idAsignatura, this.props.asignatura)}>Ver mas</button>
                     </div>
                 </div>                        
             </div>                

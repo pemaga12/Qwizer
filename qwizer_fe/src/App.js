@@ -33,6 +33,7 @@ class App extends React.Component{
       idCuestionarios: [],              //Guarda los IDs de los cuestionarios
       rol: "",
       currentTest: undefined,
+      currentAsignatura: undefined      //Guarda el nombre de la asignatura para la que estamos viendo los cuestionarios
     };
     
     //Login functions
@@ -65,13 +66,20 @@ class App extends React.Component{
     var actual_page = localStorage.getItem('page');
     if(actual_page == null){
       localStorage.setItem('page', "login");
-    }else{
+    }
+    else{
+      /*
       if(actual_page === "index"){
-        console.log("hola");
         this.getAsignaturas();
         
       }
       this.setState({currentPage:actual_page});
+      */
+      this.getAsignaturas();
+      this.setState({
+        currentPage: "index"
+      });
+      localStorage.setItem("page", "index");
     }
   }
 
@@ -200,12 +208,13 @@ class App extends React.Component{
     });
   }
 
-  getCuestionarios = (idAsignatura) => {
+  getCuestionarios = (idAsignatura, nombreAsignatura) => {
 
     getSubjectTests(idAsignatura).then(data => {
       this.setState({
         cuestionarios: data.cuestionarios,
-        idCuestionarios: data.idCuestionarios
+        idCuestionarios: data.idCuestionarios,
+        currentAsignatura: nombreAsignatura
       });
       this.changeCurrentPage("cuestionarios");   
     });
@@ -283,7 +292,7 @@ class App extends React.Component{
           document.title = "Cuestionarios";
           return  <Router>
             <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-            <CuestionariosContainer cuestionarios={this.state.cuestionarios} idCuestionarios={this.state.idCuestionarios} empezarTest={this.startTest}></CuestionariosContainer> 
+            <CuestionariosContainer cuestionarios={this.state.cuestionarios} idCuestionarios={this.state.idCuestionarios} empezarTest={this.startTest} asignatura={this.state.currentAsignatura}></CuestionariosContainer> 
             </Router>
       }else if (this.state.currentPage === "test"){//Pagina del test
         if (!this.state.allow){ //Introduce la contrasenia del test para poder hacerlo
