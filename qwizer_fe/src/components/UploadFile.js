@@ -19,14 +19,15 @@ export default class UploadFile extends Component {
     
     setFile = (e) =>{
         this.setState({file: e.target.files[0]})
+        console.log("He cambiado el fichero!")
+        e.target.value = ''
     }
 
     uploadFile = () => {
         if(this.state.file.name !== ""){
             let reader = new FileReader();
             reader.readAsText(this.state.file,'utf-8');
-            reader.onload = (e) =>{
-                
+            reader.onload = (e) =>{               
                 const fichero_yaml = new Map([["fichero_yaml", e.target.result]]);
                 const jsonObject = JSON.stringify(Object.fromEntries(fichero_yaml));
                 var token = localStorage.getItem('token');
@@ -42,10 +43,10 @@ export default class UploadFile extends Component {
                 .then(response => response.json())
                 .then(data => {
                 
+                    $("#message_paragraph").text(data.message);  
                     this.setState({
-                        file:''
-                    });
-                    $("#message_paragraph").text(data.message);             
+                        file: ""
+                    });          
                     })
                 .catch(error => console.log(error));
             }
