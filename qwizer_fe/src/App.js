@@ -240,9 +240,10 @@ class App extends React.Component{
     else{
       localStorage.setItem('page', page);
     }
-
+    
     this.setState({
       currentPage : page,
+      allow: false
     });
    
   }
