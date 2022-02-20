@@ -4,6 +4,7 @@ import React from 'react'
 import TestQuestion from './TestQuestion.js'
 import TextQuestion from './TextQuestion.js'
 import QuestionNav from './QuestionNav.js'
+import Timer from './Timer.js';
 
 
 
@@ -82,6 +83,7 @@ class QuestionContainer extends React.Component {
         <div class="p-4 row-1">
           <div class="col" className="card">
             <h1 class="text-center">Nombre del Test</h1>
+            <Timer duracion={1} sendTest={this.props.sendTest}></Timer>
           </div>
         </div>
 
