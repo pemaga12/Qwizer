@@ -1,6 +1,6 @@
 import React from 'react'
 import $ from 'jquery'; 
-import ErrorModal from './common/ErrorModal';
+import ErrorModal from './common/modals/ErrorModal';
 
 
 class TarjetaCuestionario extends React.Component {

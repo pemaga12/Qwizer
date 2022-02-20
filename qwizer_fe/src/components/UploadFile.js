@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import $ from 'jquery'; 
+import ErrorModal from './common/modals/ErrorModal';
+import SuccessModal from './common/modals/SuccessModal';
 
 
 
@@ -10,6 +12,7 @@ export default class UploadFile extends Component {
     
       this.state = {
          file:'',
+         message: undefined
       };
 
       this.setFile = this.setFile.bind(this);
@@ -19,7 +22,6 @@ export default class UploadFile extends Component {
     
     setFile = (e) =>{
         this.setState({file: e.target.files[0]})
-        console.log("He cambiado el fichero!")
         e.target.value = ''
     }
 
@@ -43,10 +45,17 @@ export default class UploadFile extends Component {
                 .then(response => response.json())
                 .then(data => {
                 
-                    $("#message_paragraph").text(data.message);  
                     this.setState({
-                        file: ""
-                    });          
+                        file: "",
+                        message: data.message
+                    });
+                    if(data.inserted == "false"){
+                        window.$("#inserted_error").modal('show');
+                    } 
+                    else{
+                        window.$("#inserted_success").modal('show');
+                    } 
+                             
                     })
                 .catch(error => console.log(error));
             }
@@ -75,10 +84,11 @@ export default class UploadFile extends Component {
                             {this.state.file !== '' && 
                                 <button type="button" className="btn btn-success btn-submit" onClick={this.uploadFile}>Subir Cuestionario</button>
                             }
-                            <p id="message_paragraph"></p>
                             </div>
                         </div>                        
                     </div>
+                    <ErrorModal id={"inserted_error"} message={this.state.message}></ErrorModal>
+                    <SuccessModal id={"inserted_success"} message={this.state.message}></SuccessModal>
                 </div>
             )
        

@@ -1,8 +1,7 @@
 import React from 'react'
-import NotificationPanel from './NotificationPanel';
 
 
-class ErrorModal extends React.Component {
+class SuccessModal extends React.Component {
     
   constructor(props){
     super(props);
@@ -19,8 +18,8 @@ class ErrorModal extends React.Component {
                 <div className="modal fade" id={this.props.id} tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div className="modal-dialog modal-dialog-centered" role="document">
                         <div className="modal-content">
-                        <div className="modal-header error-modal-header">
-                            <h5 className="modal-title" id="exampleModalLongTitle">Error</h5>
+                        <div className="modal-header success-modal-header">
+                            <h5 className="modal-title" id="exampleModalLongTitle">Todo ha ido bien</h5>
                             <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={this.close_modal}>
                             <span aria-hidden="true">&times;</span>
                             </button>
@@ -29,7 +28,7 @@ class ErrorModal extends React.Component {
                             {this.props.message}
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-error" data-dismiss="modal" onClick={this.close_modal}>Cerrar</button>
+                            <button type="button" className="btn btn-success" data-dismiss="modal" onClick={this.close_modal}>Cerrar</button>
                         </div>
                         </div>
                     </div>
@@ -39,4 +38,4 @@ class ErrorModal extends React.Component {
 
 }
 
-export default ErrorModal;
+export default SuccessModal;

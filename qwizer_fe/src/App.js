@@ -14,6 +14,7 @@ import CuestionariosContainer from './components/CuestionariosContainer';
 import {comprobarPassword,descifrarTest,sendTest} from './utils/manage_test.js'
 import {logIn,logOut} from './utils/manage_user.js'
 import {getSubjects,getSubjectTests} from './utils/manage_subjects'
+import CuestionarioPassword from './components/CuestionarioPassword';
 
 
 class App extends React.Component{
@@ -57,7 +58,7 @@ class App extends React.Component{
     this.restorePassword = this.restorePassword.bind(this);
     this.changeCurrentPage = this.changeCurrentPage.bind(this);
 
-    this.insertTestPasswordPage = this.insertTestPasswordPage.bind(this);
+    
 
   };
 
@@ -250,27 +251,6 @@ class App extends React.Component{
 
   //  -----------------------------------------------------------------------------------------
 
-  insertTestPasswordPage = () => { //Pagina para insertar contrasenia para hacer el test
-    return <div class="index-body container-fluid">
-        <div class="p-4 row"></div>
-        <div class="row" className="card">
-          <div class="col text-center">
-            <h1>Introduce la contraseña</h1>
-            <h1>para empezar el examen!</h1>
-          </div>
-        </div>
-        <div class="p-4 row">
-          <div class="col text-center">
-            <input type="text" className="center" onChange={this.getPass}></input>
-          </div>
-        </div>
-        <div class="p-4 row">
-          <div class="col text-center">
-            <button type="button" class="btn btn-success" onClick={this.unlockTest}>Empezar Test</button>
-          </div>
-        </div>
-    </div>  
-  }
   
   render(){
 
@@ -299,7 +279,7 @@ class App extends React.Component{
           document.title = "Password Check";
           return  <Router>
             <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-            {this.insertTestPasswordPage()}
+            <CuestionarioPassword unlockTest={this.unlockTest} getPass={this.getPass}></CuestionarioPassword>
             </Router>
         }else{ 
           return <Router>

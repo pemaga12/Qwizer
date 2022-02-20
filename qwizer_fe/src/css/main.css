@@ -30,3 +30,25 @@ a{
     background-color: #F5E3DC;
     height: 100%;
 }
+
+.success-modal-header{
+    color:white;
+    background-color: #5cb481;
+}
+
+.btn.btn-success{
+    background-color: #509e71;
+    border-color: #509e71;
+    color:white;
+}
+
+.btn.btn-success:hover{
+    background-color: #40805b;
+    border-color: #40805b;
+}
+
+/* CONTRASEÑA DEL CUESTIONARIO */
+.margin-password{
+    margin-left: 10vw;
+    margin-right: 10vw;
+}
