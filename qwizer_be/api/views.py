@@ -356,8 +356,8 @@ Llegan las respuestas de un test:
 {
     'idCuestionario': 1,
      'respuestas': [
-        {'id': 1, 'type': 'test', 'answr': '2'},
-        {'id': 2, 'type': 'test', 'answr': '5'},
+        {'id': 1, 'type': 'test', 'answr': 2},
+        {'id': 2, 'type': 'text', 'answr': 'blabla'},
     ]
 }
 """

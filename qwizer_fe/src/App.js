@@ -154,7 +154,12 @@ class App extends React.Component{
       var pregunta = {}
       pregunta.id = key
       pregunta.type = value.type
-      pregunta.answr = value.answr
+      if(pregunta.type == 'test'){
+        pregunta.answr = Number(value.answr)
+      }else{
+        pregunta.answr = value.answr
+      }
+      
       listaRespuestas.push(pregunta);
     }
 
@@ -179,12 +184,14 @@ class App extends React.Component{
         questionList: list,
         allow:true
       });
+      localStorage.setItem('initTime',Date.now()) //guardamos la hora a la que empieza el examen
     }
   }
 
-  startTest = (id) => { 
+  startTest = (id,duracion) => { 
     this.setState({
       currentTest: id,
+      testDuration:duracion,
     });
     this.changeCurrentPage('test');
   }
@@ -283,9 +290,20 @@ class App extends React.Component{
             <CuestionarioPassword unlockTest={this.unlockTest} getPass={this.getPass}></CuestionarioPassword>
             </Router>
         }else{ 
+          //
+          //
+          //
+          //
+          //
+          //Pasarle la toda la informacion del cuestionario seleccionado en un objeto en vez de atributo a atributo !!!
+          //
+          //
+          //
+          //
+          //
           return <Router>
             <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-            <QuestionContainer idCuestionario={this.state.currentTest} questionList={this.state.questionList} sendTest = {this.enviarTest} addAnswerMethod = {this.addAnswer}/>
+            <QuestionContainer duration={this.state.testDuration} idCuestionario={this.state.currentTest} questionList={this.state.questionList} sendTest={this.enviarTest} addAnswerMethod={this.addAnswer}/>
           </Router>
         }
       }else if (this.state.currentPage === "upload"){ //Pagina para subir cuestionarios

@@ -144,7 +144,7 @@ class TarjetaCuestionario extends React.Component {
                         
                     </div>
                    <div className="col-3 button-section">
-                        {(this.state.downloaded && !this.state.corregido && !this.state.bloqueado) && <button className="btn btn-primary login-button" onClick={() => this.props.empezarTest(this.props.idCuestionario)}>Realizar</button>}
+                        {(this.state.downloaded && !this.state.corregido && !this.state.bloqueado) && <button className="btn btn-primary login-button" onClick={() => this.props.empezarTest(this.props.idCuestionario,this.state.duracion)}>Realizar</button>}
                         {!this.state.downloaded && !this.state.corregido &&<button className="btn btn-success login-button" onClick={() => this.getTest(this.props.idCuestionario)}>Descargar test</button>}
                         {(this.state.downloaded && !this.state.corregido && this.state.bloqueado) && <button type="button" className="btn btn-primary" data-toggle="modal" onClick={this.show_modal}>Realizar</button>}
                         {this.state.corregido && <button className="btn btn-primary login-button" >Revisar</button>}
