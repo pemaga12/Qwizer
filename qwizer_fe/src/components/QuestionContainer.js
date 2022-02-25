@@ -13,7 +13,8 @@ class QuestionContainer extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      indPregunta:0
+      indPregunta:0,
+      numPreguntas:this.props.questionList.length,
     }
     this.questionType = this.questionType.bind(this);
     this.renderButtons = this.renderButtons.bind(this);
@@ -41,13 +42,12 @@ class QuestionContainer extends React.Component {
 
     //comprobar si se ha pasado de fecha ???
 
-    this.setState({leftTime:leftSeconds});
+    return leftSeconds;
   }
   
   questionType = (pregunta) => {
 
     if(pregunta != null){
-
       if(pregunta.type === 'test'){
         return  <TestQuestion key={pregunta.id} idCuestionario={this.props.idCuestionario} question={pregunta.question} options={pregunta.options} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
       } // else type = 'text'
@@ -61,7 +61,6 @@ class QuestionContainer extends React.Component {
 
     if(this.state.indPregunta + 1 <= this.state.numPreguntas-1 ){
       this.setState({indPregunta: this.state.indPregunta + 1});
-      this.updateTime();
     }
     
   }
@@ -69,7 +68,6 @@ class QuestionContainer extends React.Component {
 
     if(this.state.indPregunta - 1 >= 0 ){
       this.setState({indPregunta: this.state.indPregunta - 1});
-      this.updateTime();
     }
   }
 
@@ -93,9 +91,9 @@ class QuestionContainer extends React.Component {
   
 
   UNSAFE_componentWillMount(){
-    this.setState({numPreguntas:this.props.questionList.length});
-    this.updateTime();
+    
   }
+
   navHandler = (val) =>{
     this.setState({indPregunta:val});
   }
@@ -123,7 +121,7 @@ class QuestionContainer extends React.Component {
   };
 
   render() { 
-      
+    
     const renderQtype = this.questionType
     const pregunta = this.props.questionList[this.state.indPregunta]
     if(this.props.duration){
@@ -133,7 +131,7 @@ class QuestionContainer extends React.Component {
           <div class="p-4 row-1">
             <div class="col" className="card">
               <h1 class="text-center">Nombre del Test</h1>
-              <Countdown date={Date.now() + (this.state.leftTime*1000)} renderer={this.renderer}/>
+              <Countdown date={Date.now() + (this.updateTime()*1000)} renderer={this.renderer}/>
             </div>
           </div>
   

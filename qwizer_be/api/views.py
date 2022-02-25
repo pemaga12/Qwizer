@@ -252,6 +252,93 @@ def test(request):
 
     return Response(content)
 
+""" 
+    Conseguir test corregido (Revision)
+    nota : 5
+    questions:[
+        {
+            id:
+            question:
+            type: test
+            options:[
+                {
+                    id:
+                    op:
+                    correct_op:
+                    user_op:
+                },
+                {
+                    id:
+                    op:
+                    correct_op:
+                    user_op:
+                }
+            ]
+        },
+        {
+            id:
+            question:
+            type: text
+            correct_op:
+            user_op:
+                
+            ]
+        },
+    ]
+"""
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def testCorrected(request):
+
+    #---------------------------------
+    # AQUI COMPROBAR SI LA PETICION LA ESTA HACIENDO EL ALUMNO O EL PROFE
+    # Si es alumno: alumno = reques.user
+    # Si es profe : pasar el id de alumno y conseguir el objecto de alumno de la BBDD
+    #-----------------------------------
+
+    alumno = request.user
+
+    idCuestionario = request.data["idCuestionario"]
+    cuestionario = Cuestionarios.objects.get(id = idCuestionario)
+    pertenecen = PerteneceACuestionario.objects.filter(idCuestionario = cuestionario.id)
+    nota = Notas.objects.get(idCuestionario = cuestionario, idAlumno = alumno)
+
+    questions = []
+    for pertenece in pertenecen:
+        pregunta = Preguntas.objects.get(id = pertenece.idPregunta.id)
+        preguntaJSON = {}
+        preguntaJSON["id"] = pregunta.id
+        preguntaJSON["question"] = pregunta.pregunta
+        preguntaJSON["type"] = pregunta.tipoPregunta 
+        if pregunta.tipoPregunta == "test":
+            opcionesLista = []
+            opciones = OpcionesTest.objects.filter(idPregunta = pregunta.id)
+            for opcion in opciones:
+                opcionesJSON = {}
+                opcionesJSON["id"] = opcion.id
+                opcionesJSON["op"] = opcion.opcion
+                opcionesJSON["correct_op"] = RespuestasTest.objects.get(idPregunta=pregunta).idOpcion.id
+                opcionesJSON["user_op"] = RespuestasEnviadasTest.objects.get(idCuestionario=cuestionario,idAlumno=alumno,idPregunta=pregunta).idRespuesta.id
+                opcionesLista.append(opcionesJSON)
+            preguntaJSON["options"] = opcionesLista
+        if pregunta.tipoPregunta == "text":
+            preguntaJSON["correct_op"] = RespuestasTexto.objects.get(idPregunta=pregunta).respuesta
+            preguntaJSON["user_op"] = RespuestasEnviadasTest.objects.get(idCuestionario=cuestionario,idAlumno=alumno,idPregunta=pregunta).Respuesta
+        questions.append(preguntaJSON)
+
+    messageJSON = {}
+    messageJSON["nota"] = nota
+    messageJSON["questions"] = questions
+
+    quizString = json.dumps(messageJSON)
+    
+    content = {
+        'corrected_test': quizString, 
+    }
+
+    return Response(content)
+
+
 #Un profesor solo puede subir tests de una asignatura que matricule
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
