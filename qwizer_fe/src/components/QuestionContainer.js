@@ -14,7 +14,6 @@ class QuestionContainer extends React.Component {
     super(props);
     this.state = {
       indPregunta:0,
-      numPreguntas:this.props.questionList.length,
     }
     this.questionType = this.questionType.bind(this);
     this.renderButtons = this.renderButtons.bind(this);
@@ -45,14 +44,21 @@ class QuestionContainer extends React.Component {
     return leftSeconds;
   }
   
+  UNSAFE_componentWillMount (){
+    if(this.props.questionList){ //si esta definido, porque si hace revision no lo esta
+      this.setState({numPreguntas:this.props.questionList.length});
+    }
+    
+  }
   questionType = (pregunta) => {
 
     if(pregunta != null){
+      
       if(pregunta.type === 'test'){
-        return  <TestQuestion key={pregunta.id} idCuestionario={this.props.idCuestionario} question={pregunta.question} options={pregunta.options} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
+        return  <TestQuestion revision={this.props.revision} infoPreg={pregunta} key={pregunta.id} idCuestionario={this.props.idCuestionario} question={pregunta.question} options={pregunta.options} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
       } // else type = 'text'
 
-      return <TextQuestion key={pregunta.id} idCuestionario={this.props.idCuestionario} question={pregunta.question} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
+      return <TextQuestion revision={this.props.revision} infoPreg={pregunta} key={pregunta.id} idCuestionario={this.props.idCuestionario} question={pregunta.question} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
     }
   
   }
@@ -88,12 +94,6 @@ class QuestionContainer extends React.Component {
 
   }
 
-  
-
-  UNSAFE_componentWillMount(){
-    
-  }
-
   navHandler = (val) =>{
     this.setState({indPregunta:val});
   }
@@ -116,15 +116,15 @@ class QuestionContainer extends React.Component {
             <div class="progress-bar progress-bar-striped" role="progressbar" style={{width:porcentaje+"%"}} aria-valuenow={porcentaje} aria-valuemin="0" aria-valuemax="100"></div>
           </div>
         </div>
-      //return <span>{hours}h:{minutes}min:{seconds}s</span>;
     }
   };
 
   render() { 
     
     const renderQtype = this.questionType
-    const pregunta = this.props.questionList[this.state.indPregunta]
-    if(this.props.duration){
+    
+    if(this.props.revision == false){
+      const pregunta = this.props.questionList[this.state.indPregunta]
       return(
         <div class="index-body container-fluid" id="questions">
   
@@ -157,6 +157,37 @@ class QuestionContainer extends React.Component {
             </div>
           </div>
   
+        </div>
+      );
+    }else if(this.props.revision == true && this.props.correctedTest ){
+      const correctedTestInfo = this.props.correctedTest
+      return(
+        <div class="index-body container-fluid" id="questions">
+  
+          <div class="p-4 row-1">
+            <div class="col" className="card">
+              <h1 class="text-center">{correctedTestInfo.titulo}</h1>
+            </div>
+            <div class="col" className="card">
+              <h1 class="text-center">Calificacion: {correctedTestInfo.nota}</h1>
+            </div>
+          </div>
+  
+          <div class="p-4 row">
+            <div class="p-2 col-9" id="question">
+                <div className="card">      
+                      <div key={correctedTestInfo.questions[this.state.indPregunta].id}>
+                        <h2 className="p-2 m-2 card"> {this.state.indPregunta+1}{".-" + correctedTestInfo.questions[this.state.indPregunta].question}</h2>
+                        {renderQtype(correctedTestInfo.questions[this.state.indPregunta])}
+                      </div>
+                </div>
+            </div>
+  
+            <div class="p-2 col-3" id="question-nav">
+              <QuestionNav navigationHandler={this.navHandler} listaPreguntas={correctedTestInfo.questions}/>
+            </div>
+  
+          </div>
         </div>
       );
     }else{

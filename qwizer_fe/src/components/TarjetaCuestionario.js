@@ -2,7 +2,6 @@ import React from 'react'
 import $ from 'jquery'; 
 import ErrorModal from './common/modals/ErrorModal';
 
-
 class TarjetaCuestionario extends React.Component {
 
     constructor(props) {
@@ -147,7 +146,7 @@ class TarjetaCuestionario extends React.Component {
                         {(this.state.downloaded && !this.state.corregido && !this.state.bloqueado) && <button className="btn btn-primary login-button" onClick={() => this.props.empezarTest(this.props.idCuestionario,this.state.duracion)}>Realizar</button>}
                         {!this.state.downloaded && !this.state.corregido &&<button className="btn btn-success login-button" onClick={() => this.getTest(this.props.idCuestionario)}>Descargar test</button>}
                         {(this.state.downloaded && !this.state.corregido && this.state.bloqueado) && <button type="button" className="btn btn-primary" data-toggle="modal" onClick={this.show_modal}>Realizar</button>}
-                        {this.state.corregido && <button className="btn btn-primary login-button" >Revisar</button>}
+                        {this.state.corregido && <button className="btn btn-primary login-button" onClick={() => this.props.revisionTest(this.props.idCuestionario)}>Revisar</button>}
                     </div>
                     <ErrorModal id={"fecha_" + this.props.idCuestionario} message={["El test solo se puede resolver entre las siguientes fechas:", <br/> , this.state.fecha_apertura_formateada, <br/> ,this.state.fecha_cierre_formateada]}></ErrorModal>
                 </div>                        

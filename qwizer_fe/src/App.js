@@ -11,11 +11,10 @@ import NavBar from './components/common/NavBar';
 import UploadFile from './components/UploadFile';
 import CuestionariosContainer from './components/CuestionariosContainer';
 
-import {comprobarPassword,descifrarTest,sendTest} from './utils/manage_test.js'
+import {comprobarPassword,descifrarTest,sendTest,getCorrectedTest} from './utils/manage_test.js'
 import {logIn,logOut} from './utils/manage_user.js'
 import {getSubjects,getSubjectTests} from './utils/manage_subjects'
 import CuestionarioPassword from './components/CuestionarioPassword';
-
 
 class App extends React.Component{
 
@@ -52,6 +51,7 @@ class App extends React.Component{
     this.addAnswer = this.addAnswer.bind(this);
     this.startTest = this.startTest.bind(this);
     this.enviarTest = this.enviarTest.bind(this);
+    this.revisionTest = this.revisionTest.bind(this);
 
     // Funciones auxiliares
     this.getPass = this.getPass.bind(this);
@@ -175,7 +175,7 @@ class App extends React.Component{
 
   //  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-  //// Funciones para desbloquear, empezar, enviarTest el test >>>>>>>>>>>>>>>>>>>
+  //// Funciones para desbloquear, empezar, enviarTest, revision el test >>>>>>>>>>>>>>>>>>>
   unlockTest = () =>{
     if(comprobarPassword(this.state.contra,this.state.currentTest)){
       var list = descifrarTest(this.state.currentTest);
@@ -199,6 +199,16 @@ class App extends React.Component{
   enviarTest = () => {
     sendTest().then(data => {
       this.changeCurrentPage('cuestionarios');
+    }).catch(function(error){
+      console.log("Error", error)
+    })
+  }
+
+  revisionTest = (idCuestionario) => {
+    getCorrectedTest(idCuestionario).then(data => {
+      var jsonData = JSON.parse(data.corrected_test)
+      this.setState({testCorregido:jsonData});
+      this.changeCurrentPage('revision');
     }).catch(function(error){
       console.log("Error", error)
     })
@@ -280,7 +290,7 @@ class App extends React.Component{
           document.title = "Cuestionarios";
           return  <Router>
             <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-            <CuestionariosContainer cuestionarios={this.state.cuestionarios} idCuestionarios={this.state.idCuestionarios} empezarTest={this.startTest} asignatura={this.state.currentAsignatura}></CuestionariosContainer> 
+            <CuestionariosContainer cuestionarios={this.state.cuestionarios} idCuestionarios={this.state.idCuestionarios} empezarTest={this.startTest} asignatura={this.state.currentAsignatura} revisionTest={this.revisionTest}></CuestionariosContainer> 
             </Router>
       }else if (this.state.currentPage === "test"){//Pagina del test
         if (!this.state.allow){ //Introduce la contrasenia del test para poder hacerlo
@@ -291,21 +301,18 @@ class App extends React.Component{
             </Router>
         }else{ 
           //
-          //
-          //
-          //
-          //
           //Pasarle la toda la informacion del cuestionario seleccionado en un objeto en vez de atributo a atributo !!!
-          //
-          //
-          //
-          //
           //
           return <Router>
             <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-            <QuestionContainer duration={this.state.testDuration} idCuestionario={this.state.currentTest} questionList={this.state.questionList} sendTest={this.enviarTest} addAnswerMethod={this.addAnswer}/>
+            <QuestionContainer revision={false} duration={this.state.testDuration} idCuestionario={this.state.currentTest} questionList={this.state.questionList} sendTest={this.enviarTest} addAnswerMethod={this.addAnswer}/>
           </Router>
         }
+      }else if (this.state.currentPage === "revision") {
+        return <Router>
+            <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
+            <QuestionContainer revision={true} correctedTest={this.state.testCorregido}/>
+          </Router>
       }else if (this.state.currentPage === "upload"){ //Pagina para subir cuestionarios
          return <Router>
             <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>

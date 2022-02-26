@@ -185,7 +185,10 @@ def get_info_cuestionario(request):
     fechaCierre = cuestionario.fecha_cierre
     notaCuestionario = 0
     try:
-        nota = Notas.objects.get(idCuestionario = cuestionario, idAlumno = request.user)
+        #-----
+        #Corregir Un alumno solo puede tener una nota para un cuestionario, solo puede hacer un cuestionrio una vez
+        #......
+        nota = Notas.objects.get(idCuestionario = cuestionario, idAlumno = request.user) # <-- Salta excepcion si devuelve mas de uno
         corregido = 1
         notaCuestionario = nota.nota
     except:
@@ -254,6 +257,7 @@ def test(request):
 
 """ 
     Conseguir test corregido (Revision)
+    titulo:
     nota : 5
     questions:[
         {
@@ -264,16 +268,14 @@ def test(request):
                 {
                     id:
                     op:
-                    correct_op:
-                    user_op:
                 },
                 {
                     id:
                     op:
-                    correct_op:
-                    user_op:
                 }
-            ]
+            ],
+            correct_op:
+            user_op:
         },
         {
             id:
@@ -297,15 +299,15 @@ def testCorrected(request):
     #-----------------------------------
 
     alumno = request.user
-
+    print(request.data)
     idCuestionario = request.data["idCuestionario"]
     cuestionario = Cuestionarios.objects.get(id = idCuestionario)
     pertenecen = PerteneceACuestionario.objects.filter(idCuestionario = cuestionario.id)
-    nota = Notas.objects.get(idCuestionario = cuestionario, idAlumno = alumno)
+    notaObj = Notas.objects.get(idCuestionario = cuestionario, idAlumno = alumno)
 
     questions = []
     for pertenece in pertenecen:
-        pregunta = Preguntas.objects.get(id = pertenece.idPregunta.id)
+        pregunta = pertenece.idPregunta
         preguntaJSON = {}
         preguntaJSON["id"] = pregunta.id
         preguntaJSON["question"] = pregunta.pregunta
@@ -317,17 +319,18 @@ def testCorrected(request):
                 opcionesJSON = {}
                 opcionesJSON["id"] = opcion.id
                 opcionesJSON["op"] = opcion.opcion
-                opcionesJSON["correct_op"] = RespuestasTest.objects.get(idPregunta=pregunta).idOpcion.id
-                opcionesJSON["user_op"] = RespuestasEnviadasTest.objects.get(idCuestionario=cuestionario,idAlumno=alumno,idPregunta=pregunta).idRespuesta.id
                 opcionesLista.append(opcionesJSON)
             preguntaJSON["options"] = opcionesLista
+            preguntaJSON["correct_op"] = RespuestasTest.objects.get(idPregunta=pregunta).idOpcion.id
+            preguntaJSON["user_op"] = RespuestasEnviadasTest.objects.get(idCuestionario=cuestionario,idAlumno=alumno,idPregunta=pregunta).idRespuesta.id
         if pregunta.tipoPregunta == "text":
             preguntaJSON["correct_op"] = RespuestasTexto.objects.get(idPregunta=pregunta).respuesta
-            preguntaJSON["user_op"] = RespuestasEnviadasTest.objects.get(idCuestionario=cuestionario,idAlumno=alumno,idPregunta=pregunta).Respuesta
+            preguntaJSON["user_op"] = RespuestasEnviadasText.objects.get(idCuestionario=cuestionario,idAlumno=alumno,idPregunta=pregunta).Respuesta
         questions.append(preguntaJSON)
 
     messageJSON = {}
-    messageJSON["nota"] = nota
+    messageJSON["titulo"] = cuestionario.titulo
+    messageJSON["nota"] = int(notaObj.nota) #nota en decimal no se serializa bien en json
     messageJSON["questions"] = questions
 
     quizString = json.dumps(messageJSON)
@@ -335,7 +338,7 @@ def testCorrected(request):
     content = {
         'corrected_test': quizString, 
     }
-
+    print(content)
     return Response(content)
 
 

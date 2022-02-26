@@ -48,3 +48,21 @@ export const sendTest = () => {
     body: listaRespuestas
   })
 }
+
+export const getCorrectedTest = (idCuestionario) => {
+
+  var token = localStorage.getItem('token');
+  var url = "http://127.0.0.1:8000/api/test-corrected";
+  const message = new Map([["idCuestionario", idCuestionario]]);
+  const obj = JSON.stringify(Object.fromEntries(message));
+
+  return fetch(url, {
+    method: 'POST',
+    headers:{
+      'Content-type': 'application/json',
+      'Authorization': token
+    },
+    body: obj
+    })
+    .then(data => data.json())
+}
