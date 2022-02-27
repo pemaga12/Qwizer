@@ -27,6 +27,9 @@ class NavBar extends React.Component {
                             {localStorage.getItem("rol") == "teacher" && <li className="nav-item active">
                                 <a className="nav-link" onClick={() => this.props.changeCurrentPage("upload")}>Subir test <span className="sr-only"></span></a>
                             </li>}
+                            {localStorage.getItem("rol") == "teacher" && <li className="nav-item active">
+                                <a className="nav-link" onClick={() => this.props.changeCurrentPage("crear-cuestionario")}>Crear Cuestionario<span className="sr-only"></span></a>
+                            </li>}
                             
                         </ul>
                         <NotificationPanel></NotificationPanel>

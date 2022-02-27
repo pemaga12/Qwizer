@@ -15,6 +15,7 @@ import {comprobarPassword,descifrarTest,sendTest,getCorrectedTest} from './utils
 import {logIn,logOut} from './utils/manage_user.js'
 import {getSubjects,getSubjectTests} from './utils/manage_subjects'
 import CuestionarioPassword from './components/CuestionarioPassword';
+import CrearCuestionario from './components/CrearCuestionario';
 
 class App extends React.Component{
 
@@ -313,6 +314,11 @@ class App extends React.Component{
             <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
             <QuestionContainer revision={true} correctedTest={this.state.testCorregido}/>
           </Router>
+      }else if (this.state.currentPage === "crear-cuestionario"){ //Pagina para crear cuestionarios
+        return <Router>
+           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
+           <CrearCuestionario></CrearCuestionario>
+         </Router>
       }else if (this.state.currentPage === "upload"){ //Pagina para subir cuestionarios
          return <Router>
             <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>

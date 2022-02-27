@@ -126,7 +126,7 @@ def get_asignaturas(request):
         for idAsignartura in listaIdAsignaturas:
             nombre = Asignaturas.objects.get(id=idAsignartura.idAsignatura_id)
             listaAsignaturas.append(nombre.asignatura)
-            listaIds.append(idAsignartura.idAsignatura_id)
+            listaIds.append(idAsignartura.idAsignatura_id) #juntar los id de asignatura y asignatura en un jason en vez de tener dos listas
         
     elif role == 'teacher':
         listaIdAsignaturas = Imparte.objects.filter(idProfesor_id=identif).order_by('idAsignatura')
@@ -140,6 +140,20 @@ def get_asignaturas(request):
     
 
     return Response({'asignaturas':listaAsignaturas, 'idAsignaturas': listaIds})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_all_asignaturas(request):
+    listaAsignaturas = []
+    #comprobar que es un profesor
+    asignaturas = Asignaturas.objects.all()
+    for asignatura in asignaturas:
+        asig = {}
+        asig["asignatura"] = asignatura.asignatura
+        asig["id"] = asignatura.id
+        listaAsignaturas.append(asig)
+
+    return Response({'asignaturas':listaAsignaturas})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -340,6 +354,48 @@ def testCorrected(request):
     }
     print(content)
     return Response(content)
+
+"""
+    Devuelve todas las preguntas de todos los cuestionarios pertencientes a una asignatura
+"""
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_preg_asignatura(request):
+
+    #Comprobar el rol de profesor
+    profesor = request.user
+
+    asignatura = Asignaturas.objects.get(id = request.data["idAsignatura"])
+    listaCuestionarios = Cuestionarios.objects.filter(idAsignatura = asignatura)
+    listaPreguntas = []
+    for cuestionario in listaCuestionarios:
+        pertenecen = PerteneceACuestionario.objects.filter(idCuestionario = cuestionario.id)
+        for pertenece in pertenecen:
+            pregunta = Preguntas.objects.get(id = pertenece.idPregunta.id)
+            preguntaJSON = {}
+            preguntaJSON["id"] = pregunta.id
+            preguntaJSON["question"] = pregunta.pregunta
+            preguntaJSON["type"] = pregunta.tipoPregunta 
+            if pregunta.tipoPregunta == "test":
+                opcionesLista = []
+                opciones = OpcionesTest.objects.filter(idPregunta = pregunta.id)
+                for opcion in opciones:
+                    opcionesJSON = {}
+                    opcionesJSON["id"] = opcion.id
+                    opcionesJSON["op"] = opcion.opcion
+                    opcionesLista.append(opcionesJSON)
+                preguntaJSON["options"] = opcionesLista
+                preguntaJSON["correct_op"] = RespuestasTest.objects.get(idPregunta = pregunta).idOpcion.id
+            if pregunta.tipoPregunta == "text":
+                preguntaJSON["correct_op"] = RespuestasTexto.objects.get(idPregunta = pregunta).respuesta
+            listaPreguntas.append(preguntaJSON)
+
+    messageJSON = {}
+    messageJSON["preguntas"] = listaPreguntas
+    print(messageJSON)
+
+    return Response(messageJSON)
+
 
 
 #Un profesor solo puede subir tests de una asignatura que matricule
