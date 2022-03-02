@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {BrowserRouter as Router,Route,Switch} from 'react-router-dom';
+import {BrowserRouter as Router} from 'react-router-dom';
 
 import IndexContainer from './components/IndexContainer';
 import QuestionContainer from './components/QuestionContainer.js';
@@ -28,8 +28,7 @@ class App extends React.Component{
       login:false,                      //Guarda si se ha hecho login
       currentPage: "login",             //Página actual que está mostrando el login
       username: "",
-      asignaturas: [],                  //Guarda los nombres de las asignaturas
-      idAsignaturas: [],                //Guarda los IDs de las asignaturas 
+      asignaturas: [],                  //Guarda id y nombre de las asignaturas
       cuestionarios: [],                //Guarda los nombres de los cuestionarios
       idCuestionarios: [],              //Guarda los IDs de los cuestionarios
       rol: "",
@@ -91,7 +90,7 @@ class App extends React.Component{
     
     logIn(username, password).then(role => {
 
-      if(role == " "){
+      if(role === " "){
         window.alert("¡Contraseña incorrecta!")
       }else{
         this.getAsignaturas();
@@ -155,7 +154,7 @@ class App extends React.Component{
       var pregunta = {}
       pregunta.id = key
       pregunta.type = value.type
-      if(pregunta.type == 'test'){
+      if(pregunta.type === 'test'){
         pregunta.answr = Number(value.answr)
       }else{
         pregunta.answr = value.answr
@@ -222,7 +221,6 @@ class App extends React.Component{
     getSubjects().then(data => {
       this.setState({
         asignaturas: data.asignaturas,
-        idAsignaturas: data.idAsignaturas
       }); 
     });
   }
@@ -285,7 +283,7 @@ class App extends React.Component{
         document.title = "Inicio"
         return <Router> 
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-          <IndexContainer getAsignaturas={this.getAsignaturas} empezarTest={this.startTest} idAsignaturas={this.state.idAsignaturas} asignaturas={this.state.asignaturas} getCuestionarios={this.getCuestionarios}></IndexContainer>  
+          <IndexContainer getAsignaturas={this.getAsignaturas} empezarTest={this.startTest} asignaturas={this.state.asignaturas} getCuestionarios={this.getCuestionarios}></IndexContainer>  
         </Router>
       }else if (this.state.currentPage === "cuestionarios"){//Pagina que muestra los cuestionarios para la asignatura seleccionada
           document.title = "Cuestionarios";
@@ -317,7 +315,7 @@ class App extends React.Component{
       }else if (this.state.currentPage === "crear-cuestionario"){ //Pagina para crear cuestionarios
         return <Router>
            <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-           <CrearCuestionario></CrearCuestionario>
+           <CrearCuestionario changeCurrentPage={this.changeCurrentPage}></CrearCuestionario>
          </Router>
       }else if (this.state.currentPage === "upload"){ //Pagina para subir cuestionarios
          return <Router>

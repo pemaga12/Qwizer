@@ -66,3 +66,19 @@ export const getCorrectedTest = (idCuestionario) => {
     })
     .then(data => data.json())
 }
+
+
+export const sendCreatedTest = (cuestionario) => {
+
+  var token = localStorage.getItem('token');
+  var url = "http://127.0.0.1:8000/api/crear-cuestionario";
+  var jsonCuestionario = JSON.stringify(cuestionario)
+  return fetch(url, {
+    method: 'POST',
+    headers:{
+      'Content-type': 'application/json',
+      'Authorization': token
+    },
+    body: jsonCuestionario
+  }).then(data => data.json())
+}

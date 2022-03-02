@@ -16,15 +16,15 @@ class IndexContainer extends React.Component {
     render() {
         
         const empezarTest = this.props.empezarTest;
-        const idAsignaturas = this.props.idAsignaturas;
         const getCuestionarios = this.props.getCuestionarios;
+
         if(empezarTest){
             return(
                 <div className="index-body">
                     { this.props.asignaturas.map(function(asignatura,indx){
                       return (
                         <div className='d-flex justify-content-center'>
-                            <TarjetaAsignatura asignatura={asignatura} idAsignatura={idAsignaturas[indx]} getCuestionarios={getCuestionarios}></TarjetaAsignatura>
+                            <TarjetaAsignatura asignatura={asignatura.nombre} idAsignatura={asignatura.id} getCuestionarios={getCuestionarios}></TarjetaAsignatura>
                         </div>
                             
                         

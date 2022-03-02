@@ -116,34 +116,33 @@ def registro(request):
 @permission_classes([IsAuthenticated])
 def get_asignaturas(request):
     listaAsignaturas = []
-    listaIds = []
-    identif = str(request.user.id)
+    identif = request.user.id
     role = str(request.user.role)
     print(role)
 
-    if role == 'student':
-        listaIdAsignaturas = EsAlumno.objects.filter(idAlumno_id=identif).order_by('idAsignatura')
-        for idAsignartura in listaIdAsignaturas:
-            nombre = Asignaturas.objects.get(id=idAsignartura.idAsignatura_id)
-            listaAsignaturas.append(nombre.asignatura)
-            listaIds.append(idAsignartura.idAsignatura_id) #juntar los id de asignatura y asignatura en un jason en vez de tener dos listas
+
+    if role == 'student' or role == 'teacher':
+
+        if role == 'student':
+            listaIdAsignaturas = EsAlumno.objects.filter(idAlumno=identif).order_by('idAsignatura')
+        elif role == 'teacher':
+            listaIdAsignaturas = Imparte.objects.filter(idProfesor=identif).order_by('idAsignatura')
         
-    elif role == 'teacher':
-        listaIdAsignaturas = Imparte.objects.filter(idProfesor_id=identif).order_by('idAsignatura')
-        for idAsignartura in listaIdAsignaturas:
-            nombre = Asignaturas.objects.get(id=idAsignartura.idAsignatura_id)
-            listaAsignaturas.append(nombre.asignatura)
-            listaIds.append(idAsignartura.idAsignatura_id)
+        for asignartura in listaIdAsignaturas:
+            asignaturaJSON = {}
+            asignaturaJSON["id"] = asignartura.idAsignatura.id
+            asignaturaJSON["nombre"] = asignartura.idAsignatura.asignatura
+            listaAsignaturas.append(asignaturaJSON)
+        
     else:
         return Response('El admin no tiene ninguna asignatura')
 
-    
-
-    return Response({'asignaturas':listaAsignaturas, 'idAsignaturas': listaIds})
+    print(listaAsignaturas)
+    return Response({'asignaturas':listaAsignaturas})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def get_all_asignaturas(request):
+def get_all_asignaturas(request): #conseguir todas las asignaturas para el banco de preguntas
     listaAsignaturas = []
     #comprobar que es un profesor
     asignaturas = Asignaturas.objects.all()
@@ -356,46 +355,138 @@ def testCorrected(request):
     return Response(content)
 
 """
-    Devuelve todas las preguntas de todos los cuestionarios pertencientes a una asignatura
+    Devuelve todas las preguntas de una asignatura para el banco de preguntas
 """
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def get_preg_asignatura(request):
 
-    #Comprobar el rol de profesor
-    profesor = request.user
+    if str(request.user.role) == "student":
+        content = {
+            'inserted' : 'false',
+            'message': 'Error:  debes de ser administrador o profesor.'         
+        }
+        return Response(content) 
 
-    asignatura = Asignaturas.objects.get(id = request.data["idAsignatura"])
-    listaCuestionarios = Cuestionarios.objects.filter(idAsignatura = asignatura)
-    listaPreguntas = []
-    for cuestionario in listaCuestionarios:
-        pertenecen = PerteneceACuestionario.objects.filter(idCuestionario = cuestionario.id)
-        for pertenece in pertenecen:
-            pregunta = Preguntas.objects.get(id = pertenece.idPregunta.id)
-            preguntaJSON = {}
-            preguntaJSON["id"] = pregunta.id
-            preguntaJSON["question"] = pregunta.pregunta
-            preguntaJSON["type"] = pregunta.tipoPregunta 
-            if pregunta.tipoPregunta == "test":
-                opcionesLista = []
-                opciones = OpcionesTest.objects.filter(idPregunta = pregunta.id)
-                for opcion in opciones:
-                    opcionesJSON = {}
-                    opcionesJSON["id"] = opcion.id
-                    opcionesJSON["op"] = opcion.opcion
-                    opcionesLista.append(opcionesJSON)
-                preguntaJSON["options"] = opcionesLista
-                preguntaJSON["correct_op"] = RespuestasTest.objects.get(idPregunta = pregunta).idOpcion.id
-            if pregunta.tipoPregunta == "text":
-                preguntaJSON["correct_op"] = RespuestasTexto.objects.get(idPregunta = pregunta).respuesta
-            listaPreguntas.append(preguntaJSON)
+    asignatura = Asignaturas.objects.get(id = int(request.data["idAsignatura"]))
+    listaPreguntas = Preguntas.objects.filter(idAsignatura = asignatura)
+    preguntas = []
+
+    for pregunta in listaPreguntas:
+        preguntaJSON = {}
+        preguntaJSON["id"] = pregunta.id
+        preguntaJSON["question"] = pregunta.pregunta
+        preguntaJSON["type"] = pregunta.tipoPregunta 
+        if pregunta.tipoPregunta == "test":
+            opcionesLista = []
+            opciones = OpcionesTest.objects.filter(idPregunta = pregunta.id)
+            for opcion in opciones:
+                opcionesJSON = {}
+                opcionesJSON["id"] = opcion.id
+                opcionesJSON["op"] = opcion.opcion
+                opcionesLista.append(opcionesJSON)
+            preguntaJSON["options"] = opcionesLista
+            preguntaJSON["correct_op"] = RespuestasTest.objects.get(idPregunta = pregunta).idOpcion.id
+        if pregunta.tipoPregunta == "text":
+            preguntaJSON["correct_op"] = RespuestasTexto.objects.get(idPregunta = pregunta).respuesta
+        preguntas.append(preguntaJSON)
 
     messageJSON = {}
-    messageJSON["preguntas"] = listaPreguntas
+    messageJSON["preguntas"] = preguntas
     print(messageJSON)
 
     return Response(messageJSON)
 
+
+"""
+    Llega el siguiente JSON:
+    {
+        testName: 'ewew', 
+
+        testPass: 'ewe', 
+
+        testSubject: 1, 
+
+        secuencial: 0, 
+
+        fechaApertura: '2022-03-02T20:14'
+
+        fechaCierre: "2022-03-03T20:14"
+
+        questionIdList: [7]
+    }
+
+
+"""
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def crear_cuestionario(request):
+
+    if str(request.user.role) == "student":
+        content = {
+            'inserted' : 'false',
+            'message': 'Error: Para poder crear tests debes de ser administrador o profesor.'         
+        }
+        return Response(content) 
+    
+    profesor = request.user 
+
+    cuestionarioData = request.data
+
+    title = cuestionarioData["testName"]
+    passw = cuestionarioData["testPass"]
+    idAsignatura = cuestionarioData["testSubject"]
+    sec =  cuestionarioData["secuencial"]
+    durat = cuestionarioData["testDuration"]
+
+    fecha_apertura = cuestionarioData["fechaApertura"]
+    date_time_apertura = datetime.fromtimestamp(fecha_apertura/1000)
+
+    fecha_cierre = cuestionarioData["fechaCierre"]
+    date_time_cierre = datetime.fromtimestamp(fecha_cierre/1000)
+
+    listaPreguntas = cuestionarioData["questionList"]
+    
+    try:
+        asignatura = Asignaturas.objects.get(id=idAsignatura)
+    except:
+        content = {
+            'inserted' : 'false',
+            'message': 'Error: La asignatura no existe!'         
+        }
+        return Response(content) 
+
+    
+    cuestionario = Cuestionarios(titulo=title, nPreguntas=len(listaPreguntas), secuencial=sec, idAsignatura=asignatura, idProfesor=profesor, duracion=durat, password=passw, fecha_cierre = date_time_cierre, fecha_apertura = date_time_apertura)
+    
+    try:
+        cuestionario.save()  
+    except:
+        content = {
+            'inserted' : 'false',
+            'message': 'Error: El cuestionario ya existe'         
+        }
+        return Response(content)
+
+
+    i = 0
+    for preguntas in listaPreguntas:
+
+        pregunta = Preguntas(id=preguntas["id"])
+
+        pertenece = PerteneceACuestionario(nQuestion = i, puntosAcierto = preguntas["punt_positiva"], puntosFallo=preguntas["punt_negativa"], idCuestionario = cuestionario, idPregunta = pregunta)
+        pertenece.save()
+
+        i += 1
+        
+               
+    content = {
+        'inserted' : 'true',
+        'message': 'El cuestionario se ha insertado correctamente'         
+    }
+
+    return Response(content)
 
 
 #Un profesor solo puede subir tests de una asignatura que matricule
@@ -425,7 +516,7 @@ def upload(request):
     date_time_cierre = datetime.strptime(fecha_cierre, '%y/%m/%d %H:%M:%S')
     title = yamlplscomeon["cuestionario"]["titulo"]
     nombreAsig = yamlplscomeon["cuestionario"]["asignatura"]
-    idPr = int(request.user.id)
+    profesor = request.user
     nPreg = yamlplscomeon["cuestionario"]["nPreguntas"]
     sec = yamlplscomeon["cuestionario"]["secuencial"]
     durat = yamlplscomeon["cuestionario"]["duracion"]
@@ -437,7 +528,7 @@ def upload(request):
             'message': 'Error: La asignatura no existe!'         
         }
         return Response(content) 
-    profesor = User.objects.get(id = idPr)
+
     cuestionario = Cuestionarios(titulo=title, nPreguntas=nPreg, secuencial=sec, idAsignatura=asignatura, idProfesor=profesor, duracion=durat, password=passw, fecha_cierre = date_time_cierre, fecha_apertura = date_time_apertura)
     try:
         cuestionario.save()  
@@ -447,9 +538,8 @@ def upload(request):
             'message': 'Error: El cuestionario ya existe'         
         }
         return Response(content)  
-    #Obtenemos el id del cuestionario que acabamos de crear y empezamos a guardar las preguntas. Si existen simplemente se las añadimos al cuestionario
-    cuestionario = Cuestionarios.objects.get(titulo=title, nPreguntas=nPreg, secuencial=sec, idAsignatura=asignatura, idProfesor=profesor, duracion=durat)
-    cuestionario.id
+    
+
     preguntas = yamlplscomeon["cuestionario"]["preguntas"]
     i = 0
     preguntaExistente = False

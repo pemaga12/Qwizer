@@ -15,4 +15,5 @@ urlpatterns = [
     path('get-info-cuestionario', views.get_info_cuestionario, name='get-info-cuestionario'),
     path('get-preg-asignaturas', views.get_preg_asignatura, name='get-preg-asignaturas'),
     path('upload', views.upload, name='upload'),
+    path('crear-cuestionario', views.crear_cuestionario, name='crear-cuestionario'),
 ]

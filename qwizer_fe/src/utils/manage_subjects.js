@@ -1,6 +1,6 @@
 
 
-export const getSubjects = () => {//Asignaturas en la que esta matriculado el estudiante
+export const getSubjects = () => {//Asignaturas en la que esta matriculado el estudiante o las que imparte el profe
     
     var url = 'http://127.0.0.1:8000/api/get-asignaturas';
     var token = localStorage.getItem('token');
