@@ -49,11 +49,11 @@ export const sendTest = () => {
   })
 }
 
-export const getCorrectedTest = (idCuestionario) => {
+export const getCorrectedTest = (idCuestionario, idAlumno) => {              //idAlumno solo se usa cuando eres profesor y quieres ver los resultados para tu alumno
 
   var token = localStorage.getItem('token');
   var url = "http://127.0.0.1:8000/api/test-corrected";
-  const message = new Map([["idCuestionario", idCuestionario]]);
+  const message = new Map([["idCuestionario", idCuestionario], ["idAlumno", idAlumno]]);
   const obj = JSON.stringify(Object.fromEntries(message));
 
   return fetch(url, {

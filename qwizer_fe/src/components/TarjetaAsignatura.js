@@ -37,8 +37,7 @@ class TarjetaAsignatura extends React.Component {
         body: jsonObject
         })
         .then(response => response.json())
-        .then(data => {
-            
+        .then(data => {         
             this.setState({
                 nCuestionarios: data.nCuestionarios,
                 nPendientes: data.nPendientes,

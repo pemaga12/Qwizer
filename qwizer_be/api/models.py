@@ -134,7 +134,6 @@ class Cuestionarios(models.Model):
     titulo = models.CharField(blank=True, max_length=100, verbose_name='titulo')
     idProfesor = models.ForeignKey(User, on_delete=models.CASCADE)
     idAsignatura = models.ForeignKey('Asignaturas', on_delete=models.CASCADE)
-    nPreguntas = models.IntegerField(default=0, verbose_name='nPreguntas')
     duracion = models.IntegerField(default=10, verbose_name='duracion')
     #0 no es secuencial, 1 es secuencial
     secuencial =  models.IntegerField(default=1, verbose_name='secuencial')

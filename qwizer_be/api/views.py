@@ -244,7 +244,8 @@ def test(request):
     #Hay que hacer que el texto se pueda enviar en bloques de 16 bytes, sino no funciona
     message = _pad_string(quizString)
     #Proceso de generación de la key a partir del password
-    password = b'1234'
+    #password = b'1234'
+    password = bytes(cuestionario.password, 'utf-8')
     key = hashlib.sha256(password).digest()
     mode = AES.MODE_CFB
     #Utilizamos un IV
@@ -310,8 +311,10 @@ def testCorrected(request):
     # Si es alumno: alumno = reques.user
     # Si es profe : pasar el id de alumno y conseguir el objecto de alumno de la BBDD
     #-----------------------------------
-
-    alumno = request.user
+    if request.user.role == "student":
+        alumno = request.user
+    else:
+        alumno = User.objects.get(id = request.data["idAlumno"])
     print(request.data)
     idCuestionario = request.data["idCuestionario"]
     cuestionario = Cuestionarios.objects.get(id = idCuestionario)
@@ -632,7 +635,7 @@ Funcion que calcula la nota del cuestionario realizado
 def calcularNota(alumno,cuestionario,respuestas):
 
     notaTest = 0
-
+    
     for respuesta in respuestas:  
         pregunta = Preguntas.objects.get(id=respuesta["id"])
         pregunta_info = PerteneceACuestionario.objects.get(idPregunta =pregunta ,idCuestionario = cuestionario)
@@ -647,10 +650,57 @@ def calcularNota(alumno,cuestionario,respuestas):
                 notaTest = notaTest - pregunta_info.puntosFallo
             
         if respuesta["type"] == "text":
-            valor = "Todavia no hace nada, esta por implementar"
+            respuestaProcesada = respuesta["answr"].lower()
+            respuestaProcesada = respuestaProcesada.replace(" ", "")
+            respuestaCorrecta = RespuestasTexto.objects.get(idPregunta = respuesta["id"])
+            respuestaCorrectaProcesada = respuestaCorrecta.respuesta
+            print(respuestaCorrectaProcesada)
+            respuestaCorrectaProcesada = respuestaCorrectaProcesada.lower()
+            respuestaCorrectaProcesada = respuestaCorrectaProcesada.replace(" ", "")
+            print(respuestaCorrectaProcesada + " " + respuestaProcesada)
+            if respuestaProcesada == respuestaCorrectaProcesada:
+                notaTest = notaTest + pregunta_info.puntosAcierto
+            else:
+                notaTest = notaTest - pregunta_info.puntosFallo
     
     notaAlumno = Notas(idAlumno = alumno,idCuestionario=cuestionario,nota = notaTest)
     notaAlumno.save()
 
 
     return notaTest
+
+"""
+Funcion que devuelve las notas de todos los alumnos para un cuestionario
+"""   
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_notas_de_test(request):
+    #comporbar que es alumno
+    
+    cuestionario = Cuestionarios.objects.get(id = request.data["idCuestionario"])
+    name_map = {'first_name': 'first_name', 'last_name': 'last_name', 'email': 'nota'}
+
+    alumnos = User.objects.raw("SELECT u.id, u.first_name, u.last_name, n.nota as nota FROM " +
+        "api_user AS u " + 
+        "JOIN es_alumno AS alumn " + 
+        "ON u.id = alumn.idAlumno_id " + 
+        "left JOIN (SELECT * from notas WHERE idCuestionario_id = " + str(request.data["idCuestionario"]) +") AS n ON " +
+        "alumn.id = n.idAlumno_id "+
+        "WHERE alumn.idAsignatura_id = " + str(cuestionario.idAsignatura.id), translations=name_map)
+
+    notas = []
+    for alumno in alumnos:
+        alumnoJSON = {}
+        alumnoJSON["id"] = alumno.id
+        alumnoJSON["nombre"] = alumno.first_name
+        alumnoJSON["apellidos"] = alumno.last_name
+        nota = alumno.nota
+        if alumno.nota == None: 
+            nota = "No presentado"
+        alumnoJSON["nota"] = nota
+        notas.append(alumnoJSON)
+
+    content = {
+        'notas' : notas,         
+    }
+    return Response(content)

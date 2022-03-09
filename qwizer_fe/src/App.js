@@ -16,6 +16,7 @@ import {logIn,logOut} from './utils/manage_user.js'
 import {getSubjects,getSubjectTests} from './utils/manage_subjects'
 import CuestionarioPassword from './components/CuestionarioPassword';
 import CrearCuestionario from './components/CrearCuestionario';
+import RevisionNotasContainer from './components/RevisionNotasContainer';
 
 class App extends React.Component{
 
@@ -33,7 +34,8 @@ class App extends React.Component{
       idCuestionarios: [],              //Guarda los IDs de los cuestionarios
       rol: "",
       currentTest: undefined,
-      currentAsignatura: undefined      //Guarda el nombre de la asignatura para la que estamos viendo los cuestionarios
+      currentAsignatura: undefined,       //Guarda el nombre de la asignatura para la que estamos viendo los cuestionarios
+      cuestionarioViendoNotas: undefined  //Guarda el id del cuestionario cuando un profesor revisa las notas de ese cuestionario 
     };
     
     //Login functions
@@ -52,6 +54,8 @@ class App extends React.Component{
     this.startTest = this.startTest.bind(this);
     this.enviarTest = this.enviarTest.bind(this);
     this.revisionTest = this.revisionTest.bind(this);
+    this.revisarNotasTest = this.revisarNotasTest.bind(this);
+    this.revisionTestProfesor = this.revisionTestProfesor.bind(this);
 
     // Funciones auxiliares
     this.getPass = this.getPass.bind(this);
@@ -65,20 +69,15 @@ class App extends React.Component{
   componentWillMount(){
     this.checkLogged();
     var actual_page = localStorage.getItem('page');
+    
     if(actual_page == null){
       localStorage.setItem('page', "login");
     }
     else{
-      /*
-      if(actual_page === "index"){
-        this.getAsignaturas();
-        
-      }
-      this.setState({currentPage:actual_page});
-      */
       this.getAsignaturas();
       this.setState({
-        currentPage: "index"
+        currentPage: "index",
+        rol: localStorage.getItem("rol")
       });
       localStorage.setItem("page", "index");
     }
@@ -205,13 +204,31 @@ class App extends React.Component{
   }
 
   revisionTest = (idCuestionario) => {
-    getCorrectedTest(idCuestionario).then(data => {
+    getCorrectedTest(idCuestionario, "").then(data => {
       var jsonData = JSON.parse(data.corrected_test)
       this.setState({testCorregido:jsonData});
       this.changeCurrentPage('revision');
     }).catch(function(error){
       console.log("Error", error)
     })
+  }
+
+  revisionTestProfesor = (idCuestionario, idAlumno) => {
+    console.log(idAlumno)
+    getCorrectedTest(idCuestionario, idAlumno).then(data => {
+      var jsonData = JSON.parse(data.corrected_test)
+      this.setState({testCorregido:jsonData});
+      this.changeCurrentPage('revision');
+    }).catch(function(error){
+      console.log("Error", error)
+    })
+  }
+
+  revisarNotasTest = (idCuestionario) => {
+    console.log("Revisar notas")
+    
+    this.setState({cuestionarioViendoNotas:idCuestionario});
+    this.changeCurrentPage('revisionNotas');
   }
   //  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -289,7 +306,7 @@ class App extends React.Component{
           document.title = "Cuestionarios";
           return  <Router>
             <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
-            <CuestionariosContainer cuestionarios={this.state.cuestionarios} idCuestionarios={this.state.idCuestionarios} empezarTest={this.startTest} asignatura={this.state.currentAsignatura} revisionTest={this.revisionTest}></CuestionariosContainer> 
+            <CuestionariosContainer cuestionarios={this.state.cuestionarios} idCuestionarios={this.state.idCuestionarios} empezarTest={this.startTest} asignatura={this.state.currentAsignatura} revisionTest={this.revisionTest} revisionTestProfesor={this.revisionTestProfesor} rol={this.state.rol} revisarNotasTest={this.revisarNotasTest}></CuestionariosContainer> 
             </Router>
       }else if (this.state.currentPage === "test"){//Pagina del test
         if (!this.state.allow){ //Introduce la contrasenia del test para poder hacerlo
@@ -322,6 +339,11 @@ class App extends React.Component{
             <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
             <UploadFile></UploadFile>
           </Router>
+      }else if(this.state.currentPage === "revisionNotas"){
+        return <Router>
+          <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
+          <RevisionNotasContainer currentCuestionario={this.state.cuestionarioViendoNotas} revisionTestProfesor={this.revisionTestProfesor}></RevisionNotasContainer>
+        </Router>
       }
     }
     

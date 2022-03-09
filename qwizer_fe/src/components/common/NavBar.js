@@ -9,9 +9,7 @@ class NavBar extends React.Component {
   }
 
   
-  render() { 
-    localStorage.getItem("rol");
-    
+  render() {     
             return(
                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
                     <a className="navbar-brand" onClick={() => this.props.changeCurrentPage("index")}>Qwizer</a>
@@ -24,12 +22,20 @@ class NavBar extends React.Component {
                                 <a className="nav-link" onClick={() => this.props.changeCurrentPage("index")}>Inicio <span className="sr-only"></span></a>
                                 
                             </li>
-                            {localStorage.getItem("rol") == "teacher" && <li className="nav-item active">
+                            {localStorage.getItem("rol") === "teacher" && <li className="nav-item active">
+                                <a className="nav-link" onClick="#">Añadir alumno<span className="sr-only"></span></a>
+                            </li>}
+                            {localStorage.getItem("rol") === "teacher" && <div className="nav-item dropdown">
+                                <a className="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Crear cuestionarios
+                                </a>
+                                <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a className="nav-link" onClick={() => this.props.changeCurrentPage("upload")}>Subir test <span className="sr-only"></span></a>
-                            </li>}
-                            {localStorage.getItem("rol") == "teacher" && <li className="nav-item active">
                                 <a className="nav-link" onClick={() => this.props.changeCurrentPage("crear-cuestionario")}>Crear Cuestionario<span className="sr-only"></span></a>
-                            </li>}
+                                <a className="nav-link" onClick="#">Añadir una pregunta<span className="sr-only"></span></a>
+                                </div>
+                            </div>}
+                           
                             
                         </ul>
                         <NotificationPanel></NotificationPanel>
