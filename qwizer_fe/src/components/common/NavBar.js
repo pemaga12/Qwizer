@@ -30,9 +30,9 @@ class NavBar extends React.Component {
                                 Crear cuestionarios
                                 </a>
                                 <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a className="nav-link"onClick={() => this.props.changeCurrentPage("upload-questions")}>Subir Preguntas<span className="sr-only"></span></a>
                                 <a className="nav-link" onClick={() => this.props.changeCurrentPage("upload")}>Subir test <span className="sr-only"></span></a>
                                 <a className="nav-link" onClick={() => this.props.changeCurrentPage("crear-cuestionario")}>Crear Cuestionario<span className="sr-only"></span></a>
-                                <a className="nav-link" onClick="#">Añadir una pregunta<span className="sr-only"></span></a>
                                 </div>
                             </div>}
                            

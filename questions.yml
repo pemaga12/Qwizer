@@ -1,0 +1,11 @@
+preguntas:
+  
+  - tipo: "test"
+    pregunta: "Madrid es la capital de..."
+    opciones: ["España", "Argentina", "Oceano Pacifico"]
+    op_correcta: 0 #id de opcion correcta
+
+  - tipo: "text"
+    pregunta: "Enumera almenos 2 animales mamiferos"
+    opciones: "Pajaro Gallina"
+    

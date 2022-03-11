@@ -9,6 +9,7 @@ import LoginComponent from './components/LoginComponent';
 import NavBar from './components/common/NavBar';
 
 import UploadFile from './components/UploadFile';
+import UploadQuestions from './components/UploadQuestions';
 import CuestionariosContainer from './components/CuestionariosContainer';
 
 import {comprobarPassword,descifrarTest,sendTest,getCorrectedTest} from './utils/manage_test.js'
@@ -339,7 +340,12 @@ class App extends React.Component{
             <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
             <UploadFile></UploadFile>
           </Router>
-      }else if(this.state.currentPage === "revisionNotas"){
+      }else if (this.state.currentPage === "upload-questions"){ //Pagina para subir preguntas
+        return <Router>
+           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
+           <UploadQuestions></UploadQuestions>
+         </Router>
+     }else if(this.state.currentPage === "revisionNotas"){
         return <Router>
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
           <RevisionNotasContainer currentCuestionario={this.state.cuestionarioViendoNotas} revisionTestProfesor={this.revisionTestProfesor}></RevisionNotasContainer>

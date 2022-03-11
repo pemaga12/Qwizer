@@ -2,7 +2,6 @@ cuestionario:
   titulo: "Tema 11"
   password: "1234"
   asignatura: "Estructura de datos"
-  nPreguntas: 2
   secuencial: 0 #0 es que no es secuencial, 1 es secuencial
   duracion: 10 #minutos que durara el test
   fecha_apertura: '21/02/20 11:00:00' #Formato esperado: yy:mm:dd hh:mm:ss

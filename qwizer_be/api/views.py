@@ -520,7 +520,6 @@ def upload(request):
     title = yamlplscomeon["cuestionario"]["titulo"]
     nombreAsig = yamlplscomeon["cuestionario"]["asignatura"]
     profesor = request.user
-    nPreg = yamlplscomeon["cuestionario"]["nPreguntas"]
     sec = yamlplscomeon["cuestionario"]["secuencial"]
     durat = yamlplscomeon["cuestionario"]["duracion"]
     try:
@@ -532,7 +531,7 @@ def upload(request):
         }
         return Response(content) 
 
-    cuestionario = Cuestionarios(titulo=title, nPreguntas=nPreg, secuencial=sec, idAsignatura=asignatura, idProfesor=profesor, duracion=durat, password=passw, fecha_cierre = date_time_cierre, fecha_apertura = date_time_apertura)
+    cuestionario = Cuestionarios(titulo=title, secuencial=sec, idAsignatura=asignatura, idProfesor=profesor, duracion=durat, password=passw, fecha_cierre = date_time_cierre, fecha_apertura = date_time_apertura)
     try:
         cuestionario.save()  
     except:
@@ -545,12 +544,10 @@ def upload(request):
 
     preguntas = yamlplscomeon["cuestionario"]["preguntas"]
     i = 0
-    preguntaExistente = False
     
     for q in preguntas:
         print(q["tipo"])
          
-       
         try:
             pregunta = Preguntas(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
             pregunta.save()
@@ -587,6 +584,82 @@ def upload(request):
     content = {
         'inserted' : 'true',
         'message': 'El cuestionario se ha insertado correctamente'         
+    }    
+    return Response(content)
+
+
+""" SUBIR PREGUNTAS """
+#Un profesor solo puede subir preguntas de una asignatura que imparte
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def upload_questions(request):
+
+    if str(request.user.role) == "student":
+        content = {
+            'inserted' : 'false',
+            'message': 'Error: Para poder subir preguntas debes de ser administrador o profesor.'         
+        }
+        return Response(content) 
+
+    try:
+        yamlplscomeon = yaml.load(request.data["fichero_yaml"],Loader=yaml.FullLoader)
+    except:
+        content = {
+            'inserted' : 'false',
+            'message': 'Error: El cuestionario está mal formado. Por favor, revisa que lo hayas escrito bien.'         
+        }
+        return Response(content)  
+    
+
+    nombreAsig = request.data["idAsignatura"]
+    
+    try:
+        asignatura = Asignaturas.objects.get(id=nombreAsig)
+    except:
+        content = {
+            'inserted' : 'false',
+            'message': 'Error: La asignatura no existe!'         
+        }
+        return Response(content) 
+
+    
+    preguntas = yamlplscomeon["preguntas"]
+
+    i = 0
+    
+    for q in preguntas:
+        print(q["tipo"])
+         
+        try:
+            pregunta = Preguntas(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
+            pregunta.save()
+        except:
+            pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
+            continue
+
+        #Guardamos las opciones
+        if(q["tipo"] == "test"):
+            j = 0
+            opciones = q["opciones"]
+            for o in opciones:
+                opcion = OpcionesTest(opcion = o, idPregunta = pregunta)
+                try:
+                    opcion.save()
+                    if j == q["op_correcta"]:
+                        respuesta = RespuestasTest(idOpcion = opcion, idPregunta = pregunta)
+                        respuesta.save()
+                    j += 1
+                except:
+                    print("La pregunta ya existia")
+        elif q["tipo"] == "text":
+            respuestaText = RespuestasTexto(respuesta = q["opciones"], idPregunta = pregunta)
+            respuestaText.save()    
+        i += 1
+        
+               
+    content = {
+        'inserted' : 'true',
+        'message': 'Las preguntas se han insertado correctamente'         
     }    
     return Response(content)
 
