@@ -128,9 +128,9 @@ export default class BancoPreguntas extends React.Component {
             return <nav aria-label="Page navigation example">
                 <ul class="pagination">
                 <button class="page-item page-link" onClick={()=> this.state.paginationPage-1>= 0 &&
-                                                        this.setState({paginationPage:this.state.paginationPage-1})} >Previous</button>
+                                                        this.setState((state)=>({paginationPage:state.paginationPage-1}))} >Previous</button>
                 <button class="page-item page-link" onClick={()=> this.state.paginationPage+1 < this.state.totalPages &&
-                                                        this.setState({paginationPage:this.state.paginationPage+1})}>Next</button>
+                                                        this.setState((state)=>({paginationPage:state.paginationPage+1}))}>Next</button>
                 </ul>
             </nav>
         }
