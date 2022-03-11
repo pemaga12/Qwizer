@@ -33,6 +33,7 @@ class NavBar extends React.Component {
                                 <a className="nav-link"onClick={() => this.props.changeCurrentPage("upload-questions")}>Subir Preguntas<span className="sr-only"></span></a>
                                 <a className="nav-link" onClick={() => this.props.changeCurrentPage("upload")}>Subir test <span className="sr-only"></span></a>
                                 <a className="nav-link" onClick={() => this.props.changeCurrentPage("crear-cuestionario")}>Crear Cuestionario<span className="sr-only"></span></a>
+                                <a className="nav-link" onClick={() => this.props.changeCurrentPage("banco-preguntas")}>Banco de Preguntas<span className="sr-only"></span></a>
                                 </div>
                             </div>}
                            

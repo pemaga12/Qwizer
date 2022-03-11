@@ -418,10 +418,7 @@ def get_preg_asignatura(request):
 
         questionIdList: [7]
     }
-
-
 """
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def crear_cuestionario(request):

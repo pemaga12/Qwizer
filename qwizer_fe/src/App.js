@@ -8,6 +8,7 @@ import QuestionContainer from './components/QuestionContainer.js';
 import LoginComponent from './components/LoginComponent';
 import NavBar from './components/common/NavBar';
 
+import BancoPreguntas from './components/BancoPreguntas';
 import UploadFile from './components/UploadFile';
 import UploadQuestions from './components/UploadQuestions';
 import CuestionariosContainer from './components/CuestionariosContainer';
@@ -345,6 +346,11 @@ class App extends React.Component{
            <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
            <UploadQuestions></UploadQuestions>
          </Router>
+     }else if(this.state.currentPage === "banco-preguntas"){
+      return <Router>
+          <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
+          <BancoPreguntas></BancoPreguntas>
+        </Router>
      }else if(this.state.currentPage === "revisionNotas"){
         return <Router>
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
