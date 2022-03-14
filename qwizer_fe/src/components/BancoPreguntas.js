@@ -42,7 +42,7 @@ export default class BancoPreguntas extends React.Component {
             this.setState({
                 selectedAsignatura:idAsignatura,
                 preguntas: data.preguntas,
-                totalPages: Math.round(data.preguntas.length/this.state.itemsPerPage),
+                totalPages: Math.ceil(data.preguntas.length/this.state.itemsPerPage,1),
                 paginationPage:0,
             }); 
           });
