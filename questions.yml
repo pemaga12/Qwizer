@@ -7,5 +7,5 @@ preguntas:
 
   - tipo: "text"
     pregunta: "Enumera almenos 2 animales mamiferos"
-    opciones: "Pajaro Gallina"
+    op_correcta: "Pajaro Gallina"
     

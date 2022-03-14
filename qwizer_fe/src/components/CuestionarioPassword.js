@@ -9,7 +9,7 @@ class CuestionarioPassword extends React.Component {
         super(props);
     }
 
-    componentWillMount(){
+    componentDidMount(){
        
     }
 

@@ -68,7 +68,7 @@ class App extends React.Component{
 
   };
 
-  componentWillMount(){
+  componentDidMount(){
     this.checkLogged();
     var actual_page = localStorage.getItem('page');
     

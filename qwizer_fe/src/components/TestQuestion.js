@@ -12,23 +12,23 @@ class TestQuestion extends React.Component {
         this.handleOnClick = this.handleOnClick.bind(this);
     }
     
-    componentWillMount(){
+    componentDidMount(){
 
         if(!this.props.revision){
             var answers = localStorage.getItem('answers');
-            if (answers != null){
+            if (answers !== null){
                 var json_answers = JSON.parse(answers);
                 var opcion = "NULL"
                 var listaRespuestas = json_answers.respuestas
                 
                 listaRespuestas.map( respuesta => {
                     
-                    if(respuesta.id == this.props.id){
+                    if(respuesta.id === this.props.id){
                         opcion = respuesta.answr
                     }
                 })
                 
-                if (opcion != "NULL") {
+                if (opcion !== "NULL") {
                     opcion = Number(opcion)
                     this.setState({
                         selectedOp:opcion,
@@ -58,7 +58,7 @@ class TestQuestion extends React.Component {
         //const onclick = this.props.handleOnClick;
         const opcionSelec = this.state.selectedOp;
         const handle = this.handleOnClick
-        if(this.props.revision==false && this.props.options){
+        if(this.props.revision===false && this.props.options){
             return(
             
                 <table class="m-4" >
@@ -66,7 +66,7 @@ class TestQuestion extends React.Component {
                         {this.props.options.map(function(option,indx){
                          return (<tr key={option.id}><td>
                                     <input type="radio"  id={option.id} name={"opciones" + preguntaId} 
-                                        value={option.id} onChange={handle} checked={opcionSelec == option.id}></input>
+                                        value={option.id} onChange={handle} checked={opcionSelec === option.id}></input>
                                     <label htmlFor={option.id}>{indx+1}.- {option.op}</label>
                                  </td></tr>);
                          })}            
@@ -84,7 +84,7 @@ class TestQuestion extends React.Component {
                             {questionData.options.map(function(option,indx){
                             return (<tr key={option.id}><td>
                                         <input type="radio"  id={option.id} name={"opciones" + preguntaId} 
-                                            value={option.id} onChange={handle} checked={questionData.user_op == option.id}></input>
+                                            value={option.id} onChange={handle} checked={questionData.user_op === option.id}></input>
                                         <label htmlFor={option.id}>{indx+1}.- {option.op}</label>
                                     </td></tr>);
                             })}            
@@ -92,7 +92,7 @@ class TestQuestion extends React.Component {
                     </table>
                     <div className='bg-warning rounded-pill'>
                     Respuesta Correcta: {questionData.options.map(function(option,indx){
-                        return questionData.correct_op == option.id && questionData.options[indx].op 
+                        return questionData.correct_op === option.id && questionData.options[indx].op 
                     })}
                     </div>
                 </div>

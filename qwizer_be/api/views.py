@@ -649,7 +649,7 @@ def upload_questions(request):
                 except:
                     print("La pregunta ya existia")
         elif q["tipo"] == "text":
-            respuestaText = RespuestasTexto(respuesta = q["opciones"], idPregunta = pregunta)
+            respuestaText = RespuestasTexto(respuesta = q["op_correcta"], idPregunta = pregunta)
             respuestaText.save()    
         i += 1
         

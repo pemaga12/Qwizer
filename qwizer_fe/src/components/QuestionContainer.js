@@ -4,7 +4,6 @@ import React from 'react'
 import TestQuestion from './TestQuestion.js'
 import TextQuestion from './TextQuestion.js'
 import QuestionNav from './QuestionNav.js'
-import Timer from './Timer.js';
 import Countdown from 'react-countdown';
 
 
@@ -44,7 +43,7 @@ class QuestionContainer extends React.Component {
     return leftSeconds;
   }
   
-  UNSAFE_componentWillMount (){
+  componentDidMount (){
     if(this.props.questionList){ //si esta definido, porque si hace revision no lo esta
       this.setState({numPreguntas:this.props.questionList.length});
     }
@@ -123,7 +122,7 @@ class QuestionContainer extends React.Component {
     
     const renderQtype = this.questionType
     
-    if(this.props.revision == false){
+    if(this.props.revision === false){
       const pregunta = this.props.questionList[this.state.indPregunta]
       return(
         <div class="index-body container-fluid" id="questions">
@@ -159,7 +158,7 @@ class QuestionContainer extends React.Component {
   
         </div>
       );
-    }else if(this.props.revision == true && this.props.correctedTest ){
+    }else if(this.props.revision === true && this.props.correctedTest ){
       const correctedTestInfo = this.props.correctedTest
       return(
         <div class="index-body container-fluid" id="questions">

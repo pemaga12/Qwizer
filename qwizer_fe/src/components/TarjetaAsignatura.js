@@ -17,7 +17,7 @@ class TarjetaAsignatura extends React.Component {
     }
 
     
-  componentWillMount(){
+  componentDidMount(){
     this.get_info();
    
   }

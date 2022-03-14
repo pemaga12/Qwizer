@@ -22,7 +22,7 @@ class RevisionNotasContainer extends React.Component {
     this.generar_tabla = this.generar_tabla.bind(this);
   }
 
-  UNSAFE_componentWillMount(){
+  componentDidMount(){
     this.getNotas();
   }
 

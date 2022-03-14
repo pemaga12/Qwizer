@@ -1,6 +1,7 @@
 import React from 'react'
 import {getAllSubjects,getSubjectQuestions} from '../utils/manage_subjects.js'
 
+import yaml from 'js-yaml'
 
 export default class BancoPreguntas extends React.Component {
 
@@ -10,7 +11,7 @@ export default class BancoPreguntas extends React.Component {
       this.state = {
         listaAsignaturas:[], //lista de asignaturas del banco de preguntas
         selectQuestions:false, //si esta a true permite seleccionar las preguntas a descargar, si false, solo se pueden visualizar las preguntas
-        selectedQuestions:[], //lista de ids de preguntas seleccionadas para luego descargarlas en yaml
+        selectedList:[], //lista de ids de preguntas seleccionadas para luego descargarlas en yaml
         itemsPerPage:2,
         paginationPage:0,
       }
@@ -74,7 +75,22 @@ export default class BancoPreguntas extends React.Component {
         
     }
 
-    selectQuestionsInterface = () => {//falta implementar que cuando se selecciona se añada la pregunta a la lista de preguntas a descargar
+    handleCheckBox = (e,questionId) => {
+        
+        var listaPregSelec = this.state.selectedList //lista de preguntas seleccionadas
+
+        if(e.target.checked && !listaPregSelec.includes(questionId)){
+            listaPregSelec.push(questionId)
+            this.setState({selectedList:listaPregSelec})
+        }else if (!e.target.checked && listaPregSelec.includes(questionId)){
+            listaPregSelec.splice(listaPregSelec.indexOf(questionId), 1)
+            this.setState({selectedList:listaPregSelec})
+        }
+        
+
+    }
+
+    selectQuestionsInterface = () => {
         var numItems = 0;
         return <div className="list-group">
             {this.state.preguntas.map((question,indx) => {
@@ -83,7 +99,9 @@ export default class BancoPreguntas extends React.Component {
                     numItems++;
                     return (
                         <label key={indx} className="list-group-item">
-                            <input key={indx} type="checkbox" className="form-check-input me-1"  value=""/>
+                            <input key={indx} type="checkbox" className="form-check-input me-1"  value={question.id}
+                                onChange={ (e) => this.handleCheckBox(e,question.id)}
+                                checked={this.state.selectedList.includes(question.id)}/>
                             {question.question}
                         </label>
                     );
@@ -119,13 +137,43 @@ export default class BancoPreguntas extends React.Component {
 
     }
 
-    downloadSelectedQuestions = () => { //Funcion para descargar las preguntas seleccionadas en formato yaml
+    downloadselectedList = () => { //Funcion para descargar las preguntas seleccionadas en formato yaml
+        
+        var preguntas = this.state.preguntas.filter(pregunta => this.state.selectedList.includes(pregunta.id));
+        var listaPreguntas = []
+        preguntas.map(pregunta =>{
 
+            var question = {}
+            question["tipo"] = pregunta.type
+            question["pregunta"] = pregunta.question
+            question["opciones"] = pregunta.options
+
+            if(pregunta.type == "test"){
+                question["opciones"] = pregunta.options
+            }
+
+            question["op_correcta"] = pregunta.correct_op
+
+            listaPreguntas.push(question)
+        })
+
+        var jsonObj = {"preguntas": listaPreguntas}
+
+        //Convet JSON to Yaml
+
+        var yamlObj = yaml.dump(jsonObj)
+
+        console.log(yamlObj)
+
+        var data = new Blob ([yamlObj],{type :'text/yml'})
+        var url = window.URL.createObjectURL(data)
+        
+        return url
     }
 
     generatePagination = () => {
         if(this.state.totalPages){
-            return <nav aria-label="Page navigation example">
+            return <nav aria-label="Page navigation">
                 <ul class="pagination">
                 <button class="page-item page-link" onClick={()=> this.state.paginationPage-1>= 0 &&
                                                         this.setState((state)=>({paginationPage:state.paginationPage-1}))} >Previous</button>
@@ -146,6 +194,10 @@ export default class BancoPreguntas extends React.Component {
                     {this.state.selectQuestions===false && this.state.preguntas && this.listQuestionsInterface()}
                     {this.state.selectQuestions===true && this.state.preguntas && this.selectQuestionsInterface()}
                 </div>
+                
+                {this.state.selectQuestions===true &&
+                    this.state.selectedList.length !== 0 && 
+                        <a class="btn btn-success" role="button" href={this.downloadselectedList()} download="preguntas.yml"> Descargar</a>}
                 
                 {this.state.preguntas && this.generatePagination()}
             </div>

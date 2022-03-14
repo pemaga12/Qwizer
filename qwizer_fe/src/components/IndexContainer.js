@@ -9,7 +9,7 @@ class IndexContainer extends React.Component {
         super(props);
     }
 
-    componentWillMount(){
+    componentDidMount(){
         this.props.getAsignaturas();
     }
 
@@ -18,12 +18,12 @@ class IndexContainer extends React.Component {
         const empezarTest = this.props.empezarTest;
         const getCuestionarios = this.props.getCuestionarios;
 
-        if(empezarTest){
+        if(empezarTest && this.props.asignaturas){
             return(
                 <div className="index-body">
                     { this.props.asignaturas.map(function(asignatura,indx){
                       return (
-                        <div className='d-flex justify-content-center'>
+                        <div key={indx} className='d-flex justify-content-center'>
                             <TarjetaAsignatura asignatura={asignatura.nombre} idAsignatura={asignatura.id} getCuestionarios={getCuestionarios}></TarjetaAsignatura>
                         </div>
                             
