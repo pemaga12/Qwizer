@@ -18,4 +18,6 @@ urlpatterns = [
     path('upload-questions', views.upload_questions, name='upload-questions'),
     path('crear-cuestionario', views.crear_cuestionario, name='crear-cuestionario'),
     path('get-notas-de-test', views.get_notas_de_test, name='get-notas-de-test'),
+    path('delete-question', views.delete_question, name='delete-question'),
+    path('update-question', views.update_question, name='update-question'),
 ]

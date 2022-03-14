@@ -673,7 +673,6 @@ Llegan las respuestas de un test:
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def response(request):
-    #comporbar que es alumno
 
     cuestionario = Cuestionarios.objects.get(id=request.data["idCuestionario"])
     alumno = request.user
@@ -772,5 +771,47 @@ def get_notas_de_test(request):
 
     content = {
         'notas' : notas,         
+    }
+    return Response(content)
+
+
+
+"""
+Eliminar una pregunta
+""" 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def delete_question(request):
+    if str(request.user.role) == "student":
+        content = {
+            'message': 'Error: Para eliminar una pregunta debes ser un profesor.'         
+        }
+        return Response(content) 
+
+    preguntaId = request.data["idPregunta"]
+    pregunta = Preguntas.objects.get(id=preguntaId)
+    pregunta.delete()
+
+    content = {
+        'message' : "Pregunta eliminada correctamente",         
+    }
+    return Response(content)
+
+
+"""
+Actualizar una pregunta
+""" 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_question(request):
+    if str(request.user.role) == "student":
+        content = {
+            'message': 'Error: Para actualizar una pregunta debes ser un profesor.'         
+        }
+        return Response(content) 
+
+
+    content = {
+        'message' : "Pregunta actualizada correctamente",         
     }
     return Response(content)

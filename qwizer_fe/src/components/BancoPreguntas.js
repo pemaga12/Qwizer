@@ -10,10 +10,13 @@ export default class BancoPreguntas extends React.Component {
       super(props)
     
       this.state = {
+        selectedAsignatura:undefined,
         listaAsignaturas:[], //lista de asignaturas del banco de preguntas
         selectQuestions:false, //si esta a true permite seleccionar las preguntas a descargar, si false, solo se pueden visualizar las preguntas
         selectedList:[], //lista de ids de preguntas seleccionadas para luego descargarlas en yaml
-        visualizeQuestionId:undefined,
+        visualizeQuestionId:undefined, //id de la pregunta que se esta visualizando
+        editedQuestionId:undefined, //id de la pregunta que se esta editando
+        editedQuestion:{}, //contiene la pregunta actualizada
         itemsPerPage:2,
         paginationPage:0,
       }
@@ -24,6 +27,7 @@ export default class BancoPreguntas extends React.Component {
     componentDidMount(){
         this.getAsignaturas();
     }
+
 
     getAsignaturas = () => {
         getAllSubjects().then(data => {
@@ -36,8 +40,10 @@ export default class BancoPreguntas extends React.Component {
     getPregAsignaturas = (idAsignatura) =>{
         getSubjectQuestions(idAsignatura).then(data => {
             this.setState({
+                selectedAsignatura:idAsignatura,
                 preguntas: data.preguntas,
-                totalPages: data.preguntas.length/this.state.itemsPerPage,
+                totalPages: Math.round(data.preguntas.length/this.state.itemsPerPage),
+                paginationPage:0,
             }); 
           });
     }
@@ -48,13 +54,14 @@ export default class BancoPreguntas extends React.Component {
             return <div className="card  m-3 p-3">
                 <div className='row'>
                     <div className='col'>
-                        Asignatura :<select defaultValue='null' onChange={(e) => this.getPregAsignaturas(e.target.value)}>
-                            {this.state.listaAsignaturas.map((subject,indx) => {
-                                return (
-                                    <option key={indx} value={subject.id}>{subject.asignatura}</option>
-                                );
-                            })}
-                            <option key='null' value='null'> Selecciona una Asignatura </option>
+                        Asignatura :<select defaultValue={ this.state.selectedAsignatura != undefined?this.state.selectedAsignatura:'null'} 
+                            onChange={(e) => this.getPregAsignaturas(e.target.value)}>
+                                {this.state.listaAsignaturas.map((subject,indx) => {
+                                    return (
+                                        <option key={indx} value={subject.id}>{subject.asignatura}</option>
+                                    );
+                                })}
+                                <option key='null' value='null'> Selecciona una Asignatura </option>
                         </select>
                     </div>
                     <div className='col'>
@@ -138,20 +145,66 @@ export default class BancoPreguntas extends React.Component {
         if(pregunta.type == "test"){
             return  <div>
                     <TestQuestion mode="visualize" infoPreg={pregunta} id={pregunta.id}/>
-                    <button class="btn btn-success"onClick={() => this.setState({visualizeQuestionId:undefined})}> Cerrar </button>
+                    <button class="btn btn-success" onClick={() => this.setState({visualizeQuestionId:undefined})}> Volver atras </button>
+                    <button class="btn btn-danger"  onClick={() => this.deleteQuestion(pregunta.id)}> Eliminar Pregunta </button>
                 </div> 
         }
 
         if(pregunta.type == "text"){
             return  <div>
                     <TextQuestion mode="visualize" infoPreg={pregunta} />
-                    <button class="btn btn-success"onClick={() => this.setState({visualizeQuestionId:undefined})}> Cerrar </button>
+                    <button class="btn btn-success" onClick={() => this.setState({visualizeQuestionId:undefined})}>  Volver atras </button>
+                    <button class="btn btn-danger"  onClick={() => this.deleteQuestion(pregunta.id)}> Eliminar Pregunta </button>
                 </div> 
         }
     }
 
-    editQuestion = () =>{ //Editar la pegunta seleccionada y actualizarla en la base de datos
+    deleteQuestion = (idPregunta) =>{
 
+        var token = localStorage.getItem('token');
+        var url = "http://127.0.0.1:8000/api/delete-question";
+
+        const message = new Map([["idPregunta", idPregunta]]);
+        const obj = JSON.stringify(Object.fromEntries(message));
+
+        fetch(url , {
+            method: 'POST',
+            headers:{
+            'Content-type': 'application/json',
+            'Authorization': token
+            },
+            body: obj
+        }).then(data => data.json())
+        .then(result =>{
+            console.log(result)
+            this.getPregAsignaturas(this.state.selectedAsignatura)
+            this.setState({visualizeQuestionId:undefined})
+        })
+
+
+    }
+
+    editQuestion = () =>{
+
+        var token = localStorage.getItem('token');
+        var url = "http://127.0.0.1:8000/api/update-question";
+
+        
+        var preguntaObj = {} //objeto con la pregunta modificada
+        preguntaObj["id"] = this.state.editedQuestionId
+
+        fetch(url , {
+            method: 'POST',
+            headers:{
+            'Content-type': 'application/json',
+            'Authorization': token
+            },
+            body: preguntaObj
+        }).then(data => data.json())
+        .then(result =>{
+            console.log(result)
+            this.setState({editedQuestionId:undefined,editedQuestion:{}})
+        })
     }
 
     downloadselectedList = () => { //Funcion para descargar las preguntas seleccionadas en formato yaml
