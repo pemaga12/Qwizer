@@ -1,6 +1,7 @@
 import React from 'react'
 import {getAllSubjects,getSubjectQuestions} from '../utils/manage_subjects.js'
-
+import TestQuestion from './TestQuestion.js'
+import TextQuestion from './TextQuestion.js'
 import yaml from 'js-yaml'
 
 export default class BancoPreguntas extends React.Component {
@@ -12,6 +13,7 @@ export default class BancoPreguntas extends React.Component {
         listaAsignaturas:[], //lista de asignaturas del banco de preguntas
         selectQuestions:false, //si esta a true permite seleccionar las preguntas a descargar, si false, solo se pueden visualizar las preguntas
         selectedList:[], //lista de ids de preguntas seleccionadas para luego descargarlas en yaml
+        visualizeQuestionId:undefined,
         itemsPerPage:2,
         paginationPage:0,
       }
@@ -119,7 +121,7 @@ export default class BancoPreguntas extends React.Component {
                         numItems++;
                         return (
                             <button key={indx} type="button" className="list-group-item list-group-item-action"
-                                onClick={() => this.visualizeQuestion(question.id)}>
+                                onClick={() => this.setState({visualizeQuestionId:question.id})}>
                                 {question.question}
                             </button>
                         );
@@ -129,8 +131,23 @@ export default class BancoPreguntas extends React.Component {
             </div>
     }
 
-    visualizeQuestion = (idPregunta) =>{ //Fisualizar la pregunta seleccionada y poder editarla
+    visualizeQuestion = () =>{ //Fisualizar la pregunta seleccionada y poder editarla
+        
+        var pregunta = this.state.preguntas.find( question => question.id == this.state.visualizeQuestionId)
 
+        if(pregunta.type == "test"){
+            return  <div>
+                    <TestQuestion mode="visualize" infoPreg={pregunta} id={pregunta.id}/>
+                    <button class="btn btn-success"onClick={() => this.setState({visualizeQuestionId:undefined})}> Cerrar </button>
+                </div> 
+        }
+
+        if(pregunta.type == "text"){
+            return  <div>
+                    <TextQuestion mode="visualize" infoPreg={pregunta} />
+                    <button class="btn btn-success"onClick={() => this.setState({visualizeQuestionId:undefined})}> Cerrar </button>
+                </div> 
+        }
     }
 
     editQuestion = () =>{ //Editar la pegunta seleccionada y actualizarla en la base de datos
@@ -163,7 +180,7 @@ export default class BancoPreguntas extends React.Component {
 
         var yamlObj = yaml.dump(jsonObj)
 
-        console.log(yamlObj)
+        //console.log(yamlObj)
 
         var data = new Blob ([yamlObj],{type :'text/yml'})
         var url = window.URL.createObjectURL(data)
@@ -187,7 +204,8 @@ export default class BancoPreguntas extends React.Component {
 
     render() {
 
-        return<div>
+        if(this.state.visualizeQuestionId == undefined){
+            return<div>
                 <h1 className='text-center'>Banco de Preguntas</h1>
                 {this.bancoPreguntas()}
                 <div className="card  m-3 p-3">
@@ -201,5 +219,14 @@ export default class BancoPreguntas extends React.Component {
                 
                 {this.state.preguntas && this.generatePagination()}
             </div>
+        }else{
+            return<div>
+                <h1 className='text-center'>Banco de Preguntas</h1> 
+                <div className="card  m-3 p-3">
+                    {this.state.preguntas && this.visualizeQuestion()}
+                </div>
+            </div>
+        }
+       
     }
 }

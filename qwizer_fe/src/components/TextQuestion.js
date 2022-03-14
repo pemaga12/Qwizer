@@ -12,9 +12,10 @@ class TextQuestion extends React.Component {
 
         this.handleChange = this.handleChange.bind(this);
     }
+    // this.props.mode puede tomar los siguientes valores: test, revision, visualize
 
     componentDidMount(){
-        if(!this.props.revision){
+        if(this.props.mode === "test"){
             var answers = localStorage.getItem('answers');
             if (answers !== null){
                 var json_answers = JSON.parse(answers);
@@ -42,36 +43,48 @@ class TextQuestion extends React.Component {
     }
 
     handleChange(event) {
-        var id = this.props.id;
 
         var answer = {
-           "id": id, "respuesta" : {"type" : this.props.type, "answer" : event.target.value}
+           "id": this.props.id, "respuesta" : {"type" : this.props.type, "answer" : event.target.value}
         }
-        this.setState({
-            textValue: event.target.value,
-        });
+        this.setState({textValue: event.target.value,});
         
         this.props.addAnswerd(answer);
+    }
 
+    testMode = () =>{
+        return(
+            <div class="p-4 m-2 text-center">
+                <textarea rows="9" cols="70" name="textValue" onChange={this.handleChange} value={this.state.textValue} />
+            </div>
+        );
+    }
+
+    revisionMode = () =>{
+        return(
+            <div class="p-4 m-2 text-center">
+                <p className='bg-secondary rounded'>{this.props.infoPreg.user_op}</p>
+                <div className='bg-warning rounded-pill'>
+                     Respuesta Correcta: {this.props.infoPreg.correct_op}
+                 </div>
+            </div>
+         );
+    }
+
+    visualizeMode = () =>{
+        return(
+            <div class="p-4 m-2 text-center">
+                <h2>{this.props.infoPreg.question}</h2>
+                <p className='p-4 m-2 bg-light rounded'>Respuesta : {this.props.infoPreg.correct_op}</p>
+            </div>
+         );
     }
 
     render() { 
-        if(this.props.revision===false){
-            return(
-                <div class="p-4 m-2 text-center">
-                    <textarea rows="9" cols="70" name="textValue" onChange={this.handleChange} value={this.state.textValue} />
-                </div>
-             );
-        }else{
-            return(
-                <div class="p-4 m-2 text-center">
-                    <p className='bg-secondary rounded'>{this.props.infoPreg.user_op}</p>
-                    <div className='bg-warning rounded-pill'>
-                         Respuesta Correcta: {this.props.infoPreg.correct_op}
-                     </div>
-                </div>
-             );
-        }
+
+        if(this.props.mode==="test"){ return this.testMode();}
+        else if (this.props.mode==="revision" && this.props.infoPreg){return this.revisionMode();}
+        else if (this.props.mode==="visualize" && this.props.infoPreg){return this.visualizeMode();}
         
     }
 }
