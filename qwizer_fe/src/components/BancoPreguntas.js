@@ -184,7 +184,6 @@ export default class BancoPreguntas extends React.Component {
             this.setState({visualizeQuestionId:undefined})
         })
 
-
     }
 
     editQuestion = () => {
