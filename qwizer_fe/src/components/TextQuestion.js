@@ -47,7 +47,7 @@ class TextQuestion extends React.Component {
         var answer = {
            "id": this.props.id, "respuesta" : {"type" : this.props.type, "answer" : event.target.value}
         }
-        this.setState({textValue: event.target.value,});
+        this.setState({textValue: event.target.value});
         
         this.props.addAnswerd(answer);
     }

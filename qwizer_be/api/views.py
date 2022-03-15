@@ -800,6 +800,33 @@ def delete_question(request):
 
 """
 Actualizar una pregunta
+
+-----------------------
+preguntaActualizada:
+        {
+            id:
+            question:
+            type: test
+            options:[
+                {
+                    id:
+                    op:
+                },
+                {
+                    id:
+                    op:
+                }
+            ],
+            correct_op:
+        }
+o
+preguntaActualizada: 
+        {
+            id:
+            question:
+            type: text
+            correct_op:
+        },
 """ 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -809,6 +836,27 @@ def update_question(request):
             'message': 'Error: Para actualizar una pregunta debes ser un profesor.'         
         }
         return Response(content) 
+    print(request.data["preguntaActualizada"])
+    updatedQuestion = request.data["preguntaActualizada"]
+    
+    pregunta = Preguntas.objects.get(id=updatedQuestion["id"])
+    pregunta.pregunta = updatedQuestion["question"]
+    pregunta.save()
+
+    if updatedQuestion["type"] == "test":
+        for option in updatedQuestion["options"]:
+            optionObj = OpcionesTest.objects.get(id=option["id"])
+            optionObj.opcion = option["op"]
+            optionObj.save()
+
+        respTest = RespuestasTest.objects.get(idPregunta=updatedQuestion["id"])
+        respTest.idOpcion = OpcionesTest.objects.get(id=updatedQuestion["correct_op"])
+        respTest.save()
+
+    elif updatedQuestion["type"] == "text":
+        respText = RespuestasTexto.objects.get(idPregunta=updatedQuestion["id"])
+        respText.respuesta = updatedQuestion["correct_op"]
+        respText.save()
 
 
     content = {

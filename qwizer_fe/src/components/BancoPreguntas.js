@@ -3,6 +3,8 @@ import {getAllSubjects,getSubjectQuestions} from '../utils/manage_subjects.js'
 import TestQuestion from './TestQuestion.js'
 import TextQuestion from './TextQuestion.js'
 import yaml from 'js-yaml'
+import EditTestQuestion from './EditTestQuestion.js'
+import EditTextQuestion from './EditTextQuestion.js'
 
 export default class BancoPreguntas extends React.Component {
 
@@ -15,8 +17,7 @@ export default class BancoPreguntas extends React.Component {
         selectQuestions:false, //si esta a true permite seleccionar las preguntas a descargar, si false, solo se pueden visualizar las preguntas
         selectedList:[], //lista de ids de preguntas seleccionadas para luego descargarlas en yaml
         visualizeQuestionId:undefined, //id de la pregunta que se esta visualizando
-        editedQuestionId:undefined, //id de la pregunta que se esta editando
-        editedQuestion:{}, //contiene la pregunta actualizada
+        editQuestion:false, //id de la pregunta que se esta editando
         itemsPerPage:2,
         paginationPage:0,
       }
@@ -147,6 +148,7 @@ export default class BancoPreguntas extends React.Component {
                     <TestQuestion mode="visualize" infoPreg={pregunta} id={pregunta.id}/>
                     <button class="btn btn-success" onClick={() => this.setState({visualizeQuestionId:undefined})}> Volver atras </button>
                     <button class="btn btn-danger"  onClick={() => this.deleteQuestion(pregunta.id)}> Eliminar Pregunta </button>
+                    <button class="btn btn-warning"  onClick={() => this.setState({editQuestion:true})}> Editar Pregunta </button>
                 </div> 
         }
 
@@ -155,6 +157,7 @@ export default class BancoPreguntas extends React.Component {
                     <TextQuestion mode="visualize" infoPreg={pregunta} />
                     <button class="btn btn-success" onClick={() => this.setState({visualizeQuestionId:undefined})}>  Volver atras </button>
                     <button class="btn btn-danger"  onClick={() => this.deleteQuestion(pregunta.id)}> Eliminar Pregunta </button>
+                    <button class="btn btn-warning"  onClick={() => this.setState({editQuestion:true})}> Editar Pregunta </button>
                 </div> 
         }
     }
@@ -184,15 +187,30 @@ export default class BancoPreguntas extends React.Component {
 
     }
 
-    editQuestion = () =>{
+    editQuestion = () => {
+        var editarPregunta = this.state.preguntas.find( question => question.id == this.state.visualizeQuestionId)
+
+        if(editarPregunta.type == "test"){
+            return  <div>
+                    <EditTestQuestion pregunta={editarPregunta} updateEditQuestion={this.updateEditedQuestion}/>
+                </div> 
+        }
+
+        if(editarPregunta.type == "text"){
+            return  <div>
+                    <EditTextQuestion pregunta={editarPregunta} updateEditQuestion={this.updateEditedQuestion} />
+                </div> 
+        }
+    }
+
+    updateEditedQuestion = (question) => {
 
         var token = localStorage.getItem('token');
         var url = "http://127.0.0.1:8000/api/update-question";
 
-        
-        var preguntaObj = {} //objeto con la pregunta modificada
-        preguntaObj["id"] = this.state.editedQuestionId
-
+        const message = new Map([["preguntaActualizada", question]]);
+        const preguntaObj = JSON.stringify(Object.fromEntries(message));
+        console.log(preguntaObj)
         fetch(url , {
             method: 'POST',
             headers:{
@@ -203,8 +221,8 @@ export default class BancoPreguntas extends React.Component {
         }).then(data => data.json())
         .then(result =>{
             console.log(result)
-            this.setState({editedQuestionId:undefined,editedQuestion:{}})
-        })
+            this.setState({editQuestion:false})
+        }).catch(e => console.log(e))
     }
 
     downloadselectedList = () => { //Funcion para descargar las preguntas seleccionadas en formato yaml
@@ -272,11 +290,19 @@ export default class BancoPreguntas extends React.Component {
                 
                 {this.state.preguntas && this.generatePagination()}
             </div>
-        }else{
+        }else if (this.state.visualizeQuestionId != undefined && !this.state.editQuestion){
             return<div>
                 <h1 className='text-center'>Banco de Preguntas</h1> 
                 <div className="card  m-3 p-3">
                     {this.state.preguntas && this.visualizeQuestion()}
+                </div>
+            </div>
+        }else if (this.state.visualizeQuestionId != undefined && this.state.editQuestion){
+            //
+            return<div>
+                <h1 className='text-center'>Banco de Preguntas</h1> 
+                <div className="card  m-3 p-3">
+                    {this.state.editQuestion && this.editQuestion()}
                 </div>
             </div>
         }
