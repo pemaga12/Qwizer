@@ -15,6 +15,10 @@ a{
     background-color: #d45461;
 }
 
+.modal-body{
+    white-space: pre-line;
+}
+
 .btn.btn-error{
     background-color: #d45461;
     border-color: #d45461;
@@ -49,8 +53,7 @@ a{
 
 /* CONTRASEÑA DEL CUESTIONARIO */
 .margin-password{
-    margin-left: 10vw;
-    margin-right: 10vw;
+    
 }
 
 /* SECCION TABLA NOTAS DE LOS ALUMNOS*/
@@ -61,3 +64,6 @@ a{
     margin-top: 10vh;
 }
 
+.fix-select{
+    padding: 10px;
+}

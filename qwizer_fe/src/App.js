@@ -14,11 +14,12 @@ import UploadQuestions from './components/UploadQuestions';
 import CuestionariosContainer from './components/CuestionariosContainer';
 
 import {comprobarPassword,descifrarTest,sendTest,getCorrectedTest} from './utils/manage_test.js'
-import {logIn,logOut} from './utils/manage_user.js'
+import {logIn,logOut, getStudents} from './utils/manage_user.js'
 import {getSubjects,getSubjectTests} from './utils/manage_subjects'
 import CuestionarioPassword from './components/CuestionarioPassword';
 import CrearCuestionario from './components/CrearCuestionario';
 import RevisionNotasContainer from './components/RevisionNotasContainer';
+import RegisterContainer from './components/RegisterContainer';
 
 class App extends React.Component{
 
@@ -346,15 +347,20 @@ class App extends React.Component{
            <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
            <UploadQuestions></UploadQuestions>
          </Router>
-     }else if(this.state.currentPage === "banco-preguntas"){
+      }else if(this.state.currentPage === "banco-preguntas"){
       return <Router>
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
           <BancoPreguntas></BancoPreguntas>
         </Router>
-     }else if(this.state.currentPage === "revisionNotas"){
+      }else if(this.state.currentPage === "revisionNotas"){
         return <Router>
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
           <RevisionNotasContainer currentCuestionario={this.state.cuestionarioViendoNotas} revisionTestProfesor={this.revisionTestProfesor}></RevisionNotasContainer>
+        </Router>
+      }else if(this.state.currentPage === "register"){
+        return <Router>
+          <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
+          <RegisterContainer getSubjects={getSubjects} getStudents={getStudents}></RegisterContainer>
         </Router>
       }
     }

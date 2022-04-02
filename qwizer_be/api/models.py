@@ -153,6 +153,7 @@ class Preguntas(models.Model):
     tipoPregunta = models.CharField(blank=True, max_length=100, verbose_name='tipoPregunta')
     pregunta = models.CharField(blank=True, max_length=254, verbose_name='pregunta')
     idAsignatura = models.ForeignKey('Asignaturas', on_delete=models.CASCADE)
+    titulo = models.CharField(blank=True, max_length=254, verbose_name='titulo')
 
     def __str__(self):
         return self.pregunta
