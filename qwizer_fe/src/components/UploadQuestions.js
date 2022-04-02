@@ -77,17 +77,16 @@ export default class UploadQuestions extends Component {
 
     seleccionaAsignatura = () => {
         return <div className='row'>
-                    <h4>Selecciona una asignatura:</h4>
-                    <div className='fix-select'>
-                    <select className='form-select' defaultValue='null' onChange={(e) => this.setState({idAsignatura:Number(e.target.value)})}>
+                    <h3>Selecciona una asignatura:</h3>
+                    <select defaultValue='null' onChange={(e) => this.setState({idAsignatura:Number(e.target.value)})}>
                                 {this.state.asignaturasImpartidas.map((subject,indx) => {
                                                 return (
                                                     <option key={indx} value={subject.id}>{subject.nombre}</option>
                                                 );
                                 })}
-                                <option hidden key='null' value='null'> Selecciona una Asignatura </option>
+                                <option key='null' value='null'> Selecciona una Asignatura </option>
                                 </select>
-                                </div>
+                    
                 </div>
     }
 

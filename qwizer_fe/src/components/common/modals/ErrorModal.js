@@ -24,7 +24,7 @@ class ErrorModal extends React.Component {
                             <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div className="modal-body" >
+                        <div className="modal-body">
                             {this.props.message}
                         </div>
                         <div className="modal-footer">

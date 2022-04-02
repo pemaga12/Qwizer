@@ -543,13 +543,13 @@ def upload(request):
     i = 0
     
     for q in preguntas:
-        print(q["titulo"])
+        print(q["tipo"])
          
         try:
-            pregunta = Preguntas(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura, titulo=q["titulo"])
+            pregunta = Preguntas(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
             pregunta.save()
         except:
-            pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura, titulo=q["titulo"])
+            pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
             pertenece = PerteneceACuestionario(nQuestion = i, puntosAcierto = q["punt_positiva"], puntosFallo=q["punt_negativa"], idCuestionario = cuestionario, idPregunta = pregunta)
             pertenece.save()
             continue
@@ -557,7 +557,7 @@ def upload(request):
         pertenece = PerteneceACuestionario(nQuestion = i, puntosAcierto = q["punt_positiva"], puntosFallo=q["punt_negativa"], idCuestionario = cuestionario, idPregunta = pregunta)
         pertenece.save()
 
-        pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura, titulo=q["titulo"])
+        pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
         #Guardamos las opciones
         if(q["tipo"] == "test"):
             j = 0
@@ -625,10 +625,10 @@ def upload_questions(request):
     i = 0
     
     for q in preguntas:
-        print("hola" + q["titulo"])
-        print(q)
+        print(q["tipo"])
+         
         try:
-            pregunta = Preguntas(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura, titulo=q["titulo"])
+            pregunta = Preguntas(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
             pregunta.save()
         except:
             pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
@@ -774,50 +774,92 @@ def get_notas_de_test(request):
     }
     return Response(content)
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def get_alumnos(request):
-    content = {}
-    #comporbar que es alumno
-    if request.user.role == "teacher":
-        usuarios = User.objects.filter(role="student")
-        alumnos = []
-        for alumno in usuarios:
-            alumnoJSON = {}
-            alumnoJSON["id"] = alumno.id
-            alumnoJSON["nombre"] = alumno.first_name
-            alumnoJSON["apellidos"] = alumno.last_name
-            alumnos.append(alumnoJSON)
-        content["alumnos"] = (alumnos)
-        
-        return Response(content)
-    else:
-        return Response("")
 
+
+"""
+Eliminar una pregunta
+""" 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def matricular_alumnos(request):
-    content = {}
-    correct = True
-    alumnosFallidos = []
-    alumnos = request.data["alumnos"]
-    asignatura = request.data["asignatura"]
-    print(alumnos)
-    print(asignatura)
-    for alumno in alumnos:
-        print(alumno["id"])
-        objetoAlumno = User.objects.get(id = alumno["id"])
-        print(objetoAlumno)
-        objetoAsignatura = Asignaturas.objects.get(id = asignatura)
-        objetoEsAlumno = EsAlumno(idAlumno = objetoAlumno, idAsignatura = objetoAsignatura)
-        
-        try:
-            objetoEsAlumno.save()
-        except:
-            correct = False
-            alumnosFallidos.append(alumno["nombre"] + " " + alumno["apellidos"])
-        
-    content["insertados"] = correct
-    content["errors"] = alumnosFallidos
+def delete_question(request):
+    if str(request.user.role) == "student":
+        content = {
+            'message': 'Error: Para eliminar una pregunta debes ser un profesor.'         
+        }
+        return Response(content) 
+
+    preguntaId = request.data["idPregunta"]
+    pregunta = Preguntas.objects.get(id=preguntaId)
+    pregunta.delete()
+
+    content = {
+        'message' : "Pregunta eliminada correctamente",         
+    }
     return Response(content)
 
+
+"""
+Actualizar una pregunta
+
+-----------------------
+preguntaActualizada:
+        {
+            id:
+            question:
+            type: test
+            options:[
+                {
+                    id:
+                    op:
+                },
+                {
+                    id:
+                    op:
+                }
+            ],
+            correct_op:
+        }
+o
+preguntaActualizada: 
+        {
+            id:
+            question:
+            type: text
+            correct_op:
+        },
+""" 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_question(request):
+    if str(request.user.role) == "student":
+        content = {
+            'message': 'Error: Para actualizar una pregunta debes ser un profesor.'         
+        }
+        return Response(content) 
+    print(request.data["preguntaActualizada"])
+    updatedQuestion = request.data["preguntaActualizada"]
+    
+    pregunta = Preguntas.objects.get(id=updatedQuestion["id"])
+    pregunta.pregunta = updatedQuestion["question"]
+    pregunta.save()
+
+    if updatedQuestion["type"] == "test":
+        for option in updatedQuestion["options"]:
+            optionObj = OpcionesTest.objects.get(id=option["id"])
+            optionObj.opcion = option["op"]
+            optionObj.save()
+
+        respTest = RespuestasTest.objects.get(idPregunta=updatedQuestion["id"])
+        respTest.idOpcion = OpcionesTest.objects.get(id=updatedQuestion["correct_op"])
+        respTest.save()
+
+    elif updatedQuestion["type"] == "text":
+        respText = RespuestasTexto.objects.get(idPregunta=updatedQuestion["id"])
+        respText.respuesta = updatedQuestion["correct_op"]
+        respText.save()
+
+
+    content = {
+        'message' : "Pregunta actualizada correctamente",         
+    }
+    return Response(content)

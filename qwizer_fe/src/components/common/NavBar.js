@@ -23,7 +23,7 @@ class NavBar extends React.Component {
                                 
                             </li>
                             {localStorage.getItem("rol") === "teacher" && <li className="nav-item active">
-                                <a className="nav-link" onClick={() => this.props.changeCurrentPage("register")}>Añadir alumno<span className="sr-only"></span></a>
+                                <a className="nav-link" onClick="#">Añadir alumno<span className="sr-only"></span></a>
                             </li>}
                             {localStorage.getItem("rol") === "teacher" && <div className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -28,7 +28,7 @@ export const comprobarPassword = (contra,currentTest) => {
     
     if(CryptoJS.SHA256(contra).toString() === text.password) return true 
   }
-  window.$("#unlock_error").modal("show");
+  
   return false
 }
 

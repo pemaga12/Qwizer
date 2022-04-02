@@ -40,13 +40,3 @@ export const logOut = () => {
     }).then(data => data.json())
    
 }
-
-export const getStudents = () => {
-  var token = localStorage.getItem('token');
-  var url = "http://127.0.0.1:8000/api/get-alumnos";
-  return fetch(url, {
-    method: 'POST',
-        headers:{
-      'Authorization': token}
-    }).then(data => data.json())
-}

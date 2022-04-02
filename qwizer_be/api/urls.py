@@ -20,6 +20,4 @@ urlpatterns = [
     path('get-notas-de-test', views.get_notas_de_test, name='get-notas-de-test'),
     path('delete-question', views.delete_question, name='delete-question'),
     path('update-question', views.update_question, name='update-question'),
-    path('get-alumnos', views.get_alumnos, name='get-alumnos'),
-    path('matricular-alumnos', views.matricular_alumnos, name='matricular-alumnos'),
 ]
