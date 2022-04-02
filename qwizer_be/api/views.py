@@ -546,10 +546,10 @@ def upload(request):
         print(q["tipo"])
          
         try:
-            pregunta = Preguntas(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
+            pregunta = Preguntas(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura, titulo=q["titulo"])
             pregunta.save()
         except:
-            pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
+            pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura, titulo=q["titulo"])
             pertenece = PerteneceACuestionario(nQuestion = i, puntosAcierto = q["punt_positiva"], puntosFallo=q["punt_negativa"], idCuestionario = cuestionario, idPregunta = pregunta)
             pertenece.save()
             continue
@@ -557,7 +557,7 @@ def upload(request):
         pertenece = PerteneceACuestionario(nQuestion = i, puntosAcierto = q["punt_positiva"], puntosFallo=q["punt_negativa"], idCuestionario = cuestionario, idPregunta = pregunta)
         pertenece.save()
 
-        pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
+        pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura, titulo=q["titulo"])
         #Guardamos las opciones
         if(q["tipo"] == "test"):
             j = 0
@@ -628,7 +628,7 @@ def upload_questions(request):
         print(q["tipo"])
          
         try:
-            pregunta = Preguntas(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
+            pregunta = Preguntas(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura, titulo=q["titulo"])
             pregunta.save()
         except:
             pregunta = Preguntas.objects.get(tipoPregunta=q["tipo"], pregunta = q["pregunta"], idAsignatura = asignatura)
