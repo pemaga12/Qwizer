@@ -863,3 +863,51 @@ def update_question(request):
         'message' : "Pregunta actualizada correctamente",         
     }
     return Response(content)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_alumnos(request):
+    content = {}
+    #comporbar que es alumno
+    if request.user.role == "teacher":
+        usuarios = User.objects.filter(role="student")
+        alumnos = []
+        for alumno in usuarios:
+            alumnoJSON = {}
+            alumnoJSON["id"] = alumno.id
+            alumnoJSON["nombre"] = alumno.first_name
+            alumnoJSON["apellidos"] = alumno.last_name
+            alumnos.append(alumnoJSON)
+        content["alumnos"] = (alumnos)
+        
+        return Response(content)
+    else:
+        return Response("")
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def matricular_alumnos(request):
+    content = {}
+    correct = True
+    alumnosFallidos = []
+    alumnos = request.data["alumnos"]
+    asignatura = request.data["asignatura"]
+    print(alumnos)
+    print(asignatura)
+    for alumno in alumnos:
+        print(alumno["id"])
+        objetoAlumno = User.objects.get(id = alumno["id"])
+        print(objetoAlumno)
+        objetoAsignatura = Asignaturas.objects.get(id = asignatura)
+        objetoEsAlumno = EsAlumno(idAlumno = objetoAlumno, idAsignatura = objetoAsignatura)
+        
+        try:
+            objetoEsAlumno.save()
+        except:
+            correct = False
+            alumnosFallidos.append(alumno["nombre"] + " " + alumno["apellidos"])
+        
+    content["insertados"] = correct
+    content["errors"] = alumnosFallidos
+    return Response(content)
+

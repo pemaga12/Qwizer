@@ -2,10 +2,12 @@ preguntas:
   
   - tipo: "test"
     pregunta: "Madrid es la capital de..."
+    titulo: "Titulo temporal1"
     opciones: ["España", "Argentina", "Oceano Pacifico"]
     op_correcta: 0 #id de opcion correcta
 
   - tipo: "text"
     pregunta: "Enumera almenos 2 animales mamiferos"
-    op_correcta: "Pajaro Gallina"
+    titulo: "Titulo temporal2"
+    opciones: "Pajaro Gallina"
     
