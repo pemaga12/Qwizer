@@ -54,7 +54,7 @@ export default class CrearCuestionario extends React.Component {
     cuestionarioInfo = () => {
         return <div className="card m-3 p-3">
             <div className='row'>
-                Nombre :<input name="testName" type="text"  onChange={(e) => this.setState({testName:e.target.value})}/>
+                Nombre :<input name="testName" type="text" className='form-control form-control-sm'  onChange={(e) => this.setState({testName:e.target.value})}/>
             </div>
             <div className='row'>
                 Password :<input name="testPass" type="text"  onChange={(e) => this.setState({testPass:e.target.value})}/>
