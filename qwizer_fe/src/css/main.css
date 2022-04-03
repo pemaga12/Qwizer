@@ -15,6 +15,10 @@ a{
     background-color: #d45461;
 }
 
+.modal-body{
+    white-space: pre-wrap;
+}
+
 .btn.btn-error{
     background-color: #d45461;
     border-color: #d45461;
