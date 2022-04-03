@@ -112,7 +112,7 @@ export default class UploadQuestions extends Component {
                             
                             <div className="upload-message-section">
                             {this.state.file !== '' && this.state.idAsignatura && 
-                                <button type="button" className="btn btn-success btn-submit" onClick={this.uploadFile}>Subir Cuestionario</button>
+                                <button type="button" className="btn btn-success btn-submit" onClick={this.uploadFile}>Subir Preguntas</button>
                             }
                             </div>
                         </div>   
