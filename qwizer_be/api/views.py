@@ -379,6 +379,7 @@ def get_preg_asignatura(request):
         preguntaJSON = {}
         preguntaJSON["id"] = pregunta.id
         preguntaJSON["question"] = pregunta.pregunta
+        preguntaJSON["title"] = pregunta.titulo
         preguntaJSON["type"] = pregunta.tipoPregunta 
         if pregunta.tipoPregunta == "test":
             opcionesLista = []

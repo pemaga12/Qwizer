@@ -71,3 +71,9 @@ a{
     margin-top: 50px;
 }
 
+/* SECCION VISUALIZACION DE PREGUNTAS */
+.visualize-container{
+    margin: 10px !important;
+    background-color: aliceblue;
+}
+
