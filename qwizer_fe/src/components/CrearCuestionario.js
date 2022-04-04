@@ -53,14 +53,23 @@ export default class CrearCuestionario extends React.Component {
 
     cuestionarioInfo = () => {
         return <div className="card m-3 p-3">
-            <div className='row'>
-                Nombre :<input name="testName" type="text" className='form-control form-control-sm'  onChange={(e) => this.setState({testName:e.target.value})}/>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Nombre: &nbsp;</span>
+                </div>
+                <input  className="form-control" name="testName" type="text" onChange={(e) => this.setState({testName:e.target.value})}/>
             </div>
-            <div className='row'>
-                Password :<input name="testPass" type="text"  onChange={(e) => this.setState({testPass:e.target.value})}/>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Password: &nbsp;</span>
+                </div>
+                <input  className="form-control" name="testPass" type="text"  onChange={(e) => this.setState({testPass:e.target.value})}/>
             </div>
-            <div className='row'>
-                Asignatura :<select defaultValue='null' onChange={(e) => this.setState({testSubject:Number(e.target.value)})}>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Asignatura: &nbsp;</span>
+                </div>
+                <select className='form-control' defaultValue='null' onChange={(e) => this.setState({testSubject:Number(e.target.value)})}>
                             {this.state.asignaturasImpartidas.map((subject,indx) => {
                                             return (
                                                 <option key={indx} value={subject.id}>{subject.nombre}</option>
@@ -68,28 +77,36 @@ export default class CrearCuestionario extends React.Component {
                             })}
                             <option key='null' value='null'> Selecciona una Asignatura </option>
                             </select>
-                
             </div>
-            <div className='row'>
-                Secuencial :<select defaultValue='0' onChange={(e) => this.setState({secuencial:Number(e.target.value)})}>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Secuencial: &nbsp;</span>
+                </div>
+                <select className='form-control' defaultValue='0' onChange={(e) => this.setState({secuencial:Number(e.target.value)})}>
                                 <option value="0">No</option>
                                 <option value="1">Si</option>
                             </select>
             </div>
-            <div className='row'>
-                <p>Duracion: <input type="number" name="testDuration" min="10" max="180" 
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Duracion: (minutos [max 3h]) &nbsp;</span>
+                </div>
+                <input  className='form-control' type="number" name="testDuration" min="10" max="180" 
                             onChange={(e) => this.setState({testDuration:e.target.value})}/>
-                                minutos (max 3h)</p>
             </div>
-            <div className='row'>
-                Fecha Apertura: <input type="datetime-local" name="fechaApertura" onChange={(e) => this.setState({fechaApertura:e.target.value})} />
-            
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Fecha Apertura: &nbsp;</span>
+                </div>
+                <input className='form-control' type="datetime-local" name="fechaApertura" onChange={(e) => this.setState({fechaApertura:e.target.value})} />
             </div>
-            <div className='row'>
-                Fecha Cierre: <input type="datetime-local" name="fechaCierre" onChange={(e) => this.setState({fechaCierre:e.target.value})} />
-        
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Fecha Cierre: &nbsp;</span>
+                </div>
+                <input className='form-control' type="datetime-local" name="fechaCierre" onChange={(e) => this.setState({fechaCierre:e.target.value})} />
             </div>
-            
            </div>
     }
 
