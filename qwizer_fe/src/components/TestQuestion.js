@@ -104,21 +104,30 @@ class TestQuestion extends React.Component {
         const questionData = this.props.infoPreg;
 
         return(
-            <div>
-                <h2 className='p-4 m-2 text-center' >{questionData.question}</h2>
-                <table class="p-4 m-2 bg-light rounded" >
-                    <tbody>
-                        {questionData.options.map(function(option,indx){
-                        return (<tr key={option.id}><td>
-                                    <input type="radio"  id={option.id} name={"opciones" + preguntaId} 
-                                        value={option.id} checked={questionData.correct_op === option.id}></input>
-                                    <label htmlFor={option.id}>{indx+1}.- {questionData.correct_op === option.id ?
-                                                                                                 option.op + " (Correcta)":
-                                                                                                 option.op}</label>
-                                </td></tr>);
-                        })}            
-                    </tbody>
-                </table>
+            <div className='d-flex flex-column justify-content-center visualize-container'>
+                <div className='row m-1'>
+                    <label className='col-4'>Pregunta: &nbsp;</label>
+                    <input className="col-8 m-input"  type="text" value={questionData.question} disabled></input>
+                </div>
+                
+                {questionData.options.map(function(option,indx){
+                    return (<div key={option.id}>
+                                <div className='row m-1'>
+                                    <div className='col-4'>
+                                        <input type="radio"  id={option.id} name={"opciones" + preguntaId} 
+                                            value={option.id} checked={questionData.correct_op === option.id} disabled></input>
+                                        <label  htmlFor={option.id}>{indx+1}.- Opcion: &nbsp;</label>
+                                    </div>
+                                    
+                                    <input className="col-8 m-input"  type="text" value={questionData.correct_op === option.id ?
+                                                                                                option.op + " (Correcta)":
+                                                                                                option.op} disabled></input>
+                                </div>
+                                                                                             
+                            </div>);
+                })}            
+                
+               
             </div>
          );
     }

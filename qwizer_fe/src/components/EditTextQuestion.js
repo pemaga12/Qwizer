@@ -31,11 +31,12 @@ export default class EditTextQuestion extends React.Component {
     render () {
         return(
             <div class="p-4 m-2 text-center">
-                <div className='row'>
-                    Pregunta : <input name="nombre" type="text" value={this.state.nombre} onChange={(e) => this.setState({nombre:e.target.value})}/>
-                </div>
-                <div className='row'>Respuesta : <textarea rows="5" cols="50" name="textValue" onChange={(e) =>  this.setState({textValue: e.target.value})} 
-                value={this.state.textValue} /></div>
+                <label className='col-4'>Pregunta: &nbsp;</label>
+                <input className="col-8 m-input" name="nombre" type="text" value={this.state.nombre} onChange={(e) => this.setState({nombre:e.target.value})}/>
+                
+                <label className='col-4 align-top'>Respuesta: &nbsp;</label>
+                <textarea className="col-8 m-input" rows="5" cols="50" name="textValue" onChange={(e) =>  this.setState({textValue: e.target.value})} value={this.state.textValue} />
+                    
                 <button class="btn btn-success" onClick={() => this.actualizarPregunta()}> Actualizar </button>
             </div>
         );

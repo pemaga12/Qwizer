@@ -65,21 +65,21 @@ export default class EditTestQuestion extends React.Component {
         
         return(
             <div class="p-4 m-2 text-center">
-                <div className='row'>
-                    Pregunta : <input name="nombre" type="text" value={this.state.nombre} onChange={(e) => this.setState({nombre:e.target.value})}/>
-                </div>
+                <label className='col-4'>Pregunta: &nbsp;</label>
+                <input className="col-8 m-input" name="nombre" type="text" value={this.state.nombre} onChange={(e) => this.setState({nombre:e.target.value})}/>
                 
                 {this.state.options.map((opcion,indx) => {
                                         return (
-                                            <div className='row'>
-                                                {indx + 1 + ".- Opcion :"}
-                                                <input name={opcion.id} type="text" value={opcion.op} onChange={(e) => this.updateOptions(e)}/>
+                                            <div className='row m-1'>
+                                                <label className='col-4'>{indx + 1 + ".- Opcion :"} &nbsp;</label>
+                                                <input className="col-8 m-input" name={opcion.id} type="text" value={opcion.op} onChange={(e) => this.updateOptions(e)}/>
                                             </div>
                                         );
                                     })}
 
-                <div className='row'>
-                    Respueta Correcta: <select  onChange={(e) => this.setState({correct:Number(e.target.value)})}>
+                <div className='row m-1'>
+                    <label className='col-4'>Respueta Correcta: &nbsp;</label>
+                        <select  className="col-8 m-input" onChange={(e) => this.setState({correct:Number(e.target.value)})}>
                                             {this.state.options.map((opcion,indx) => {
                                                 return (
                                                     <option key={indx} value={opcion.id} defaultValue={opcion.id==this.state.correct}>{opcion.op}</option>
@@ -87,6 +87,7 @@ export default class EditTestQuestion extends React.Component {
                                             })}
                                     </select>
                 </div>
+
                 <button class="btn btn-success" onClick={() => this.actualizarPregunta()}> Actualizar </button>
             </div>
         );

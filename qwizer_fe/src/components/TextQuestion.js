@@ -73,9 +73,13 @@ class TextQuestion extends React.Component {
 
     visualizeMode = () =>{
         return(
-            <div className="p-4 m-2 text-center">
-                <h2>{this.props.infoPreg.question}</h2>
-                <p className='p-4 m-2 bg-light rounded'>Respuesta : {this.props.infoPreg.correct_op}</p>
+            <div className="d-flex flex-column justify-content-center visualize-container">
+                <div className='row m-1'>
+                    <label className='col-4'>Pregunta: &nbsp;</label>
+                        <input className="col-8 m-input"  type="text" value={this.props.infoPreg.question} disabled></input>
+                    <label className='col-4'>Respuesta: &nbsp;</label>
+                        <input className="col-8 m-input" type="text" value={this.props.infoPreg.correct_op} disabled></input>
+                </div>
             </div>
          );
     }

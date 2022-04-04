@@ -15,11 +15,6 @@ export default class VisualizarPregunta extends Component {
       };
 
     }
-    
-    componentWillMount = () => {
-        
-    }
-
 
     visualizeQuestion = () =>{ //Visualizar la pregunta seleccionada y poder editarla
     
@@ -27,16 +22,20 @@ export default class VisualizarPregunta extends Component {
 
             return  <div>
                     <TestQuestion mode="visualize" infoPreg={this.props.data} id={this.props.data.id}/>
-                    <button class="btn btn-danger"  onClick={() => this.props.deleteQuestion(this.props.data.id)}> Eliminar Pregunta </button>
-                    <button class="btn btn-warning"  onClick={() => this.setState({editQuestion:true})}> Editar Pregunta </button>
+                    <div className='d-flex justify-content-center'>
+                        <button className="btn btn-danger m-1"  onClick={() => this.props.deleteQuestion(this.props.data.id)}> Eliminar Pregunta </button>
+                        <button className="btn btn-warning m-1"  onClick={() => this.setState({editQuestion:true})}> Editar Pregunta </button>
+                    </div>
                 </div> 
 
         }else if (this.props.data.type == "text"){
 
             return  <div>
                     <TextQuestion mode="visualize" infoPreg={this.props.data} />
-                    <button class="btn btn-danger"  onClick={() => this.props.deleteQuestion(this.props.data.id)}> Eliminar Pregunta </button>
-                    <button class="btn btn-warning"  onClick={() => this.setState({editQuestion:true})}> Editar Pregunta </button>
+                    <div className='d-flex justify-content-center'>
+                        <button className="btn btn-danger m-1"  onClick={() => this.props.deleteQuestion(this.props.data.id)}> Eliminar Pregunta </button>
+                        <button className="btn btn-warning m-1"  onClick={() => this.setState({editQuestion:true})}> Editar Pregunta </button>
+                    </div>
                 </div>    
         }
     }
