@@ -6,7 +6,6 @@ import DataTable from 'react-data-table-component'
 import yaml from 'js-yaml'
 import VisualizarPregunta from './VisualizarPregunta.js'
 
-const ExpandedComponent = ({ data }) => <VisualizarPregunta data={data.objeto}></VisualizarPregunta>;
 
 export default class BancoPreguntas extends React.Component {
 
@@ -15,11 +14,7 @@ export default class BancoPreguntas extends React.Component {
     
       this.state = {
         selectedAsignatura:undefined,
-        listaAsignaturas:[], //lista de asignaturas del banco de preguntas
-        selectQuestions:false, //si esta a true permite seleccionar las preguntas a descargar, si false, solo se pueden visualizar las preguntas
-        selectedList:[], //lista de ids de preguntas seleccionadas para luego descargarlas en yaml
-        visualizeQuestionId:undefined, //id de la pregunta que se esta visualizando
-        editQuestion:false, //id de la pregunta que se esta editando
+        listaAsignaturas:undefined, //lista de asignaturas del banco de preguntas
         columns: undefined, 
         data: undefined,
         title: undefined,
@@ -74,7 +69,6 @@ export default class BancoPreguntas extends React.Component {
           {
             name: 'objeto',
             selector: row => row.objeto,
-            sortable: true,
             omit: true,
           },
           {
@@ -121,77 +115,53 @@ export default class BancoPreguntas extends React.Component {
         
     }
     
-    
-    /*
+   
     deleteQuestion = (idPregunta) =>{
 
-        var token = localStorage.getItem('token');
-        var url = "http://127.0.0.1:8000/api/delete-question";
+      var token = localStorage.getItem('token');
+      var url = "http://127.0.0.1:8000/api/delete-question";
 
-        const message = new Map([["idPregunta", idPregunta]]);
-        const obj = JSON.stringify(Object.fromEntries(message));
+      const message = new Map([["idPregunta", idPregunta]]);
+      const obj = JSON.stringify(Object.fromEntries(message));
 
-        fetch(url , {
-            method: 'POST',
-            headers:{
-            'Content-type': 'application/json',
-            'Authorization': token
-            },
-            body: obj
-        }).then(data => data.json())
-        .then(result =>{
-            console.log(result)
-            this.getPregAsignaturas(this.state.selectedAsignatura)
-            this.setState({visualizeQuestionId:undefined})
-        })
+      fetch(url , {
+          method: 'POST',
+          headers:{
+          'Content-type': 'application/json',
+          'Authorization': token
+          },
+          body: obj
+      }).then(data => data.json())
+      .then(e => this.getPregAsignaturas(this.state.selectedAsignatura))
+      .catch(e => console.log(e))
 
     }
-
-    editQuestion = () => {
-        var editarPregunta = this.state.preguntas.find( question => question.id == this.state.visualizeQuestionId)
-
-        if(editarPregunta.type == "test"){
-            return  <div>
-                    <EditTestQuestion pregunta={editarPregunta} updateEditQuestion={this.updateEditedQuestion}/>
-                </div> 
-        }
-
-        if(editarPregunta.type == "text"){
-            return  <div>
-                    <EditTextQuestion pregunta={editarPregunta} updateEditQuestion={this.updateEditedQuestion} />
-                </div> 
-        }
-    }
-
+    
     updateEditedQuestion = (question) => {
 
-        var token = localStorage.getItem('token');
-        var url = "http://127.0.0.1:8000/api/update-question";
+      var token = localStorage.getItem('token');
+      var url = "http://127.0.0.1:8000/api/update-question";
 
-        const message = new Map([["preguntaActualizada", question]]);
-        const preguntaObj = JSON.stringify(Object.fromEntries(message));
-        console.log(preguntaObj)
-        fetch(url , {
-            method: 'POST',
-            headers:{
-            'Content-type': 'application/json',
-            'Authorization': token
-            },
-            body: preguntaObj
-        }).then(data => data.json())
-        .then(result =>{
-            console.log(result)
-            this.setState({editQuestion:false})
-        }).catch(e => console.log(e))
+      const message = new Map([["preguntaActualizada", question]]);
+      const preguntaObj = JSON.stringify(Object.fromEntries(message));
+
+      return fetch(url , {
+          method: 'POST',
+          headers:{
+          'Content-type': 'application/json',
+          'Authorization': token
+          },
+          body: preguntaObj
+      })
+      .then( e => this.getPregAsignaturas(this.state.selectedAsignatura))
+      .catch(e => console.log(e))
     }
-    */
-    downloadselectedList = () => { //Funcion para descargar las preguntas seleccionadas en formato yaml
 
+    downloadselectedList = () => { //Funcion para descargar las preguntas seleccionadas en formato yaml
 
         var listaSeleccionadas = this.state.preguntasSeleccionadas.map(seleccionada =>{
             return seleccionada.id;
         });
-
         
         var preguntas = this.state.preguntas.filter(pregunta => listaSeleccionadas.includes(pregunta.id));
         
@@ -218,7 +188,7 @@ export default class BancoPreguntas extends React.Component {
 
         var yamlObj = yaml.dump(jsonObj)
 
-        //console.log(yamlObj)
+        //Crear enlace
 
         var data = new Blob ([yamlObj],{type :'text/yml'})
         let elemx = window.document.createElement('a');
@@ -230,39 +200,48 @@ export default class BancoPreguntas extends React.Component {
         document.body.removeChild(elemx);
     }
 
-   downloadButton = () => {
-       return <><button className="btn btn-success"  onClick={this.downloadselectedList}>Descargar</button></> 
-       
-   } 
+    downloadButton = () => {
+        return <><button className="btn btn-success"  onClick={this.downloadselectedList}>Descargar</button></> 
+    } 
+
+    ExpandedComponent = ({ data }) => <VisualizarPregunta data={data.objeto}
+                                        deleteQuestion={this.deleteQuestion}
+                                        updateEditedQuestion={this.updateEditedQuestion}>
+                                      </VisualizarPregunta>;
 
     render() {
-    return <div className="index-body">
-        <div className="card tabla-notas">
-          <div className='card-content'>
-            <h4 className='d-flex justify-content-center'>Banco de preguntas</h4>
-            <label>Selecciona una asignatura para visualizar sus preguntas</label>
-            <select className="form-select" id="subject-selector" onChange={this.handleSelectChange} aria-label="Default select example">
-              <option hidden defaultValue>Selecciona una asignatura</option>
-            </select>
-            <br/>
-            <DataTable
-                pointerOnHover
-                selectableRows 
-                pagination
-                theme={"default"}	
-                title= {this.state.title}
-                columns={this.state.columns}
-                data={this.state.data}
-                onSelectedRowsChange={this.handleChange}
-                expandableRows
-                expandableRowsComponent={ExpandedComponent}
-                contextActions={this.downloadButton()}>      
-            </DataTable>
+
+      
+        
+        return <div className="index-body">
+          <div className="card tabla-notas">
+            <div className='card-content'>
+              <h4 className='d-flex justify-content-center'>Banco de preguntas</h4>
+              <label>Selecciona una asignatura para visualizar sus preguntas</label>
+              <select className="form-select" id="subject-selector" onChange={this.handleSelectChange} aria-label="Default select example">
+                <option hidden defaultValue>Selecciona una asignatura</option>
+              </select>
+              <br/>
+              <DataTable
+                  pointerOnHover
+                  selectableRows 
+                  pagination
+                  theme={"default"}	
+                  title= {this.state.title}
+                  columns={this.state.columns}
+                  data={this.state.data}
+                  onSelectedRowsChange={this.handleChange}
+                  expandableRows
+                  expandableRowsComponent={this.ExpandedComponent}
+                  contextActions={this.downloadButton()}>      
+              </DataTable>
+            </div>
           </div>
+          <ErrorModal id={"inserted_error"} message={this.state.message}></ErrorModal>
+          <SuccessModal id={"inserted_success"} message={this.state.message}></SuccessModal>
         </div>
-        <ErrorModal id={"inserted_error"} message={this.state.message}></ErrorModal>
-        <SuccessModal id={"inserted_success"} message={this.state.message}></SuccessModal>
-      </div>
+      
+      
        
     }
 }

@@ -54,7 +54,7 @@ class TextQuestion extends React.Component {
 
     testMode = () =>{
         return(
-            <div class="p-4 m-2 text-center">
+            <div className="p-4 m-2 text-center">
                 <textarea rows="9" cols="70" name="textValue" onChange={this.handleChange} value={this.state.textValue} />
             </div>
         );
@@ -62,7 +62,7 @@ class TextQuestion extends React.Component {
 
     revisionMode = () =>{
         return(
-            <div class="p-4 m-2 text-center">
+            <div className="p-4 m-2 text-center">
                 <p className='bg-secondary rounded'>{this.props.infoPreg.user_op}</p>
                 <div className='bg-warning rounded-pill'>
                      Respuesta Correcta: {this.props.infoPreg.correct_op}
@@ -73,7 +73,7 @@ class TextQuestion extends React.Component {
 
     visualizeMode = () =>{
         return(
-            <div class="p-4 m-2 text-center">
+            <div className="p-4 m-2 text-center">
                 <h2>{this.props.infoPreg.question}</h2>
                 <p className='p-4 m-2 bg-light rounded'>Respuesta : {this.props.infoPreg.correct_op}</p>
             </div>
