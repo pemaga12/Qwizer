@@ -106,6 +106,11 @@ class TestQuestion extends React.Component {
         return(
             <div className='d-flex flex-column justify-content-center visualize-container'>
                 <div className='row m-1'>
+                    <label className='col-4'>Titulo: &nbsp;</label>
+                    <input className="col-8 m-input"  type="text" value={questionData.title} disabled></input>
+                </div>
+                
+                <div className='row m-1'>
                     <label className='col-4'>Pregunta: &nbsp;</label>
                     <input className="col-8 m-input"  type="text" value={questionData.question} disabled></input>
                 </div>

@@ -806,6 +806,7 @@ Actualizar una pregunta
 preguntaActualizada:
         {
             id:
+            title:
             question:
             type: test
             options:[
@@ -824,6 +825,7 @@ o
 preguntaActualizada: 
         {
             id:
+            title:
             question:
             type: text
             correct_op:
@@ -841,6 +843,7 @@ def update_question(request):
     updatedQuestion = request.data["preguntaActualizada"]
     
     pregunta = Preguntas.objects.get(id=updatedQuestion["id"])
+    pregunta.titulo = updatedQuestion["title"]
     pregunta.pregunta = updatedQuestion["question"]
     pregunta.save()
 

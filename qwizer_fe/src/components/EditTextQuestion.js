@@ -14,6 +14,7 @@ export default class EditTextQuestion extends React.Component {
 
     componentDidMount(){
        this.setState({
+           titulo: this.props.pregunta.title,
            nombre:this.props.pregunta.question,
            textValue:this.props.pregunta.correct_op,
         })
@@ -23,6 +24,7 @@ export default class EditTextQuestion extends React.Component {
 
     actualizarPregunta(){
         var question = this.props.pregunta
+        question["title"] = this.state.titulo
         question["question"] = this.state.nombre
         question["correct_op"] = this.state.textValue
         this.props.updateEditQuestion(question);
@@ -31,6 +33,9 @@ export default class EditTextQuestion extends React.Component {
     render () {
         return(
             <div class="p-4 m-2 text-center">
+                <label className='col-4'>Titulo: &nbsp;</label>
+                <input className="col-8 m-input" name="titulo" type="text" value={this.state.titulo} onChange={(e) => this.setState({titulo:e.target.value})}/>
+
                 <label className='col-4'>Pregunta: &nbsp;</label>
                 <input className="col-8 m-input" name="nombre" type="text" value={this.state.nombre} onChange={(e) => this.setState({nombre:e.target.value})}/>
                 

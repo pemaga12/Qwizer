@@ -22,6 +22,7 @@ export default class EditTestQuestion extends React.Component {
         })
         
         this.setState({
+            titulo: this.props.pregunta.title,
             nombre:this.props.pregunta.question,
             correct:this.props.pregunta.correct_op,
             options:this.props.pregunta.options,
@@ -33,6 +34,7 @@ export default class EditTestQuestion extends React.Component {
 
     actualizarPregunta = () => {
         var question = this.props.pregunta
+        question["title"] = this.state.titulo
         question["question"] = this.state.nombre
         question["options"] = this.state.options
         question["correct_op"] = this.state.correct
@@ -65,12 +67,15 @@ export default class EditTestQuestion extends React.Component {
         
         return(
             <div class="p-4 m-2 text-center">
+                <label className='col-4'>Titulo: &nbsp;</label>
+                <input className="col-8 m-input" name="titulo" type="text" value={this.state.titulo} onChange={(e) => this.setState({titulo:e.target.value})}/>
+                
                 <label className='col-4'>Pregunta: &nbsp;</label>
                 <input className="col-8 m-input" name="nombre" type="text" value={this.state.nombre} onChange={(e) => this.setState({nombre:e.target.value})}/>
                 
                 {this.state.options.map((opcion,indx) => {
                                         return (
-                                            <div className='row m-1'>
+                                            <div key={opcion.id} className='row m-1'>
                                                 <label className='col-4'>{indx + 1 + ".- Opcion :"} &nbsp;</label>
                                                 <input className="col-8 m-input" name={opcion.id} type="text" value={opcion.op} onChange={(e) => this.updateOptions(e)}/>
                                             </div>
