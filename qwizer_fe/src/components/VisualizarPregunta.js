@@ -21,7 +21,7 @@ export default class VisualizarPregunta extends Component {
     }
 
 
-    visualizeQuestion = () =>{ //Fisualizar la pregunta seleccionada y poder editarla
+    visualizeQuestion = () =>{ //Visualizar la pregunta seleccionada y poder editarla
     
         if(this.props.data.type == "test"){
 
