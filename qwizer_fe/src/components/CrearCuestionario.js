@@ -2,6 +2,8 @@ import React from 'react'
 import {getSubjects,getAllSubjects,getSubjectQuestions} from '../utils/manage_subjects.js'
 import {sendCreatedTest} from '../utils/manage_test.js'
 import BancoPreguntas from './BancoPreguntas.js'
+import TestQuestion from './TestQuestion'
+import TextQuestion from './TextQuestion'
 
 
 export default class CrearCuestionario extends React.Component {
@@ -239,41 +241,9 @@ export default class CrearCuestionario extends React.Component {
 
     }
 
-    preguntaTest = (pregunta,indx) =>{
-        return <div key={indx} className='row'>
-            <div className='row'>
-                Pregunta: {pregunta.question}
-            </div>
-            <div className='row'>
-            Opciones: <lo>{pregunta.options.map((option,indx) =>{
-                    return <li> {option.op} </li>
-                })}</lo>
-            </div>
-            <div className='row'>
-            Opcion corecta: {pregunta.options.map((option,indx) =>{
-                        return option.id === pregunta.correct_op && option.op
-                    })}
-            </div>
-            
-            
-            
-        </div>
-    }
-    preguntaText = (pregunta,indx) =>{
-        return <div key={indx} className='row'>
-            <div className='row'>
-                Pregunta: {pregunta.question}
-            </div>
-            <div className='row'>
-                Respuesta: {pregunta.correct_op}
-            </div>
-        </div>
-    }
 
     createSelectedQuestions = () => {
 
-        const pregTest = this.preguntaTest
-        const pregText = this.preguntaText
         const modfPunt = this.modificarPuntuacion
 
         if(this.state.selectedList.length !== 0){
@@ -281,24 +251,26 @@ export default class CrearCuestionario extends React.Component {
                 {this.state.selectedList.map((pregunta,indx) => {
                     return <div className='card'>
 
-                        {pregunta.type === 'text' && pregText(pregunta,indx)}
-                        {pregunta.type === 'test' && pregTest(pregunta,indx)}
+                        {pregunta.type === 'text' && <TextQuestion mode="visualize" infoPreg={pregunta} id={pregunta.id}/>}
+                        {pregunta.type === 'test' && <TestQuestion mode="visualize" infoPreg={pregunta} id={pregunta.id}/>}
 
-                        <div className='row'>
-                            <div className='col'>
-                                Puntuacion positiva : <input type="number" step="any" onChange={(e) =>modfPunt(pregunta.id,"pos",Number(e.target.value)) }/>
-                            </div>
-                            <div className='col'>
-                                Puntuacion negativa : <input type="number" step="any" onChange={(e) =>modfPunt(pregunta.id,"neg",Number(e.target.value)) }/>
+                        <div className="d-flex flex-column justify-content-center visualize-container">
+                            <div className='row m-1'>
+                                <label className='col-4'>Puntuacion positiva: &nbsp;</label>
+                                <input className="col-8 m-input" type="number" step="any" onChange={(e) =>modfPunt(pregunta.id,"pos",Number(e.target.value)) }/>
+                                <label className='col-4'>Puntuacion negativa: &nbsp;</label>
+                                <input className="col-8 m-input" type="number" step="any" onChange={(e) =>modfPunt(pregunta.id,"neg",Number(e.target.value)) }/>
                             </div>
                         </div>
-                        
-                        <div className='row d-flex justify-content-center'>
+                        <div className='d-flex justify-content-center'>
                             <button type="button" className="btn btn-danger m-1" onClick={() => this.deleteSelectedQuestion(pregunta) }>Eliminar</button>
                         </div>
                     </div>
                 })}
-                <button type="button" className="btn btn-primary" onClick={this.enviarCuestionarioCreado}>Guardar</button>
+                <div className='d-flex justify-content-center'>
+                    <button type="button" className="btn btn-primary" onClick={this.enviarCuestionarioCreado}>Guardar</button>
+                </div>
+                
             </div>
         }
         
