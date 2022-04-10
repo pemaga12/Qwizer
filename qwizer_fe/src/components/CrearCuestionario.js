@@ -1,6 +1,7 @@
 import React from 'react'
 import {getSubjects,getAllSubjects,getSubjectQuestions} from '../utils/manage_subjects.js'
 import {sendCreatedTest} from '../utils/manage_test.js'
+import BancoPreguntas from './BancoPreguntas.js'
 
 
 export default class CrearCuestionario extends React.Component {
@@ -18,14 +19,11 @@ export default class CrearCuestionario extends React.Component {
       }
 
       this.cuestionarioInfo = this.cuestionarioInfo.bind(this);
-      this.getPregAsignaturas = this.getPregAsignaturas.bind(this);
     }
 
     componentDidMount(){
-        //peticion para conseguir las asignaturas disponibles
         this.getImparteAsignaturas();
         this.getAsignaturas();
-        
     }
 
     getImparteAsignaturas = () => {
@@ -42,13 +40,6 @@ export default class CrearCuestionario extends React.Component {
               listaAsignaturas: data.asignaturas,
             }); 
           })
-    }
-    getPregAsignaturas = (idAsignatura) =>{
-        getSubjectQuestions(idAsignatura).then(data => {
-            this.setState({
-                preguntas: data.preguntas,
-            }); 
-          });
     }
 
     cuestionarioInfo = () => {
@@ -110,18 +101,15 @@ export default class CrearCuestionario extends React.Component {
            </div>
     }
 
-    addSelectedQuestion = () => {
-        if(this.state.selectedQuestion !== 'null'){
-            var listaPregSelec = this.state.selectedList //lista de preguntas seleccionadas para el cuestionario
-            var pregunta = this.state.preguntas[this.state.selectedQuestion] 
+    addSelectedQuestion = (pregunta) => {
+        
+        var listaPregSelec = this.state.selectedList //lista de preguntas seleccionadas para el cuestionario
 
-            if(!listaPregSelec.includes(pregunta)){
-                listaPregSelec.push(pregunta)
-                var diccionarioPregSelec = this.state.selectedListInfo
-                diccionarioPregSelec[pregunta.id] = {punt_positiva:0,punt_negativa:0}
-                this.setState({selectedList:listaPregSelec,selectedListInfo:diccionarioPregSelec})
-            }
-            
+        if(!listaPregSelec.includes(pregunta)){
+            listaPregSelec.push(pregunta)
+            var diccionarioPregSelec = this.state.selectedListInfo
+            diccionarioPregSelec[pregunta.id] = {punt_positiva:0,punt_negativa:0}
+            this.setState({selectedList:listaPregSelec,selectedListInfo:diccionarioPregSelec})
         }
     }
 
@@ -305,10 +293,8 @@ export default class CrearCuestionario extends React.Component {
                             </div>
                         </div>
                         
-                        <div className='row'>
-                            <button type="button" className="btn btn-danger" 
-                            onClick={() => this.deleteSelectedQuestion(pregunta) }>
-                                Eliminar</button>
+                        <div className='row d-flex justify-content-center'>
+                            <button type="button" className="btn btn-danger m-1" onClick={() => this.deleteSelectedQuestion(pregunta) }>Eliminar</button>
                         </div>
                     </div>
                 })}
@@ -318,47 +304,7 @@ export default class CrearCuestionario extends React.Component {
         
     }
 
-    bancoPreguntas = () =>{
-
-        if(this.state.listaAsignaturas){
-            return <div className="card  m-3 p-3">
-                <h1 className='text-center'>Banco de Preguntas</h1>
-                <div className='row'>
-                    <div className='col'>
-                        Asignatura :<select defaultValue='null' onChange={(e) => this.getPregAsignaturas(e.target.value)}>
-                            {this.state.listaAsignaturas.map((subject,indx) => {
-                                return (
-                                    <option key={indx} value={subject.id}>{subject.asignatura}</option>
-                                );
-                            })}
-                            <option key='null' value='null'> Selecciona una Asignatura </option>
-                        </select>
-                    </div>
-                    <div className='col'>
-                        Preguntas: {this.state.preguntas && <select defaultValue='null' onChange={(e) => this.setState({selectedQuestion:Number(e.target.value)})}>
-                            {this.state.preguntas.map((question,indx) => {
-                                return (
-                                    <option key={indx} value={indx}>{question.question}</option>
-                                );
-                            })}
-                            <option key='null' value='null'> Selecciona una Pregunta </option>
-                        </select>
-                        }
-                    </div>
-                    {this.state.selectedQuestion !== 'null' && 
-                        <div className='col'>
-                            <button type="button" className="btn btn-success" onClick={this.addSelectedQuestion}>Añadir</button>
-                            </div>
-                    }
     
-                </div>
-                
-                
-                
-            </div>
-        }
-        
-    }
 
     
     render() {
@@ -366,7 +312,7 @@ export default class CrearCuestionario extends React.Component {
         return<div>
                 <h1 className='text-center'>Crear cuestionario</h1>
                 {this.cuestionarioInfo()}
-                {this.bancoPreguntas()}
+                <BancoPreguntas createQuiz={true} addQuestion={this.addSelectedQuestion}></BancoPreguntas>
                 {this.createSelectedQuestions()}
             </div>
     }

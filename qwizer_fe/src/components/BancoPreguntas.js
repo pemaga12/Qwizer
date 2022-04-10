@@ -18,7 +18,8 @@ export default class BancoPreguntas extends React.Component {
         columns: undefined, 
         data: undefined,
         title: undefined,
-        preguntasSeleccionadas: undefined
+        preguntasSeleccionadas: undefined,
+        createQuiz: false, //variable que le indica al banco de preguntas si se esta creando un cuestionario
       }
 
       this.getPregAsignaturas = this.getPregAsignaturas.bind(this);
@@ -31,6 +32,11 @@ export default class BancoPreguntas extends React.Component {
 
     componentDidMount(){
         this.getAsignaturas();
+        if(this.props.createQuiz != undefined){
+          this.setState({createQuiz: this.props.createQuiz});
+          //implica que  el metodo this.props.addQuestion tambien esta
+        }
+        
     }
 
 
@@ -204,10 +210,21 @@ export default class BancoPreguntas extends React.Component {
         return <><button className="btn btn-success"  onClick={this.downloadselectedList}>Descargar</button></> 
     } 
 
-    ExpandedComponent = ({ data }) => <VisualizarPregunta data={data.objeto}
-                                        deleteQuestion={this.deleteQuestion}
-                                        updateEditedQuestion={this.updateEditedQuestion}>
-                                      </VisualizarPregunta>;
+    ExpandedComponent = ({ data }) =>{
+      if(this.state.createQuiz){
+        return <VisualizarPregunta data={data.objeto}
+                            createQuiz={true}
+                            addQuestion={this.props.addQuestion}>
+                          </VisualizarPregunta>;
+        
+      }else{
+        return <VisualizarPregunta data={data.objeto}
+                            createQuiz={false}
+                            deleteQuestion={this.deleteQuestion}
+                            updateEditedQuestion={this.updateEditedQuestion}>
+                          </VisualizarPregunta>;
+      }
+    } 
 
     render() {
 
