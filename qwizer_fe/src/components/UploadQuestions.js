@@ -122,8 +122,8 @@ export default class UploadQuestions extends Component {
                     <SuccessModal id={"inserted_success"} message={this.state.message}></SuccessModal>
                 </div>
             )
-        }else{
-            return <h1>Loading..</h1>
         }
+
+        return <></>
     }
 }

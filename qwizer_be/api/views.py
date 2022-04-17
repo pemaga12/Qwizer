@@ -216,6 +216,8 @@ def test(request):
     
     idCuestionario = request.data["idCuestionario"]
     cuestionario = Cuestionarios.objects.get(id = idCuestionario)
+    duracion = cuestionario.duracion
+    title = cuestionario.titulo
     pertenecen = PerteneceACuestionario.objects.filter(idCuestionario = cuestionario.id)
     
     questions = []
@@ -258,9 +260,12 @@ def test(request):
     
     #Genero la respuesta
     content = {
+        'id': idCuestionario,
         'password': key.hex(),
         'iv': in_iv,
-        'encrypted_message': binascii.b2a_base64(encrypted).rstrip(), 
+        'encrypted_message': binascii.b2a_base64(encrypted).rstrip(),
+        'title':title,
+        'duracion': duracion, 
         'formatted_fecha_apertura': cuestionario.fecha_apertura.strftime("%d/%m/%Y, %H:%M:%S"),
         'formatted_fecha_cierre': cuestionario.fecha_cierre.strftime("%d/%m/%Y, %H:%M:%S"),
         'fecha_cierre': cuestionario.fecha_apertura,

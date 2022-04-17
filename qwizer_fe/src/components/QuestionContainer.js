@@ -56,7 +56,6 @@ class QuestionContainer extends React.Component {
       if(pregunta.type === 'test'){
         return  <TestQuestion mode={this.props.revision?"revision":"test"} infoPreg={pregunta} key={pregunta.id} idCuestionario={this.props.idCuestionario} question={pregunta.question} options={pregunta.options} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
       } // else type = 'text'
-      console.log(this.props.revision?"revision":"test")
       return <TextQuestion mode={this.props.revision?"revision":"test"} infoPreg={pregunta} key={pregunta.id} idCuestionario={this.props.idCuestionario} question={pregunta.question} id={pregunta.id} type={pregunta.type} addAnswerd={this.props.addAnswerMethod}/>
     }
   

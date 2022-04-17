@@ -1,10 +1,21 @@
 import CryptoJS from 'crypto-js'
 
 
+const getTestFromLocalStorage = (testId) => {
+  var tests = localStorage.getItem("tests");
+
+  var cuestionariosList = JSON.parse(tests);
+  for (const cuestionario of cuestionariosList) { 
+      var test = JSON.parse(cuestionario)
+      if(test.id == testId){
+          return test;
+      }
+  }
+}
+
 export const descifrarTest = (currentTest) => {
 
-  let testInfo = localStorage.getItem("test_" + currentTest);
-  var input = JSON.parse(testInfo);
+  var input = getTestFromLocalStorage(currentTest);
   
   var cifradas = input.encrypted_message;
   var key = CryptoJS.enc.Hex.parse(input.password);
@@ -23,9 +34,7 @@ export const descifrarTest = (currentTest) => {
 export const comprobarPassword = (contra,currentTest) => {
 
   if(contra !== ""){
-    let testInfo = localStorage.getItem("test_" + currentTest);
-    var text = JSON.parse(testInfo);
-    
+    var text = getTestFromLocalStorage(currentTest);
     if(CryptoJS.SHA256(contra).toString() === text.password) return true 
   }
   window.$("#password_error").modal("show")
@@ -39,7 +48,7 @@ export const sendTest = () => {
   var url = "http://127.0.0.1:8000/api/response";
   var listaRespuestas = localStorage.getItem('answers');
 
-  return fetch(url, {
+  fetch(url, {
     method: 'POST',
     headers:{
       'Content-type': 'application/json',

@@ -15,7 +15,7 @@ class TarjetaCuestionario extends React.Component {
             fecha_cierre: "",
             bloqueado: false,
             fecha_apertura_formateada: "",
-            fecha_cierre_formateada: ""
+            fecha_cierre_formateada: "",
         };
        
         
@@ -23,19 +23,65 @@ class TarjetaCuestionario extends React.Component {
         this.getTest = this.getTest.bind(this);
         this.comprobar_fecha = this.comprobar_fecha.bind(this);
         this.show_modal = this.show_modal.bind(this);
+
+        this.testIsDownloaded = this.testIsDownloaded.bind(this);
+        this.addTestToLocalStorage = this.addTestToLocalStorage.bind(this);
     }
 
     
     componentDidMount(){
-        this.get_info();
-        if(localStorage.getItem("test_" + this.props.idCuestionario) != null){
-            this.setState({
-                downloaded: true
-            });
-        }
+        if(!this.props.offline){
+            this.get_info();
+        } 
+        this.testIsDownloaded();
     }
 
+    //////////////////////////////////////////////////////
+    testIsDownloaded = () => {
+        var tests = localStorage.getItem("tests");
+        if(tests != null){
+            var cuestionariosList = JSON.parse(tests);
+            for (const cuestionario of cuestionariosList) { 
+                var test = JSON.parse(cuestionario)
+                if(test.id == this.props.idCuestionario){
+                    if(this.props.offline){
+                        this.setState({
+                            cuestionario: test,
+                            downloaded: true,
+                            duracion: test.duracion,
+                            corregido: false,
+                            fecha_apertura_formateada: test.formatted_fecha_apertura,
+                            fecha_cierre_formateada: test.formatted_fecha_cierre,
+                            fecha_apertura: test.fecha_apertura,
+                            fecha_cierre: test.fecha_cierre
+                        });
+                    }else{
+                        this.setState({
+                            cuestionario: test,
+                            downloaded: true
+                        });
+                    }
+                    
+                    break;
+                }
+            }
+        }
 
+        
+    }
+
+    addTestToLocalStorage = (jsonObject) => {
+        var tests = localStorage.getItem("tests");
+        if(tests == null){
+            var testList = [jsonObject]
+            localStorage.setItem('tests', JSON.stringify(testList));
+        }else{
+            var cuestionariosList = JSON.parse(tests);
+            cuestionariosList.push(jsonObject);
+            localStorage.setItem("tests",JSON.stringify(cuestionariosList));
+        } 
+    }
+    /////////////////////////////////////////////////////////////
 
     getTest = (idCuestionario) => {
         var url = 'http://127.0.0.1:8000/api/test';
@@ -58,8 +104,7 @@ class TarjetaCuestionario extends React.Component {
                 downloaded: true,
             });
             const jsonObject = JSON.stringify(data);
-            var nombre = "test_" + idCuestionario;
-            localStorage.setItem(nombre, jsonObject);
+            this.addTestToLocalStorage(jsonObject)
             
         });
         
@@ -71,12 +116,12 @@ class TarjetaCuestionario extends React.Component {
         const message = new Map([["idCuestionario", this.props.idCuestionario]]);
         const jsonObject = JSON.stringify(Object.fromEntries(message));
         fetch('http://127.0.0.1:8000/api/get-info-cuestionario', {
-        method: 'POST',
-        headers:{
-            'Content-type': 'application/json',
-            'Authorization': token
-        },
-        body: jsonObject
+            method: 'POST',
+            headers:{
+                'Content-type': 'application/json',
+                'Authorization': token
+            },
+            body: jsonObject
         })
         .then(response => response.json())
         .then(data => {
@@ -104,7 +149,9 @@ class TarjetaCuestionario extends React.Component {
                 $(idCuestionario).css("background-color", "#9c2400");
             }            
         })
-        .catch(error => console.log(error));
+        .catch(error =>{
+            console.log(error)
+        });
     }
 
     comprobar_fecha = () => {
@@ -129,34 +176,60 @@ class TarjetaCuestionario extends React.Component {
 
     render() { 
         
-        return(
-            <div className="card asignatura-section " name={this.props.cuestionario} id={this.props.idCuestionario}>
-                <div id={"cuestionario_" + this.props.idCuestionario} className="header bg-blue-grey">
-                    <h2>{this.props.cuestionario}</h2>{this.state.corregido && <h5>Calificación: {this.state.calificacion}</h5>}
-                </div>
-                <div className='asignatura-inner-body row'>
-                    <div className="col-9">
-                        
-                        <p>Duracion: {this.state.duracion} minutos</p>
-                        <p>Fecha de apertura: {this.state.fecha_apertura_formateada}</p>
-                        <p>Fecha de cierre: {this.state.fecha_cierre_formateada}</p>
-                        
-                        
+        if(this.props.offline == true){
+
+            return(
+                <div className="card asignatura-section " name={this.props.cuestionario.title} id={this.props.idCuestionario}>
+                    <div id={"cuestionario_" + this.props.idCuestionario} className="header bg-blue-grey">
+                        <h2>{this.props.cuestionario.title}</h2>
                     </div>
-                   <div className="col-3 button-section">
-                        {(this.state.downloaded && !this.state.corregido && !this.state.bloqueado && localStorage.getItem("rol") == "student") && <button className="btn btn-primary login-button" onClick={() => this.props.empezarTest(this.props.idCuestionario,this.state.duracion)}>Realizar</button>}
-                        {!this.state.downloaded && !this.state.corregido &&<button className="btn btn-success login-button" onClick={() => this.getTest(this.props.idCuestionario)}>Descargar test</button>}
-                        {(this.state.downloaded && !this.state.corregido && this.state.bloqueado && localStorage.getItem("rol") == "student") && <button type="button" className="btn btn-primary" data-toggle="modal" onClick={this.show_modal}>Realizar</button>}
-                        {this.state.corregido && localStorage.getItem("rol") == "student" && <button className="btn btn-primary login-button" onClick={() => this.props.revisionTest(this.props.idCuestionario)}>Revisar</button>}
-                        {this.state.downloaded && localStorage.getItem("rol") == "teacher" && <button className="btn btn-primary login-button" onClick={() => this.props.empezarTest(this.props.idCuestionario,this.state.duracion)}>Realizar</button>}
-                        {localStorage.getItem("rol") == "teacher" && <button className="btn btn-primary login-button" onClick={() => this.props.revisarNotasTest(this.props.idCuestionario)}>Revisar</button>}
-                        
+                    <div className='asignatura-inner-body row'>
+                        <div className="col-9">               
+                            <p>Duracion: {this.state.duracion} minutos</p>
+                            <p>Fecha de apertura: {this.state.fecha_apertura_formateada}</p>
+                            <p>Fecha de cierre: {this.state.fecha_cierre_formateada}</p>
+                        </div>
+                       <div className="col-3 button-section">
+                            {(this.state.downloaded && !this.state.corregido && !this.state.bloqueado && localStorage.getItem("rol") == "student") && <button className="btn btn-primary login-button" onClick={() => this.props.empezarTest(this.props.idCuestionario,this.state.duracion)}>Realizar</button>}
+                            {(this.state.downloaded && !this.state.corregido && this.state.bloqueado && localStorage.getItem("rol") == "student") && <button type="button" className="btn btn-primary" data-toggle="modal" onClick={this.show_modal}>Realizar</button>}
+                            {this.state.downloaded && localStorage.getItem("rol") == "teacher" && <button className="btn btn-primary login-button" onClick={() => this.props.empezarTest(this.props.idCuestionario,this.state.duracion)}>Realizar</button>}  
+                        </div>
+                        <ErrorModal id={"fecha_" + this.props.idCuestionario} message={["El test solo se puede resolver entre las siguientes fechas:", <br/> , this.state.fecha_apertura_formateada, <br/> ,this.state.fecha_cierre_formateada]}></ErrorModal>
+                    </div>                        
+                </div>                
+            );
+            
+        }else{
+            return(
+                <div className="card asignatura-section " name={this.props.cuestionario} id={this.props.idCuestionario}>
+                    <div id={"cuestionario_" + this.props.idCuestionario} className="header bg-blue-grey">
+                        <h2>{this.props.cuestionario}</h2>{this.state.corregido && <h5>Calificación: {this.state.calificacion}</h5>}
                     </div>
-                    <ErrorModal id={"fecha_" + this.props.idCuestionario} message={["El test solo se puede resolver entre las siguientes fechas:", <br/> , this.state.fecha_apertura_formateada, <br/> ,this.state.fecha_cierre_formateada]}></ErrorModal>
-                </div>                        
-            </div>                
-        );
-      }
+                    <div className='asignatura-inner-body row'>
+                        <div className="col-9">
+                            
+                            <p>Duracion: {this.state.duracion} minutos</p>
+                            <p>Fecha de apertura: {this.state.fecha_apertura_formateada}</p>
+                            <p>Fecha de cierre: {this.state.fecha_cierre_formateada}</p>
+                            
+                            
+                        </div>
+                       <div className="col-3 button-section">
+                            {(this.state.downloaded && !this.state.corregido && !this.state.bloqueado && localStorage.getItem("rol") == "student") && <button className="btn btn-primary login-button" onClick={() => this.props.empezarTest(this.props.idCuestionario,this.state.duracion)}>Realizar</button>}
+                            {!this.state.downloaded && !this.state.corregido &&<button className="btn btn-success login-button" onClick={() => this.getTest(this.props.idCuestionario)}>Descargar test</button>}
+                            {(this.state.downloaded && !this.state.corregido && this.state.bloqueado && localStorage.getItem("rol") == "student") && <button type="button" className="btn btn-primary" data-toggle="modal" onClick={this.show_modal}>Realizar</button>}
+                            {this.state.corregido && localStorage.getItem("rol") == "student" && <button className="btn btn-primary login-button" onClick={() => this.props.revisionTest(this.props.idCuestionario)}>Revisar</button>}
+                            {this.state.downloaded && localStorage.getItem("rol") == "teacher" && <button className="btn btn-primary login-button" onClick={() => this.props.empezarTest(this.props.idCuestionario,this.state.duracion)}>Realizar</button>}
+                            {localStorage.getItem("rol") == "teacher" && <button className="btn btn-primary login-button" onClick={() => this.props.revisarNotasTest(this.props.idCuestionario)}>Revisar</button>}
+                            
+                        </div>
+                        <ErrorModal id={"fecha_" + this.props.idCuestionario} message={["El test solo se puede resolver entre las siguientes fechas:", <br/> , this.state.fecha_apertura_formateada, <br/> ,this.state.fecha_cierre_formateada]}></ErrorModal>
+                    </div>                        
+                </div>                
+            );
+        }
+        
+    }
 }
 
 export default TarjetaCuestionario;

@@ -12,7 +12,6 @@ class CuestionariosContainer extends React.Component {
 
     render() {
         const idCuestionarios = this.props.idCuestionarios;
-        const cuestionarios = this.props.cuestionarios;
         const empezarTest = this.props.empezarTest;
         const asignatura = this.props.asignatura;
         const revisarTest = this.props.revisionTest;
@@ -28,7 +27,7 @@ class CuestionariosContainer extends React.Component {
                         { this.props.cuestionarios.map(function(cuestionario,indx){
                             return (
                                 <div className='d-flex justify-content-center'>
-                                    <TarjetaCuestionario cuestionario={cuestionario} idCuestionario={idCuestionarios[indx]} empezarTest={empezarTest} revisionTest={revisarTest} rol={rol} revisarNotasTest={revisarNotasTest} revisionTestProfesor={revisionTestProfesor}></TarjetaCuestionario>
+                                    <TarjetaCuestionario offline={false} cuestionario={cuestionario} idCuestionario={idCuestionarios[indx]} empezarTest={empezarTest} revisionTest={revisarTest} rol={rol} revisarNotasTest={revisarNotasTest} revisionTestProfesor={revisionTestProfesor}></TarjetaCuestionario>
                                 </div>
                             )
                         })

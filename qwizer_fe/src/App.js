@@ -21,6 +21,8 @@ import CuestionarioPassword from './components/CuestionarioPassword';
 import CrearCuestionario from './components/CrearCuestionario';
 import RevisionNotasContainer from './components/RevisionNotasContainer';
 
+import AvailableOffline from './components/AvailableOffline';
+
 class App extends React.Component{
 
   constructor(props){
@@ -38,7 +40,8 @@ class App extends React.Component{
       rol: "",
       currentTest: undefined,
       currentAsignatura: undefined,       //Guarda el nombre de la asignatura para la que estamos viendo los cuestionarios
-      cuestionarioViendoNotas: undefined  //Guarda el id del cuestionario cuando un profesor revisa las notas de ese cuestionario 
+      cuestionarioViendoNotas: undefined,  //Guarda el id del cuestionario cuando un profesor revisa las notas de ese cuestionario 
+      isOnline:true,
     };
     
     //Login functions
@@ -199,11 +202,8 @@ class App extends React.Component{
   }
   
   enviarTest = () => {
-    sendTest().then(data => {
-      this.changeCurrentPage('cuestionarios');
-    }).catch(function(error){
-      console.log("Error", error)
-    })
+    sendTest();
+    this.changeCurrentPage('cuestionarios');
   }
 
   revisionTest = (idCuestionario) => {
@@ -286,6 +286,31 @@ class App extends React.Component{
 
   //  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+  // -------------- METODO PARA COMPROBAR SI ESTAMOS ONLINE O OFFLINE --------------
+
+  getRandomString () {
+    return Math.random().toString(36).substring(2, 15)
+  }
+  
+  isOnline () {
+    if (!window.navigator.onLine) return false
+  
+    // avoid CORS errors with a request to your own origin
+    const url = new URL(window.location.origin)
+  
+    // random value to prevent cached responses
+    url.searchParams.set('rand', this.getRandomString())
+  
+    fetch(url.toString(),
+        { method: 'HEAD' },
+      ).then(resp =>{
+        return resp.ok;
+      })
+      .catch(e =>{
+        return false
+      })
+  }
+
   //  -----------------------------------------------------------------------------------------
 
   
@@ -311,6 +336,12 @@ class App extends React.Component{
             <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
             <CuestionariosContainer cuestionarios={this.state.cuestionarios} idCuestionarios={this.state.idCuestionarios} empezarTest={this.startTest} asignatura={this.state.currentAsignatura} revisionTest={this.revisionTest} revisionTestProfesor={this.revisionTestProfesor} rol={this.state.rol} revisarNotasTest={this.revisarNotasTest}></CuestionariosContainer> 
             </Router>
+      }else if (this.state.currentPage === "offline"){//Pagina que muestra los cuestionarios descargado cuando no hay conexion
+        document.title = "Available Tests";
+        return  <Router>
+          <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
+          <AvailableOffline empezarTest={this.startTest}></AvailableOffline> 
+          </Router>
       }else if (this.state.currentPage === "test"){//Pagina del test
         if (!this.state.allow){ //Introduce la contrasenia del test para poder hacerlo
           document.title = "Password Check";

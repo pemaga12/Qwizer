@@ -65,32 +65,31 @@ export default class UploadFile extends Component {
 
     render() {
 
-        //if(this.state.file !== ''){
-            return (
-                <div className="upload-body">
-                    <div className="card upload-section ">
-                        <div className="header bg-blue-grey">
-                            <h2>Sube tu cuestionario en formato : YAML</h2>
-                        </div>
-                        <div className='upload-inner-body'>
-                            <h4><label htmlFor="myfile">Selecciona un archivo:</label></h4>
-                            <div className="input-group">
-                                <div className="custom-file">
-                                    <input type="file" className="custom-file-input" aria-describedby="inputGroupFileAddon01" onChange={(e) => this.setFile(e)} id="myfile"  name="myfile"/>
-                                     <label className="custom-file-label" htmlFor="inputGroupFile01">{this.state.file.name}</label>
-                                </div>
-                            </div>
-                            <div className="upload-message-section">
-                            {this.state.file !== '' && 
-                                <button type="button" className="btn btn-success btn-submit" onClick={this.uploadFile}>Subir Cuestionario</button>
-                            }
-                            </div>
-                        </div>                        
+        return (
+            <div className="upload-body">
+                <div className="card upload-section ">
+                    <div className="header bg-blue-grey">
+                        <h2>Sube tu cuestionario en formato : YAML</h2>
                     </div>
-                    <ErrorModal id={"inserted_error"} message={this.state.message}></ErrorModal>
-                    <SuccessModal id={"inserted_success"} message={this.state.message}></SuccessModal>
+                    <div className='upload-inner-body'>
+                        <h4><label htmlFor="myfile">Selecciona un archivo:</label></h4>
+                        <div className="input-group">
+                            <div className="custom-file">
+                                <input type="file" className="custom-file-input" aria-describedby="inputGroupFileAddon01" onChange={(e) => this.setFile(e)} id="myfile"  name="myfile"/>
+                                    <label className="custom-file-label" htmlFor="inputGroupFile01">{this.state.file.name}</label>
+                            </div>
+                        </div>
+                        <div className="upload-message-section">
+                        {this.state.file !== '' && 
+                            <button type="button" className="btn btn-success btn-submit" onClick={this.uploadFile}>Subir Cuestionario</button>
+                        }
+                        </div>
+                    </div>                        
                 </div>
-            )
+                <ErrorModal id={"inserted_error"} message={this.state.message}></ErrorModal>
+                <SuccessModal id={"inserted_success"} message={this.state.message}></SuccessModal>
+            </div>
+        )
        
     }
 }

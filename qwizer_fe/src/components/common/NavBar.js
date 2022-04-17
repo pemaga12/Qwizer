@@ -7,7 +7,7 @@ class NavBar extends React.Component {
   constructor(props){
     super(props);
   }
-
+  
   
   render() {     
             return(
@@ -36,6 +36,9 @@ class NavBar extends React.Component {
                                 <a className="nav-link" onClick={() => this.props.changeCurrentPage("banco-preguntas")}>Banco de Preguntas<span className="sr-only"></span></a>
                                 </div>
                             </div>}
+                            <li className="nav-item active">
+                                <a className="nav-link" onClick={() => this.props.changeCurrentPage("offline")}>Offline <span className="sr-only"></span></a>
+                            </li>
                            
                             
                         </ul>
