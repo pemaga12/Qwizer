@@ -14,6 +14,9 @@ import UploadQuestions from './components/UploadQuestions';
 import CuestionariosContainer from './components/CuestionariosContainer';
 import RegisterContainer from './components/RegisterContainer'
 
+import QrContainer from './components/QrContainer';
+import InsercionManual from './components/InsercionManual';
+
 import {comprobarPassword,descifrarTest,sendTest,getCorrectedTest} from './utils/manage_test.js'
 import {logIn,logOut, getStudents} from './utils/manage_user.js'
 import {getSubjects,getSubjectTests} from './utils/manage_subjects'
@@ -75,6 +78,8 @@ class App extends React.Component{
   componentDidMount(){
     console.log(window.location.href);
     console.log(window.location.pathname);
+    const path = window.location.pathname.split("/");
+    console.log(path);
     this.checkLogged();
     var actual_page = localStorage.getItem('page');
     
@@ -85,9 +90,21 @@ class App extends React.Component{
       this.getAsignaturas();
       this.setState({
         currentPage: "index",
-        rol: localStorage.getItem("rol")
+        rol: localStorage.getItem("rol"),
+        userId : localStorage.getItem("userId")
+
       });
-      localStorage.setItem("page", "index");
+      if(window.location.pathname == "/")
+        localStorage.setItem("page", "index");
+      else if(path[1] == "scanner"){
+        this.setState({
+          scannedUserId: path[2],
+          scannedCuestionario: path[3],
+          scannedHash: path[4]
+        })
+        this.changeCurrentPage("insercion-manual");
+        
+      }
     }
   }
 
@@ -95,9 +112,9 @@ class App extends React.Component{
 
   login = (username, password) => {
     
-    logIn(username, password).then(role => {
+    logIn(username, password).then(response => {
 
-      if(role === " "){
+      if(response[0] === " "){
         window.alert("¡Contraseña incorrecta!")
       }else{
         this.getAsignaturas();
@@ -105,8 +122,10 @@ class App extends React.Component{
           username: username,
           login: true,
           currentPage: "index",
-          rol: role
+          rol: response[0],
+          userId: response[1]
         });
+        
         this.changeCurrentPage("index");
       }
     })
@@ -204,8 +223,18 @@ class App extends React.Component{
   }
   
   enviarTest = () => {
-    sendTest();
-    this.changeCurrentPage('cuestionarios');
+    var response = sendTest();
+    console.log(response);
+    this.setState({
+      generatedHash: response[1]
+    })
+    //this.changeCurrentPage('cuestionarios');
+    if(response[0]){
+      this.changeCurrentPage('index')
+    }
+    else{
+      this.changeCurrentPage('QrCode')
+    }
   }
 
   revisionTest = (idCuestionario) => {
@@ -380,12 +409,12 @@ class App extends React.Component{
            <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
            <UploadQuestions></UploadQuestions>
          </Router>
-     }else if(this.state.currentPage === "banco-preguntas"){
+      }else if(this.state.currentPage === "banco-preguntas"){
       return <Router>
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
           <BancoPreguntas></BancoPreguntas>
         </Router>
-     }else if(this.state.currentPage === "revisionNotas"){
+      }else if(this.state.currentPage === "revisionNotas"){
         return <Router>
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
           <RevisionNotasContainer currentCuestionario={this.state.cuestionarioViendoNotas} revisionTestProfesor={this.revisionTestProfesor}></RevisionNotasContainer>
@@ -394,6 +423,16 @@ class App extends React.Component{
         return <Router>
           <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
           <RegisterContainer getSubjects={getSubjects} getStudents={getStudents}></RegisterContainer>
+        </Router>
+      }else if(this.state.currentPage === "QrCode"){
+        return <Router>
+          <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
+          <QrContainer userId={this.state.userId} generatedHash={this.state.generatedHash} currentTest={this.state.currentTest}></QrContainer>
+        </Router>
+      }else if(this.state.currentPage === "insercion-manual"){
+        return <Router>
+          <NavBar changeCurrentPage={this.changeCurrentPage} username={this.state.username} rol={this.state.rol} logout={this.logout}></NavBar>
+          <InsercionManual userId={this.state.scannedUserId} generatedHash={this.state.scannedHash} cuestionario={this.state.scannedCuestionario}></InsercionManual>
         </Router>
       }
     }

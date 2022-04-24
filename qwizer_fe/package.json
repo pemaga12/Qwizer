@@ -16,6 +16,7 @@
     "react-countdown": "^2.3.2",
     "react-data-table-component": "^7.4.7",
     "react-dom": "^17.0.2",
+    "react-qr-code": "^2.0.7",
     "react-router-dom": "^5.3.0",
     "react-scripts": "^5.0.0",
     "start": "^5.1.0",

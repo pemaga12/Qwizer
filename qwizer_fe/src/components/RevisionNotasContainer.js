@@ -29,7 +29,7 @@ class RevisionNotasContainer extends React.Component {
   getNotas = () => {   
     var token = localStorage.getItem('token');
     const message = new Map([["idCuestionario", this.props.currentCuestionario]]);
-    console.log(message);
+    
     const jsonObject = JSON.stringify(Object.fromEntries(message));
     fetch('http://127.0.0.1:8000/api/get-notas-de-test', {
     method: 'POST',

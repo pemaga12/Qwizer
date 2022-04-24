@@ -23,7 +23,9 @@ export const logIn = (username, password) => {
             localStorage.setItem('token',data.token);
             localStorage.setItem('username',username);
             localStorage.setItem('rol', data.rol);
-            return data.rol
+            localStorage.setItem('userId', data.id);
+            var response = [data.rol, data.id]
+            return response
         }
     })
 

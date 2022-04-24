@@ -23,7 +23,7 @@ from django.contrib.auth import authenticate, login, logout
 from .models import Cuestionarios, PerteneceACuestionario, User #cogemos el modelo de usuario autenticado
 
 from .models import Asignaturas,EsAlumno,Imparte, Cuestionarios, User
-from .models import Preguntas, PerteneceACuestionario, OpcionesTest, Notas
+from .models import Preguntas, PerteneceACuestionario, OpcionesTest, Notas, EnvioOffline
 from .models import RespuestasTest,RespuestasTexto,RespuestasEnviadasTest,RespuestasEnviadasText
 
 from rest_framework.permissions import IsAuthenticated
@@ -61,17 +61,14 @@ def iniciar_sesion(request):
             "username" : correo,
             "token" : token.key,
             "rol" : user.role,
-            "token" : tokenvalue
+            "token" : tokenvalue,
+            "id" : user.id
         }
-        print(user.role)
-        
+                
         # Redirect to a success page.
     else:
         # Return an 'invalid login' error message.
         returnValue = {"respuesta" : "invalid login"}
-
-
-    
 
     return Response(returnValue)
 
@@ -922,3 +919,42 @@ def matricular_alumnos(request):
     content["errors"] = alumnosFallidos
     return Response(content)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def insercion_qr(request):
+    print("holaaa")
+    content = {}
+    if request.user.role == "teacher":
+        try:
+            idUsuario = request.data["idUsuario"]
+            alumno = User.objects.get(id = idUsuario)
+            idCuestionario = request.data["idCuestionario"]
+            cuestionario = Cuestionarios.objects.get(id = idCuestionario)
+            hash = request.data["hash"]
+            objetoInsercionManual = EnvioOffline(idAlumno = alumno, idCuestionario = cuestionario, hash = hash)
+        except:
+            message = "El codigo QR esta mal formado"
+            inserted = False
+            content["inserted"] = inserted
+            content["message"] = message
+            return Response(content)
+        try:
+            objetoInsercionManual.save()
+        except:
+            message = "Error a la hora de insertar el hash en la base de datos. Es probable que ya se haya insertado antes."
+            inserted = False
+            content["inserted"] = inserted
+            content["message"] = message
+            return Response(content)
+        message = "¡El hash se ha insertado correctamente!"
+        inserted = True
+        content["inserted"] = inserted
+        content["message"] = message
+        return Response(content)
+    else: 
+        message = "¡Un alumno no puede hacer esto!"
+        inserted = False
+        content["inserted"] = inserted
+        content["message"] = message
+        return Response(content)
+    

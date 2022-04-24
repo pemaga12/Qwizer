@@ -257,7 +257,8 @@ class EnvioOffline(models.Model):
     hash = models.CharField(blank=True, max_length=254, verbose_name='hash')
 
     class Meta:
-        db_table = "EnvioOffline"
+        db_table = "Envio_offline"
+        unique_together = ('idCuestionario', 'idAlumno') 
 
 class RespuestasEnviadasTest(models.Model):
     idCuestionario = models.ForeignKey('Cuestionarios', on_delete=models.CASCADE)

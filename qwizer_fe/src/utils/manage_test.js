@@ -50,9 +50,11 @@ export const sendTest = () => {
   var hash = CryptoJS.SHA256(listaRespuestas).toString();
   //listaRespuestas["hash"] = hash;
   const message = new Map([["respuestas", listaRespuestas], ["hash", hash]]);
-  console.log(message)
+  
   const obj = JSON.stringify(Object.fromEntries(message));
-
+  
+  var sent = false;
+  
   fetch(url, {
     method: 'POST',
     headers:{
@@ -61,7 +63,13 @@ export const sendTest = () => {
     },
     body: obj
   })
+  if (navigator.onLine) {
+    sent = true
+  }
+  var response = [sent, hash]
+  return response;
 }
+
 
 export const getCorrectedTest = (idCuestionario, idAlumno) => {              //idAlumno solo se usa cuando eres profesor y quieres ver los resultados para tu alumno
 

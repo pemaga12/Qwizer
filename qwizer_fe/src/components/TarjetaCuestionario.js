@@ -150,7 +150,7 @@ class TarjetaCuestionario extends React.Component {
             }            
         })
         .catch(error =>{
-            console.log(error)
+            
         });
     }
 

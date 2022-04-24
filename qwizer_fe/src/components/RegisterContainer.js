@@ -80,7 +80,6 @@ class RegisterContainer extends React.Component {
       data.push(row);
     });
 
-    console.log(data)
       
     this.setState({
       columns: columns,
@@ -91,9 +90,9 @@ class RegisterContainer extends React.Component {
 
   registrarAlumnos = () => {
     var alumnos = this.state.alumnosSeleccionados;
-    console.log(alumnos)
+    
     var asignatura = window.$("#subject-selector").val();
-    console.log(asignatura)
+    
 
     if(asignatura == "Selecciona una asignatura" || alumnos == undefined || alumnos.length == 0){
       this.setState({
@@ -107,7 +106,7 @@ class RegisterContainer extends React.Component {
       const jsonObject = JSON.stringify(Object.fromEntries(alumn_info));
       var url = "http://127.0.0.1:8000/api/matricular-alumnos";
       var token = localStorage.getItem('token');
-      console.log(alumn_info)
+      
 
       fetch(url, {
         method: 'POST',
@@ -119,7 +118,7 @@ class RegisterContainer extends React.Component {
         })
         .then(response => response.json())
         .then(data => {
-          console.log(data);
+          
           if(data.insertados){
             this.setState({
               message: "Los alumnos han sido matriculados correctamente."
@@ -130,7 +129,7 @@ class RegisterContainer extends React.Component {
             var errormsg = "Los siguientes alumnos no se han podido matricular: \n"
             
             data.errors.map(function(error,indx){
-              console.log(error);
+              
               errormsg += error + "\n";
             });
                        
