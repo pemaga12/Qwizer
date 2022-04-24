@@ -245,9 +245,19 @@ class Notas(models.Model):
     idAlumno = models.ForeignKey(User, on_delete=models.CASCADE)
     idCuestionario = models.ForeignKey('Cuestionarios', on_delete=models.CASCADE)
     nota = models.DecimalField(default=0, max_digits=10, decimal_places=2, verbose_name='nota')
+    hash = models.CharField(blank=True, max_length=254, verbose_name='hash')
 
     class Meta:
         db_table = "notas"
+        unique_together = ('idCuestionario', 'idAlumno') 
+
+class EnvioOffline(models.Model):
+    idAlumno = models.ForeignKey(User, on_delete=models.CASCADE)
+    idCuestionario = models.ForeignKey('Cuestionarios', on_delete=models.CASCADE)
+    hash = models.CharField(blank=True, max_length=254, verbose_name='hash')
+
+    class Meta:
+        db_table = "EnvioOffline"
 
 class RespuestasEnviadasTest(models.Model):
     idCuestionario = models.ForeignKey('Cuestionarios', on_delete=models.CASCADE)

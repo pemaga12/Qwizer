@@ -47,6 +47,11 @@ export const sendTest = () => {
   var token = localStorage.getItem('token');
   var url = "http://127.0.0.1:8000/api/response";
   var listaRespuestas = localStorage.getItem('answers');
+  var hash = CryptoJS.SHA256(listaRespuestas).toString();
+  //listaRespuestas["hash"] = hash;
+  const message = new Map([["respuestas", listaRespuestas], ["hash", hash]]);
+  console.log(message)
+  const obj = JSON.stringify(Object.fromEntries(message));
 
   fetch(url, {
     method: 'POST',
@@ -54,7 +59,7 @@ export const sendTest = () => {
       'Content-type': 'application/json',
       'Authorization': token
     },
-    body: listaRespuestas
+    body: obj
   })
 }
 

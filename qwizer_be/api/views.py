@@ -679,11 +679,13 @@ Llegan las respuestas de un test:
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def response(request):
-
-    cuestionario = Cuestionarios.objects.get(id=request.data["idCuestionario"])
+    print(request.data)
+    cuestionarioAux = json.loads(request.data["respuestas"])
+    
+    cuestionario = Cuestionarios.objects.get(id=cuestionarioAux["idCuestionario"])
     alumno = request.user
     
-    respuestas = request.data["respuestas"]
+    respuestas = cuestionarioAux["respuestas"]
     for respuesta in respuestas:  
         pregunta = Preguntas.objects.get(id=respuesta["id"])      
         if respuesta["type"] == "test":
@@ -693,8 +695,8 @@ def response(request):
         if respuesta["type"] == "text":
             respuestaEnviada = RespuestasEnviadasText(idCuestionario=cuestionario,idAlumno = alumno,idPregunta = pregunta,Respuesta=respuesta["answr"])
             respuestaEnviada.save()
-
-    nota = calcularNota(alumno,cuestionario,respuestas)
+    print(request.data["hash"])
+    nota = calcularNota(alumno,cuestionario,respuestas, request.data["hash"])
 
     content = {
         'nota' : nota,
@@ -707,7 +709,7 @@ def response(request):
 """
 Funcion que calcula la nota del cuestionario realizado
 """   
-def calcularNota(alumno,cuestionario,respuestas):
+def calcularNota(alumno,cuestionario,respuestas, hash):
 
     notaTest = 0
     
@@ -738,7 +740,7 @@ def calcularNota(alumno,cuestionario,respuestas):
             else:
                 notaTest = notaTest - pregunta_info.puntosFallo
     
-    notaAlumno = Notas(idAlumno = alumno,idCuestionario=cuestionario,nota = notaTest)
+    notaAlumno = Notas(idAlumno = alumno,idCuestionario=cuestionario,nota = notaTest, hash=hash)
     notaAlumno.save()
 
 
