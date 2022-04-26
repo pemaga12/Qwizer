@@ -229,6 +229,7 @@ class App extends React.Component{
       generatedHash: response[1]
     })
     //this.changeCurrentPage('cuestionarios');
+    //localStorage.removeItem("tests")
     if(response[0]){
       this.changeCurrentPage('index')
     }

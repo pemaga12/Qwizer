@@ -1,6 +1,7 @@
 import { data } from 'jquery';
 import React from 'react'
 import DataTable from 'react-data-table-component';
+import VisualizarNota from './VisualizarNota';
 
 const paginationComponentOptions = {
   rowsPerPageText: 'Filas por página',
@@ -62,6 +63,11 @@ class RevisionNotasContainer extends React.Component {
           selector: row => row.id,
           sortable: true,
           omit: true
+      },{
+        name: 'idCuestionario',
+        selector: row => row.idCuestionario,
+        sortable: true,
+        omit: true
       },
       {
           name: 'Nombre',
@@ -108,10 +114,12 @@ class RevisionNotasContainer extends React.Component {
     ];
     
     var data = [];
+    let idCuestionario = this.props.currentCuestionario;
     this.state.notasCuestionario.map(function(nota,indx){
       let row = {
         numero : indx,
         id : nota.id,
+        idCuestionario : idCuestionario, 
         nombre : nota.nombre,
         apellidos : nota.apellidos,
         nota : nota.nota,
@@ -127,6 +135,13 @@ class RevisionNotasContainer extends React.Component {
     });
   }
 
+  ExpandedComponent = ({ data }) =>{
+    console.log(data)
+    return <div>
+      <VisualizarNota data={data}></VisualizarNota>
+    </div>
+  } 
+
   render() { 
     if(this.state.notasCuestionario && this.state.data){
       return(
@@ -137,6 +152,8 @@ class RevisionNotasContainer extends React.Component {
                   theme={"default"}	
                   title= {this.state.title}
                   columns={this.state.columns}
+                  expandableRows
+                  expandableRowsComponent={this.ExpandedComponent}
                   data={this.state.data}
                   pagination paginationComponentOptions={paginationComponentOptions}
                 />

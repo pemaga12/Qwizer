@@ -23,4 +23,5 @@ urlpatterns = [
     path('get-alumnos', views.get_alumnos, name='get-alumnos'),
     path('matricular-alumnos', views.matricular_alumnos, name='matricular-alumnos'),
     path('insercion-qr', views.insercion_qr, name='insercion-qr'),
+    path('get-hashes', views.get_hashes, name='get-hashes'),
 ]

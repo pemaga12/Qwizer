@@ -759,7 +759,7 @@ def get_notas_de_test(request):
         "JOIN es_alumno AS alumn " + 
         "ON u.id = alumn.idAlumno_id " + 
         "left JOIN (SELECT * from notas WHERE idCuestionario_id = " + str(request.data["idCuestionario"]) +") AS n ON " +
-        "alumn.id = n.idAlumno_id "+
+        "u.id = n.idAlumno_id "+
         "WHERE alumn.idAsignatura_id = " + str(cuestionario.idAsignatura.id), translations=name_map)
 
     notas = []
@@ -950,6 +950,38 @@ def insercion_qr(request):
         inserted = True
         content["inserted"] = inserted
         content["message"] = message
+        return Response(content)
+    else: 
+        message = "¡Un alumno no puede hacer esto!"
+        inserted = False
+        content["inserted"] = inserted
+        content["message"] = message
+        return Response(content)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_hashes(request):
+    print("holaaa")
+    content = {}
+    if request.user.role == "teacher":
+        idCuestionario = request.data["idCuestionario"]
+        idUsuario = request.data["idUsuario"]
+        cuestionario = Cuestionarios.objects.get(id = idCuestionario)
+        alumno = User.objects.get(id = idUsuario)
+        try:
+            hash1 = Notas.objects.get(idAlumno = alumno, idCuestionario = cuestionario)
+            content["corrected"] = True
+            content["hashSubida"] = hash1.hash
+        except:
+            content["corrected"] = False
+        try:
+            hash2 = EnvioOffline.objects.get(idAlumno = alumno, idCuestionario = cuestionario)
+            content["hashQr"] = hash2.hash
+            print(hash2.hash)
+            content["qrSent"] = True
+        except:
+            content["qrSent"] = False
         return Response(content)
     else: 
         message = "¡Un alumno no puede hacer esto!"
