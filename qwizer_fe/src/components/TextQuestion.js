@@ -15,6 +15,7 @@ class TextQuestion extends React.Component {
     // this.props.mode puede tomar los siguientes valores: test, revision, visualize
 
     componentDidMount(){
+        
         if(this.props.mode === "test"){
             var answers = localStorage.getItem('answers');
             if (answers !== null){
@@ -24,7 +25,7 @@ class TextQuestion extends React.Component {
                 
                 listaRespuestas.map( respuesta => {
                     
-                    if(respuesta.id === this.props.id){
+                    if(respuesta.id == this.props.id){
                         rp = respuesta.answr
                     }
                 })
@@ -63,7 +64,9 @@ class TextQuestion extends React.Component {
     revisionMode = () =>{
         return(
             <div className="p-4 m-2 text-center">
-                <p className='bg-secondary rounded'>{this.props.infoPreg.user_op}</p>
+                <div className='bg-light rounded'>
+                    <p>{this.props.infoPreg.user_op}</p>
+                </div>
                 <div className='bg-warning rounded-pill'>
                      Respuesta Correcta: {this.props.infoPreg.correct_op}
                  </div>

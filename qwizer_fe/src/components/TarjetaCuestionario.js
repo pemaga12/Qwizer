@@ -185,7 +185,7 @@ class TarjetaCuestionario extends React.Component {
                     </div>
                     <div className='asignatura-inner-body row'>
                         <div className="col-9">               
-                            <p>Duracion: {this.state.duracion} minutos</p>
+                            <p>Duración: {this.state.duracion} minutos</p>
                             <p>Fecha de apertura: {this.state.fecha_apertura_formateada}</p>
                             <p>Fecha de cierre: {this.state.fecha_cierre_formateada}</p>
                         </div>
@@ -208,7 +208,7 @@ class TarjetaCuestionario extends React.Component {
                     <div className='asignatura-inner-body row'>
                         <div className="col-9">
                             
-                            <p>Duracion: {this.state.duracion} minutos</p>
+                            <p>Duración: {this.state.duracion} minutos</p>
                             <p>Fecha de apertura: {this.state.fecha_apertura_formateada}</p>
                             <p>Fecha de cierre: {this.state.fecha_cierre_formateada}</p>
                             
