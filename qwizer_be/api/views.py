@@ -758,9 +758,9 @@ def get_notas_de_test(request):
         "api_user AS u " + 
         "JOIN es_alumno AS alumn " + 
         "ON u.id = alumn.idAlumno_id " + 
-        "left JOIN (SELECT * from notas WHERE idCuestionario_id = " + str(request.data["idCuestionario"]) +") AS n ON " +
+        "left JOIN (SELECT * from notas WHERE idCuestionario_id = %s) AS n ON " +
         "u.id = n.idAlumno_id "+
-        "WHERE alumn.idAsignatura_id = " + str(cuestionario.idAsignatura.id), translations=name_map)
+        "WHERE alumn.idAsignatura_id = %s", [str(request.data["idCuestionario"]), str(cuestionario.idAsignatura.id)], translations=name_map)
 
     notas = []
     for alumno in alumnos:

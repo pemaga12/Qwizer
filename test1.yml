@@ -1,5 +1,5 @@
 cuestionario:
-  titulo: "Tema 1"
+  titulo: "Tema 3"
   password: "1234"
   asignatura: "Estructura de datos"
   secuencial: 0 #0 es que no es secuencial, 1 es secuencial
