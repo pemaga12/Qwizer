@@ -128,7 +128,7 @@ class QuestionContainer extends React.Component {
   
           <div class="p-4 row-1">
             <div class="col" className="card">
-              <h1 class="text-center">Nombre del Test</h1>
+              <h1 class="text-center"> {this.props.testName}</h1>
               <Countdown date={Date.now() + (this.updateTime()*1000)} renderer={this.renderer}/>
             </div>
           </div>
@@ -167,7 +167,7 @@ class QuestionContainer extends React.Component {
               <h1 class="text-center">{correctedTestInfo.titulo}</h1>
             </div>
             <div class="col" className="card">
-              <h1 class="text-center">Calificacion: {correctedTestInfo.nota}</h1>
+              <h1 class="text-center">Calificación: {correctedTestInfo.nota}</h1>
             </div>
           </div>
   
