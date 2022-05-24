@@ -308,11 +308,6 @@ def test(request):
 @permission_classes([IsAuthenticated])
 def testCorrected(request):
 
-    #---------------------------------
-    # AQUI COMPROBAR SI LA PETICION LA ESTA HACIENDO EL ALUMNO O EL PROFE
-    # Si es alumno: alumno = reques.user
-    # Si es profe : pasar el id de alumno y conseguir el objecto de alumno de la BBDD
-    #-----------------------------------
     if request.user.role == "student":
         alumno = request.user
     else:

@@ -14,11 +14,11 @@ cuestionario:
       punt_positiva: 3    #puntos que suma
       punt_negativa: 0.3 #puntos que resta
     - tipo: "test"
-      pregunta: "Es una estructura no lineal en la que si se realiza la implementación con apuntadores cada nodo puede apuntar a uno o varios nodos."
+      pregunta: "Selecciona la estructura no lineal:"
       titulo: "Titulo 2"
-      opciones: ["Árboles", "Colas", "Pilas", "Grafos"]
+      opciones: ["Árboles", "Colas", "Pilas"]
       op_correcta: 0 #id de opcion correcta
-      punt_positiva: 3.5    #puntos que suma
+      punt_positiva: 1.0    #puntos que suma
       punt_negativa: 0.3 #puntos que resta
     - tipo: "test"
       pregunta: "Un algoritmo es una secuencia finita de operaciones, organizadas para realizar una tarea determinada."
