@@ -43,8 +43,7 @@ class App extends React.Component{
       rol: "",
       currentTest: undefined,
       currentAsignatura: undefined,       //Guarda el nombre de la asignatura para la que estamos viendo los cuestionarios
-      cuestionarioViendoNotas: undefined,  //Guarda el id del cuestionario cuando un profesor revisa las notas de ese cuestionario 
-      isOnline:true,
+      cuestionarioViendoNotas: undefined,  //Guarda el id del cuestionario cuando un profesor revisa las notas de ese cuestionario
     };
     
     //Login functions
@@ -317,31 +316,6 @@ class App extends React.Component{
   }
 
   //  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-  // -------------- METODO PARA COMPROBAR SI ESTAMOS ONLINE O OFFLINE --------------
-
-  getRandomString () {
-    return Math.random().toString(36).substring(2, 15)
-  }
-  
-  isOnline () {
-    if (!window.navigator.onLine) return false
-  
-    // avoid CORS errors with a request to your own origin
-    const url = new URL(window.location.origin)
-  
-    // random value to prevent cached responses
-    url.searchParams.set('rand', this.getRandomString())
-  
-    fetch(url.toString(),
-        { method: 'HEAD' },
-      ).then(resp =>{
-        return resp.ok;
-      })
-      .catch(e =>{
-        return false
-      })
-  }
 
   //  -----------------------------------------------------------------------------------------
 

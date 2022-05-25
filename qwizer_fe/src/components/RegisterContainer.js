@@ -159,7 +159,7 @@ class RegisterContainer extends React.Component {
             <div className="index-body">
               <div className="card tabla-notas">
                 <div className='card-content'>
-                  <h4 className='d-flex justify-content-center'>Registo alumnos en una asignatura</h4>
+                  <h4 className='d-flex justify-content-center'>Registrar alumnos en una asignatura</h4>
                   <label>Selecciona la asignatura a la que quieras añadir a los alumnos</label>
                   <select className="form-select" id="subject-selector" aria-label="Default select example">
                     <option hidden defaultValue>Selecciona una asignatura</option>

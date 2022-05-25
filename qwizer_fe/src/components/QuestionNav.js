@@ -19,7 +19,7 @@ class QuestionNav extends React.Component {
             <div class="container">
                 {this.props.listaPreguntas.map(function(pregunta,indx){
                     return (
-                        <button type="button" class="btn btn-outline-dark" key={indx} onClick={navigate} value={indx}>{"Pegunta : "}{indx+1}</button>
+                        <button type="button" class="btn btn-outline-dark" key={indx} onClick={navigate} value={indx}>{"Pregunta "}{indx+1}</button>
                     );
                     })           
 
