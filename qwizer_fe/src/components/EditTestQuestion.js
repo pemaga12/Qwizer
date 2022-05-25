@@ -67,7 +67,7 @@ export default class EditTestQuestion extends React.Component {
         
         return(
             <div class="p-4 m-2 text-center">
-                <label className='col-4'>Titulo: &nbsp;</label>
+                <label className='col-4'>Título: &nbsp;</label>
                 <input className="col-8 m-input" name="titulo" type="text" value={this.state.titulo} onChange={(e) => this.setState({titulo:e.target.value})}/>
                 
                 <label className='col-4'>Pregunta: &nbsp;</label>
@@ -76,7 +76,7 @@ export default class EditTestQuestion extends React.Component {
                 {this.state.options.map((opcion,indx) => {
                                         return (
                                             <div key={opcion.id} className='row m-1'>
-                                                <label className='col-4'>{indx + 1 + ".- Opcion :"} &nbsp;</label>
+                                                <label className='col-4'>{indx + 1 + ".- Opción :"} &nbsp;</label>
                                                 <input className="col-8 m-input" name={opcion.id} type="text" value={opcion.op} onChange={(e) => this.updateOptions(e)}/>
                                             </div>
                                         );

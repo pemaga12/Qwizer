@@ -78,7 +78,7 @@ class TextQuestion extends React.Component {
         return(
             <div className="d-flex flex-column justify-content-center visualize-container">
                 <div className='row m-1'>
-                    <label className='col-4'>Titulo: &nbsp;</label>
+                    <label className='col-4'>Título: &nbsp;</label>
                         <input className="col-8 m-input"  type="text" value={this.props.infoPreg.title} disabled></input>
                     <label className='col-4'>Pregunta: &nbsp;</label>
                         <input className="col-8 m-input"  type="text" value={this.props.infoPreg.question} disabled></input>

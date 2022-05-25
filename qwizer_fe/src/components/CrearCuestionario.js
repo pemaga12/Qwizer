@@ -54,7 +54,7 @@ export default class CrearCuestionario extends React.Component {
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="inputGroup-sizing-default">Password: &nbsp;</span>
+                    <span class="input-group-text" id="inputGroup-sizing-default">Contraseña: &nbsp;</span>
                 </div>
                 <input  className="form-control" name="testPass" type="text"  onChange={(e) => this.setState({testPass:e.target.value})}/>
             </div>
@@ -83,7 +83,7 @@ export default class CrearCuestionario extends React.Component {
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="inputGroup-sizing-default">Duracion: (minutos [max 3h]) &nbsp;</span>
+                    <span class="input-group-text" id="inputGroup-sizing-default">Duración: (minutos [max 3h]) &nbsp;</span>
                 </div>
                 <input  className='form-control' type="number" name="testDuration" min="10" max="180" 
                             onChange={(e) => this.setState({testDuration:e.target.value})}/>
@@ -256,9 +256,9 @@ export default class CrearCuestionario extends React.Component {
 
                         <div className="d-flex flex-column justify-content-center visualize-container">
                             <div className='row m-1'>
-                                <label className='col-4'>Puntuacion positiva: &nbsp;</label>
+                                <label className='col-4'>Puntuación positiva: &nbsp;</label>
                                 <input className="col-8 m-input" type="number" step="any" onChange={(e) =>modfPunt(pregunta.id,"pos",Number(e.target.value)) }/>
-                                <label className='col-4'>Puntuacion negativa: &nbsp;</label>
+                                <label className='col-4'>Puntuación negativa: &nbsp;</label>
                                 <input className="col-8 m-input" type="number" step="any" onChange={(e) =>modfPunt(pregunta.id,"neg",Number(e.target.value)) }/>
                             </div>
                         </div>

@@ -107,7 +107,7 @@ class TestQuestion extends React.Component {
         return(
             <div className='d-flex flex-column justify-content-center visualize-container'>
                 <div className='row m-1'>
-                    <label className='col-4'>Titulo: &nbsp;</label>
+                    <label className='col-4'>Título: &nbsp;</label>
                     <input className="col-8 m-input"  type="text" value={questionData.title} disabled></input>
                 </div>
                 
@@ -122,7 +122,7 @@ class TestQuestion extends React.Component {
                                     <div className='col-4'>
                                         <input type="radio"  id={option.id} name={"opciones" + preguntaId} 
                                             value={option.id} checked={questionData.correct_op === option.id} disabled></input>
-                                        <label  htmlFor={option.id}>{indx+1}.- Opcion: &nbsp;</label>
+                                        <label  htmlFor={option.id}>{indx+1}.- Opción: &nbsp;</label>
                                     </div>
                                     
                                     <input className="col-8 m-input"  type="text" value={questionData.correct_op === option.id ?

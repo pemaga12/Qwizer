@@ -33,7 +33,7 @@ export default class EditTextQuestion extends React.Component {
     render () {
         return(
             <div class="p-4 m-2 text-center">
-                <label className='col-4'>Titulo: &nbsp;</label>
+                <label className='col-4'>Título: &nbsp;</label>
                 <input className="col-8 m-input" name="titulo" type="text" value={this.state.titulo} onChange={(e) => this.setState({titulo:e.target.value})}/>
 
                 <label className='col-4'>Pregunta: &nbsp;</label>
