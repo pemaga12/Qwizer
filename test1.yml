@@ -8,37 +8,40 @@ cuestionario:
   fecha_cierre: '23/02/23 11:59:59' #Formato esperado: yy:mm:dd hh:mm:ss
   preguntas:
     - tipo: "text"
-      pregunta: "¿Qué es una pila?"
+      pregunta: "¿Con qué TADs se puede implementar un diccionario?"
       titulo: "Titulo 1"
-      opciones: "Una pila es una estructura de datos de entradas ordenadas que sólo se puedenintroducir y eliminar por un extremo, llamado cima."
+      opciones: "Con un árbol de búsqueda o una tabla dispersa"
       punt_positiva: 3    #puntos que suma
       punt_negativa: 0.3 #puntos que resta
+      
     - tipo: "test"
-      pregunta: "Selecciona la estructura no lineal:"
-      titulo: "Titulo 2"
-      opciones: ["Árboles", "Colas", "Pilas"]
-      op_correcta: 0 #id de opcion correcta
-      punt_positiva: 1.0    #puntos que suma
-      punt_negativa: 0.3 #puntos que resta
-    - tipo: "test"
-      pregunta: "Un algoritmo es una secuencia finita de operaciones, organizadas para realizar una tarea determinada."
+      pregunta: "El problema de la mochila usa el esquema de :"
       titulo: "Titulo 3"
-      opciones: ["Falso","Verdadero"]
+      opciones: ["Divide y Vencerás","Vuelta atrás"]
       op_correcta: 1 #id de opcion correcta
       punt_positiva: 1.0    #puntos que suma
       punt_negativa: 0.3 #puntos que resta
+
     - tipo: "test"
-      pregunta: "Son la forma en que se organizan los datos para ser usados."
+      pregunta: "Indica qué TAD no es lineal:"
+      titulo: "Titulo 2"
+      opciones: ["Cola", "Pila","Árbol","Lista"]
+      op_correcta: 2 #id de opcion correcta 5,37
+      punt_positiva: 1.0    #puntos que suma
+      punt_negativa: 0.3 #puntos que resta
+    
+    - tipo: "test"
+      pregunta: "El problema de las n-reinas usa el esquema de :"
       titulo: "Titulo 4"
-      opciones: ["Estructura de datos", "Tipo de dato", "Algoritmo"]
+      opciones: ["Vuelta atrás","Divide y Vencerás"]
       op_correcta: 0 #id de opcion correcta
       punt_positiva: 0.5    #puntos que suma
       punt_negativa: 0.3 #puntos que resta
     - tipo: "test"
-      pregunta: "Nombre de la clase: ColaClase, el llamado sería..."
+      pregunta: "El TAD Cola se puede implementar con un array estático circular"
       titulo: "Titulo 5"
-      opciones: ["ColaClase.new = Cola1 ColaClase();", "ColaClase cola1 = new ColaClase();"]
-      op_correcta: 1 #id de opcion correcta
+      opciones: ["Verdadero", "Falso"]
+      op_correcta: 0 #id de opcion correcta
       punt_positiva: 0.5    #puntos que suma
       punt_negativa: 0.3 #puntos que resta
 
