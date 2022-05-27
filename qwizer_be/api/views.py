@@ -82,7 +82,7 @@ def cerrar_sesion(request):
 
 """
 {
-    "email": "profe@profe.es",
+    "email": "profesor@ucm.es",
     "first_name": "Maria",
     "last_name": "Perez",
     "password": "1234",
@@ -97,7 +97,8 @@ def registro(request):
     if request.user.is_authenticated:
         return Response('Ya estas registrado')
     info = request.data
-    user = User.objects.create_user(info['email'],info['first_name'],info['last_name'],info['password'])
+    kwargs = {'role':info['role']}
+    user = User.objects.create_user(info['email'],info['first_name'],info['last_name'],info['password'],**kwargs)
     
     return Response('Registrado correctamente intenta logearte')
 

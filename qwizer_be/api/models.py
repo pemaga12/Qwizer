@@ -19,6 +19,7 @@ class UserManager(BaseUserManager):
             Creates  and saves a User with the given email, first name, last name
             and password.
         """
+        print(extra_fields)
         if not email:
             raise ValueError(_('Users must have an email address'))
         if not first_name:
