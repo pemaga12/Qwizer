@@ -204,6 +204,7 @@ def get_info_cuestionario(request):
         notaCuestionario = nota.nota
     except:
         corregido = 0
+    print(fechaCierre.strftime("%d/%m/%Y, %H:%M:%S"), fechaCierre)
     return Response({'duracion': duracion, 'formattedFechaApertura': fechaApertura.strftime("%d/%m/%Y, %H:%M:%S"), 
     'formattedFechaCierre': fechaCierre.strftime("%d/%m/%Y, %H:%M:%S"), "FechaApertura": fechaApertura, "FechaCierre": fechaCierre, 'corregido': corregido, 'nota': notaCuestionario})
 
@@ -873,7 +874,7 @@ def update_question(request):
 def get_alumnos(request):
     content = {}
     #comporbar que es alumno
-    if request.user.role == "teacher":
+    if str(request.user.role) != "student":
         usuarios = User.objects.filter(role="student")
         alumnos = []
         for alumno in usuarios:
@@ -891,34 +892,36 @@ def get_alumnos(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def matricular_alumnos(request):
-    content = {}
-    correct = True
-    alumnosFallidos = []
-    alumnos = request.data["alumnos"]
-    asignatura = request.data["asignatura"]
-    print(alumnos)
-    print(asignatura)
-    for alumno in alumnos:
-        print(alumno["id"])
-        objetoAlumno = User.objects.get(id = alumno["id"])
-        print(objetoAlumno)
-        objetoAsignatura = Asignaturas.objects.get(id = asignatura)
-        objetoEsAlumno = EsAlumno(idAlumno = objetoAlumno, idAsignatura = objetoAsignatura)
-        
-        try:
-            objetoEsAlumno.save()
-        except:
-            correct = False
-            alumnosFallidos.append(alumno["nombre"] + " " + alumno["apellidos"])
-        
-    content["insertados"] = correct
-    content["errors"] = alumnosFallidos
-    return Response(content)
+    if str(request.user.role) != "student":
+        content = {}
+        correct = True
+        alumnosFallidos = []
+        alumnos = request.data["alumnos"]
+        asignatura = request.data["asignatura"]
+        print(alumnos)
+        print(asignatura)
+        for alumno in alumnos:
+            print(alumno["id"])
+            objetoAlumno = User.objects.get(id = alumno["id"])
+            print(objetoAlumno)
+            objetoAsignatura = Asignaturas.objects.get(id = asignatura)
+            objetoEsAlumno = EsAlumno(idAlumno = objetoAlumno, idAsignatura = objetoAsignatura)
+            
+            try:
+                objetoEsAlumno.save()
+            except:
+                correct = False
+                alumnosFallidos.append(alumno["nombre"] + " " + alumno["apellidos"])
+            
+        content["insertados"] = correct
+        content["errors"] = alumnosFallidos
+        return Response(content)
+    else:
+        return Response("")
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def insercion_qr(request):
-    print("holaaa")
     content = {}
     if request.user.role == "teacher":
         try:
@@ -958,7 +961,6 @@ def insercion_qr(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def get_hashes(request):
-    print("holaaa")
     content = {}
     if request.user.role == "teacher":
         idCuestionario = request.data["idCuestionario"]
