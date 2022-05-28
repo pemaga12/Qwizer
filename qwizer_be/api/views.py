@@ -43,7 +43,7 @@ Llega un json:
 {"email": "admin@admin.com", "password": "admin"}
 """
 @api_view(['POST'])
-def iniciar_sesion(request):
+def app_login(request):
     returnValue = ''
     info = request.data
     correo = info['email']
@@ -75,7 +75,7 @@ def iniciar_sesion(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def cerrar_sesion(request):
+def app_logout(request):
     logout(request)
     return Response('Logged out')
 
@@ -108,11 +108,11 @@ def registro(request):
 }
 
 """
-#get_asignaturas
+#get_subjects
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_asignaturas(request):
+def get_subjects(request):
     listaAsignaturas = []
     identif = request.user.id
     role = str(request.user.role)
@@ -140,7 +140,7 @@ def get_asignaturas(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def get_all_asignaturas(request): #conseguir todas las asignaturas para el banco de preguntas
+def get_all_subjects(request): #conseguir todas las asignaturas para el banco de preguntas
     listaAsignaturas = []
     #comprobar que es un profesor
     asignaturas = Asignaturas.objects.all()
@@ -154,7 +154,7 @@ def get_all_asignaturas(request): #conseguir todas las asignaturas para el banco
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def get_cuestionarios(request):
+def get_quizzes(request):
     
     print(request)
     listaCuestionarios = []
@@ -169,7 +169,7 @@ def get_cuestionarios(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def get_info_asignatura(request):
+def get_subject_info(request):
     current_user = request.user
     cuestionarios = Cuestionarios.objects.filter(idAsignatura = request.data["idAsignatura"])
     
@@ -189,7 +189,7 @@ def get_info_asignatura(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def get_info_cuestionario(request):
+def get_quiz_info(request):
     cuestionario = Cuestionarios.objects.get(id = request.data["idCuestionario"])
     duracion = cuestionario.duracion
     fechaApertura = cuestionario.fecha_apertura
@@ -361,7 +361,7 @@ def testCorrected(request):
 """
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def get_preg_asignatura(request):
+def get_subject_questions(request):
 
     if str(request.user.role) == "student":
         content = {
@@ -421,7 +421,7 @@ def get_preg_asignatura(request):
 """
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def crear_cuestionario(request):
+def create_quiz(request):
 
     if str(request.user.role) == "student":
         content = {
@@ -745,11 +745,22 @@ Funcion que devuelve las notas de todos los alumnos para un cuestionario
 """   
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def get_notas_de_test(request):
+def get_quiz_grades(request):
     #comporbar que es alumno
     
     cuestionario = Cuestionarios.objects.get(id = request.data["idCuestionario"])
     name_map = {'first_name': 'first_name', 'last_name': 'last_name', 'email': 'nota'}
+
+    print("SELECT u.id, u.first_name, u.last_name, n.nota as nota FROM " +
+        "api_user AS u " + 
+        "JOIN es_alumno AS alumn " + 
+        "ON u.id = alumn.idAlumno_id " + 
+        "left JOIN (SELECT * from notas WHERE idCuestionario_id = "+ str(request.data["idCuestionario"]) + ") AS n ON " +
+        "u.id = n.idAlumno_id "+
+        "WHERE alumn.idAsignatura_id = " + str(cuestionario.idAsignatura.id) + " UNION " +
+        "SELECT u.id, u.first_name, u.last_name, n.nota AS nota " +
+        "FROM api_user AS u JOIN notas AS n ON u.id = n.idAlumno_id WHERE n.idCuestionario_id = " + str(request.data["idCuestionario"]) + " AND n.idAlumno_id = " + str(request.data["idCuestionario"]))
+
 
     alumnos = User.objects.raw("SELECT u.id, u.first_name, u.last_name, n.nota as nota FROM " +
         "api_user AS u " + 
@@ -757,7 +768,20 @@ def get_notas_de_test(request):
         "ON u.id = alumn.idAlumno_id " + 
         "left JOIN (SELECT * from notas WHERE idCuestionario_id = %s) AS n ON " +
         "u.id = n.idAlumno_id "+
-        "WHERE alumn.idAsignatura_id = %s", [str(request.data["idCuestionario"]), str(cuestionario.idAsignatura.id)], translations=name_map)
+        "WHERE alumn.idAsignatura_id = %s UNION " +
+        "SELECT u.id, u.first_name, u.last_name, n.nota AS nota " +
+        "FROM api_user AS u JOIN notas AS n ON u.id = n.idAlumno_id WHERE n.idCuestionario_id = %s AND n.idAlumno_id = %s", [str(request.data["idCuestionario"]), str(cuestionario.idAsignatura.id), str(request.data["idCuestionario"]), request.user.id], translations=name_map)
+    
+    alumnos = User.objects.raw("SELECT u.id, u.first_name, u.last_name, n.nota AS nota " +
+        "FROM api_user AS u JOIN notas AS n ON u.id = n.idAlumno_id WHERE n.idCuestionario_id = %s AND n.idAlumno_id = %s UNION " +
+        "SELECT u.id, u.first_name, u.last_name, n.nota as nota FROM " +
+        "api_user AS u " + 
+        "JOIN es_alumno AS alumn " + 
+        "ON u.id = alumn.idAlumno_id " + 
+        "left JOIN (SELECT * from notas WHERE idCuestionario_id = %s) AS n ON " +
+        "u.id = n.idAlumno_id "+
+        "WHERE alumn.idAsignatura_id = %s ", [str(request.data["idCuestionario"]), request.user.id, str(request.data["idCuestionario"]), str(cuestionario.idAsignatura.id)], translations=name_map)
+
 
     notas = []
     for alumno in alumnos:
@@ -871,7 +895,7 @@ def update_question(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def get_alumnos(request):
+def get_students(request):
     content = {}
     #comporbar que es alumno
     if str(request.user.role) != "student":
@@ -891,7 +915,7 @@ def get_alumnos(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def matricular_alumnos(request):
+def enroll_students(request):
     if str(request.user.role) != "student":
         content = {}
         correct = True
@@ -921,7 +945,7 @@ def matricular_alumnos(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def insercion_qr(request):
+def insert_qr(request):
     content = {}
     if request.user.role == "teacher":
         try:

@@ -49,7 +49,6 @@ class NavBar extends React.Component {
                                 {this.props.username}
                                 </a>
                                 <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a className="dropdown-item" href="#">Mi perfil</a>
                                     <a className="dropdown-item" onClick={this.props.logout}>Cerrar sesión</a>
                                 </div>
                             </div>

@@ -104,7 +104,7 @@ class RegisterContainer extends React.Component {
       
       const alumn_info = new Map([["alumnos", alumnos], ["asignatura", asignatura]]);
       const jsonObject = JSON.stringify(Object.fromEntries(alumn_info));
-      var url = "http://127.0.0.1:8000/api/matricular-alumnos";
+      var url = "http://127.0.0.1:8000/api/enroll-students";
       var token = localStorage.getItem('token');
       
 

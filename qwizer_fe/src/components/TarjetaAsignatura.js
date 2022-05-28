@@ -28,7 +28,7 @@ class TarjetaAsignatura extends React.Component {
         var token = localStorage.getItem('token');
         const message = new Map([["idAsignatura", this.props.idAsignatura]]);
         const jsonObject = JSON.stringify(Object.fromEntries(message));
-        fetch('http://127.0.0.1:8000/api/get-info-asignatura', {
+        fetch('http://127.0.0.1:8000/api/get-subject-info', {
         method: 'POST',
         headers:{
             'Content-type': 'application/json',

@@ -32,7 +32,7 @@ class RevisionNotasContainer extends React.Component {
     const message = new Map([["idCuestionario", this.props.currentCuestionario]]);
     
     const jsonObject = JSON.stringify(Object.fromEntries(message));
-    fetch('http://127.0.0.1:8000/api/get-notas-de-test', {
+    fetch('http://127.0.0.1:8000/api/get-quiz-grades', {
     method: 'POST',
     headers:{
         'Content-type': 'application/json',

@@ -19,7 +19,7 @@ class InsercionManual extends React.Component {
 
     guardarDatos = () => { 
         var token = localStorage.getItem('token');
-        var url = "http://127.0.0.1:8000/api/insercion-qr";
+        var url = "http://127.0.0.1:8000/api/insert-qr";
         const message = new Map([["idUsuario", this.props.userId], ["idCuestionario", this.props.cuestionario], ["hash", this.props.generatedHash]]); 
         console.log(message)
         const obj = JSON.stringify(Object.fromEntries(message));

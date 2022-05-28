@@ -93,7 +93,7 @@ export const getCorrectedTest = (idCuestionario, idAlumno) => {              //i
 export const sendCreatedTest = (cuestionario) => {
 
   var token = localStorage.getItem('token');
-  var url = "http://127.0.0.1:8000/api/crear-cuestionario";
+  var url = "http://127.0.0.1:8000/api/create-quiz";
   var jsonCuestionario = JSON.stringify(cuestionario)
   return fetch(url, {
     method: 'POST',

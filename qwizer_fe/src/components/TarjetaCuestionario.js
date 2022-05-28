@@ -115,7 +115,7 @@ class TarjetaCuestionario extends React.Component {
         var token = localStorage.getItem('token');
         const message = new Map([["idCuestionario", this.props.idCuestionario]]);
         const jsonObject = JSON.stringify(Object.fromEntries(message));
-        fetch('http://127.0.0.1:8000/api/get-info-cuestionario', {
+        fetch('http://127.0.0.1:8000/api/get-quiz-info', {
             method: 'POST',
             headers:{
                 'Content-type': 'application/json',
