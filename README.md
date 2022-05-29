@@ -46,18 +46,35 @@ Tras ejecutar la instalación deberás usar el comando `npm install`. Es posible
 
 # **Funcionalidades:**
 
-- Login.
-- Logout.
-- Manejo de sesiones mediante Tokens.
-- Los usuarios pueden ver las asignaturas de las que están matriculados.
-- Los usuarios pueden ver los cuestionarios que tienen para una asignatura.
-- Los usuarios pueden resolver un cuestionario.
-- Las respuestas se envían al servidor y estas son corregidas automáticamente.
-- Las notas se ven con facilidad, ya que las tarjetas se colorean en función de la nota que hayan sacado.
-- El cuestionario tiene un temporizador, el si se llega a 0 el cuestionario se envía automáticamente.
-- Un profesor puede subir un cuestionario y preguntas en formato YAML a través de la página. (En la raíz del proyecto hay un ejemplo con el formato esperado).
-- Se puede descargar mas de un cuestionario, los cuales son guardados en el localstorage.
-- Service Workers y PWA.
-- Generación del código QR.
-- Tanto los alumnos como los profesores pueden revisar los cuestionarios.
-- Los profesores y los alumnos pueden ver las notas que han obtenido en los cuestionarios.
+- **Básicas:** 
+   - Login.
+   - Logout.
+   
+- **Alumnos:**  
+   - Pueden ver las asignaturas en las que están matriculados.
+   - Pueden ver los cuestionarios que tienen para una asignatura.
+   - Pueden descargar cuestionarios para su posterior realización.
+   - Pueden revisar los cuestionarios realizados y ver su nota.
+ 
+- **Profesores:** 
+   - Pueden ver las asignaturas que imparten.
+   - Pueden ver los cuestionarios que tienen para una asignatura.
+   - Pueden descargar cuestionarios para su posterior realización.
+   - Pueden revisar los cuestionarios realizados y ver su nota.
+   - Pueden revisar los cuestionarios de sus estudiantes y ver su nota.
+   - Banco de Preguntas:
+      -Visualización, edición y eliminación de preguntas.
+      -Descarga de las preguntas en un fichero en formato YAML.
+   - Subir preguntas al banco de preguntas con un fichero en formato YAML.
+   - Subir cuestionarios con un fichero en formato YAML.
+   - Creación de cuestionarios a través de la interfaz web.
+   
+- **Administradores:** 
+   - Panel de administración de Django para gestionar la base de datos.
+   
+- **Funcionamiento _offline:**
+   - Permite que los usuarios puedan realizar los cuestionarios que se hayan descargado de manera _offline.
+   - Generación del QR 
+   - Envío de respuestas automáticamente cuando el usuario recupere la conexión.
+  
+
