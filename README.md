@@ -77,5 +77,6 @@ Tras ejecutar la instalación deberás usar el comando `npm install`. Es posible
    - Permite que los usuarios puedan realizar los cuestionarios que se hayan descargado de manera _offline_.
    - Generación del QR que se deberá mostrar al profesor.
    - Envío de respuestas automáticamente cuando el usuario recupere la conexión.
+   - El profesor puede comprobar la integridad de las respuestas enviadas.
   
 
