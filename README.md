@@ -64,8 +64,8 @@ Tras ejecutar la instalación deberás usar el comando `npm install`. Es posible
    - Pueden revisar los cuestionarios realizados y ver su nota.
    - Pueden revisar los cuestionarios de sus estudiantes y ver su nota.
    - Banco de Preguntas:
-      -Visualización, edición y eliminación de preguntas.
-      -Descarga de las preguntas en un fichero en formato YAML.
+       -Visualización, edición y eliminación de preguntas.
+       -Descarga de las preguntas en un fichero en formato YAML.
    - Subir preguntas al banco de preguntas con un fichero en formato YAML.
    - Subir cuestionarios con un fichero en formato YAML.
    - Creación de cuestionarios a través de la interfaz web.
@@ -73,9 +73,9 @@ Tras ejecutar la instalación deberás usar el comando `npm install`. Es posible
 - **Administradores:** 
    - Panel de administración de Django para gestionar la base de datos.
    
-- **Funcionamiento _offline:**
-   - Permite que los usuarios puedan realizar los cuestionarios que se hayan descargado de manera _offline.
-   - Generación del QR 
+- **Funcionamiento _offline_:**
+   - Permite que los usuarios puedan realizar los cuestionarios que se hayan descargado de manera _offline_.
+   - Generación del QR que se deberá mostrar al profesor.
    - Envío de respuestas automáticamente cuando el usuario recupere la conexión.
   
 
