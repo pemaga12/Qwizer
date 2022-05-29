@@ -64,8 +64,8 @@ Tras ejecutar la instalación deberás usar el comando `npm install`. Es posible
    - Pueden revisar los cuestionarios realizados y ver su nota.
    - Pueden revisar los cuestionarios de sus estudiantes y ver su nota.
    - Banco de Preguntas:
-        -Visualización, edición y eliminación de preguntas.
-        -Descarga de las preguntas en un fichero en formato YAML.
+      - Visualización, edición y eliminación de preguntas.
+      - Descarga de las preguntas en un fichero en formato YAML.
    - Subir preguntas al banco de preguntas con un fichero en formato YAML.
    - Subir cuestionarios con un fichero en formato YAML.
    - Creación de cuestionarios a través de la interfaz web.
