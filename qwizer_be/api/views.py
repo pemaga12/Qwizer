@@ -751,27 +751,6 @@ def get_quiz_grades(request):
     cuestionario = Cuestionarios.objects.get(id = request.data["idCuestionario"])
     name_map = {'first_name': 'first_name', 'last_name': 'last_name', 'email': 'nota'}
 
-    print("SELECT u.id, u.first_name, u.last_name, n.nota as nota FROM " +
-        "api_user AS u " + 
-        "JOIN es_alumno AS alumn " + 
-        "ON u.id = alumn.idAlumno_id " + 
-        "left JOIN (SELECT * from notas WHERE idCuestionario_id = "+ str(request.data["idCuestionario"]) + ") AS n ON " +
-        "u.id = n.idAlumno_id "+
-        "WHERE alumn.idAsignatura_id = " + str(cuestionario.idAsignatura.id) + " UNION " +
-        "SELECT u.id, u.first_name, u.last_name, n.nota AS nota " +
-        "FROM api_user AS u JOIN notas AS n ON u.id = n.idAlumno_id WHERE n.idCuestionario_id = " + str(request.data["idCuestionario"]) + " AND n.idAlumno_id = " + str(request.data["idCuestionario"]))
-
-
-    alumnos = User.objects.raw("SELECT u.id, u.first_name, u.last_name, n.nota as nota FROM " +
-        "api_user AS u " + 
-        "JOIN es_alumno AS alumn " + 
-        "ON u.id = alumn.idAlumno_id " + 
-        "left JOIN (SELECT * from notas WHERE idCuestionario_id = %s) AS n ON " +
-        "u.id = n.idAlumno_id "+
-        "WHERE alumn.idAsignatura_id = %s UNION " +
-        "SELECT u.id, u.first_name, u.last_name, n.nota AS nota " +
-        "FROM api_user AS u JOIN notas AS n ON u.id = n.idAlumno_id WHERE n.idCuestionario_id = %s AND n.idAlumno_id = %s", [str(request.data["idCuestionario"]), str(cuestionario.idAsignatura.id), str(request.data["idCuestionario"]), request.user.id], translations=name_map)
-    
     alumnos = User.objects.raw("SELECT u.id, u.first_name, u.last_name, n.nota AS nota " +
         "FROM api_user AS u JOIN notas AS n ON u.id = n.idAlumno_id WHERE n.idCuestionario_id = %s AND n.idAlumno_id = %s UNION " +
         "SELECT u.id, u.first_name, u.last_name, n.nota as nota FROM " +

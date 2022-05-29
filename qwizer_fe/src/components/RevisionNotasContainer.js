@@ -136,7 +136,6 @@ class RevisionNotasContainer extends React.Component {
   }
 
   ExpandedComponent = ({ data }) =>{
-    console.log(data)
     return <div>
       <VisualizarNota data={data}></VisualizarNota>
     </div>

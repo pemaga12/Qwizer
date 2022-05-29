@@ -21,9 +21,7 @@ class InsercionManual extends React.Component {
         var token = localStorage.getItem('token');
         var url = "http://127.0.0.1:8000/api/insert-qr";
         const message = new Map([["idUsuario", this.props.userId], ["idCuestionario", this.props.cuestionario], ["hash", this.props.generatedHash]]); 
-        console.log(message)
         const obj = JSON.stringify(Object.fromEntries(message));
-        console.log(obj)
 
         
         fetch(url, {
@@ -38,13 +36,10 @@ class InsercionManual extends React.Component {
                 file: "",
                 message: data.message
             });
-            console.log(data);
             if(!data.inserted){
-                console.log("hola")
                 window.$("#inserted_error").modal('show');
             } 
             else{
-                console.log("hola2")
                 window.$("#inserted_success").modal('show');
             } 
                      

@@ -21,7 +21,6 @@ export default class VisualizarNota extends Component {
     }
 
     getHashes = () => {
-        console.log(this.props.data)   
         var token = localStorage.getItem('token');
         
         const message = new Map([["idCuestionario", this.props.data.idCuestionario], ["idUsuario", this.props.data.id]]);

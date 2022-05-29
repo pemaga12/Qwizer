@@ -22,7 +22,6 @@ class QrContainer extends React.Component {
         this.setState({
             qUrl: url
         });
-        console.log(this.state.qUrl);
     }
 
     render() {

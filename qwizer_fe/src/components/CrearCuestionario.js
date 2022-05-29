@@ -228,9 +228,7 @@ export default class CrearCuestionario extends React.Component {
         }
         
         if(!incorrect){//si se han rellenado todos los campos bien, entonces se envia
-            console.log(cuestionario)
             sendCreatedTest(cuestionario).then(data => {
-                console.log(data)
             }).then(data => {
                 this.props.changeCurrentPage('index');
                 alert("Cuestionario creado correctamente")

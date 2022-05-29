@@ -75,10 +75,7 @@ class App extends React.Component{
   };
 
   componentDidMount(){
-    console.log(window.location.href);
-    console.log(window.location.pathname);
     const path = window.location.pathname.split("/");
-    console.log(path);
     this.checkLogged();
     var actual_page = localStorage.getItem('page');
     
@@ -223,7 +220,6 @@ class App extends React.Component{
   
   enviarTest = () => {
     var response = sendTest();
-    console.log(response);
     this.setState({
       generatedHash: response[1]
     })
@@ -248,7 +244,7 @@ class App extends React.Component{
   }
 
   revisionTestProfesor = (idCuestionario, idAlumno) => {
-    console.log(idAlumno)
+
     getCorrectedTest(idCuestionario, idAlumno).then(data => {
       var jsonData = JSON.parse(data.corrected_test)
       this.setState({testCorregido:jsonData});
@@ -259,7 +255,6 @@ class App extends React.Component{
   }
 
   revisarNotasTest = (idCuestionario) => {
-    console.log("Revisar notas")
     
     this.setState({cuestionarioViendoNotas:idCuestionario});
     this.changeCurrentPage('revisionNotas');
