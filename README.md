@@ -58,6 +58,7 @@ Tras ejecutar la instalación deberás usar el comando `npm install`. Es posible
  
 - **Profesores:** 
    - Pueden ver las asignaturas que imparten.
+   - Pueden matricular estudiantes en las asignaturas que imparten.
    - Pueden ver los cuestionarios que tienen para una asignatura.
    - Pueden descargar cuestionarios para su posterior realización.
    - Pueden revisar los cuestionarios realizados y ver su nota.
