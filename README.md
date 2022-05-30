@@ -46,10 +46,6 @@ Tras ejecutar la instalación deberás usar el comando `npm install`. Es posible
 
 # **Funcionalidades:**
 
-- **Básicas:** 
-   - Login.
-   - Logout.
-   
 - **Alumnos:**  
    - Pueden ver las asignaturas en las que están matriculados.
    - Pueden ver los cuestionarios que tienen para una asignatura.
