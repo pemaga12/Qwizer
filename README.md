@@ -12,6 +12,8 @@ La aplicación tiene un diseño adaptativo, lo que permite que se visualice bien
 
 # **Instrucciones de uso:**
 
+Es importante que hagas los pasos en este orden, puesto que si intentas ejecutar Django antes que la base de datos obtendrás un error.
+
 ## Base de datos:
 Para crear la base de datos nosotros utilizamos la herramienta [laragon](https://laragon-org.translate.goog/?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=sc). Una vez instalada y ejecutada debemos darle a `Start all`. Tras esto le daremos al botón Database y como campos seleccionaremos:
 ```
@@ -29,16 +31,20 @@ Tras esto le daremos a abrir y se abrirá una nueva pantalla. En el lado izquier
 
 
 ## Django:
-Para poder usar django necesitarás tener python instalado (versión 3.9 recomendada) y django instalado `python -m pip install Django`. Además necesitarás algunos módulos más :
- `pip install django-cors-headers `,
- `pip install djangorestframework `,
-`pip install pycryptodome`,
- `pip install mysqlclient `.
+Para poder usar django necesitarás tener python instalado (versión 3.9 recomendada) y django instalado `python -m pip install Django`. Además necesitarás algunos módulos más:
+`pip install django-cors-headers`,
+ `pip install djangorestframework`,
+ `pip install django-createuser`,
+ `pip install pycryptodome`,
+ `pip install PyYAML`,
+ `pip install mysqlclient`.
 Después arrancar el sevidor mediante el comando `python manage.py runserver`. Este comando debe de ser lanzado desde la carpeta `qwizer-be` del proyecto. 
 
 **IMPORTANTE**: Si es el primer arranque, antes de ejecutar  `python manage.py runserver`  debes de ir a la carpeta `qwizer-be/api/migrations` y **borrar su contenido salvo el archivo __init__.py**. Tras esto debes ejecutar `python manage.py makemigrations` y `python manage.py migrate`. Con esto se generarán las tablas en la base de datos que creaste con anterioridad.
 
 **Creación de un usuario:** En la consola de python, antes de arrancar el servidor, ejecuta `python manage.py createsuperuser`. Los posibles roles son: `teacher, student`. También se pueden crear usuarios mediante el uso de la API, mediante la dirección `http://localhost:8000/api/register`.  En este caso sí que será necesario ejecutar el servidor. Un ejemplo de la entrada esperada se encuentra en el archivo `qwizer-be/api/views.py`
+
+**Uso del panel de administración de Django** Para poder añadir asignaturas a la base de datos se puede hacer uso del panel de administración de Django. Este panel se encuentra en la dirección `http://localhost:8000/admin/`. 
 
 ## React:
 En primer lugar necesitarás instalar [Node.js](https://nodejs.org/es/). Tras ello deberás ir a la carpeta` /qwizer-fe ` y ejecutar `npm install`. 
