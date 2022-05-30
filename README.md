@@ -44,11 +44,11 @@ Después arrancar el sevidor mediante el comando `python manage.py runserver`. E
 
 **Creación de un usuario:** En la consola de python, antes de arrancar el servidor, ejecuta `python manage.py createsuperuser`. Los posibles roles son: `teacher, student`. También se pueden crear usuarios mediante el uso de la API, mediante la dirección `http://localhost:8000/api/register`.  En este caso sí que será necesario ejecutar el servidor. Un ejemplo de la entrada esperada se encuentra en el archivo `qwizer-be/api/views.py`
 
-**Uso del panel de administración de Django** Para poder añadir asignaturas a la base de datos se puede hacer uso del panel de administración de Django. Este panel se encuentra en la dirección `http://localhost:8000/admin/`. 
+**Uso del panel de administración de Django:** Para poder añadir asignaturas a la base de datos se puede hacer uso del panel de administración de Django. Este panel se encuentra en la dirección `http://localhost:8000/admin/`. 
 
 ## React:
-En primer lugar necesitarás instalar [Node.js](https://nodejs.org/es/). Tras ello deberás ir a la carpeta` /qwizer-fe ` y ejecutar `npm install`. 
-Tras ejecutar la instalación deberás usar el comando `npm install`. Es posible que necesites instalar algunos módulos más. En ese caso lee la consola y se te indicarán.
+En primer lugar necesitarás instalar [Node.js](https://nodejs.org/es/). Tras ello deberás ir a la carpeta` ./qwizer-fe ` y ejecutar `npm install`. 
+Tras ejecutar la instalación deberás usar los comandos `npm run build` y `serve -s build`. Es posible que necesites instalar algunos módulos más. En ese caso lee la consola y se te indicarán.
 
 # **Funcionalidades:**
 
