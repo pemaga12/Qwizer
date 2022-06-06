@@ -458,7 +458,7 @@ def create_quiz(request):
         return Response(content) 
 
     
-    cuestionario = Cuestionarios(titulo=title, nPreguntas=len(listaPreguntas), secuencial=sec, idAsignatura=asignatura, idProfesor=profesor, duracion=durat, password=passw, fecha_cierre = date_time_cierre, fecha_apertura = date_time_apertura)
+    cuestionario = Cuestionarios(titulo=title, secuencial=sec, idAsignatura=asignatura, idProfesor=profesor, duracion=durat, password=passw, fecha_cierre = date_time_cierre, fecha_apertura = date_time_apertura)
     
     try:
         cuestionario.save()  
